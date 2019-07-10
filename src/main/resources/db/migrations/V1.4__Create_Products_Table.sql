@@ -25,19 +25,19 @@ CREATE INDEX products_name_idx ON products USING btree(name);
 CREATE INDEX products_caption_idx ON products USING btree(caption);
 CREATE INDEX products_description_idx ON products USING btree(description);
 
-COMMENT ON TABLE  customers IS 'Products that are offered as services.';
-COMMENT ON COLUMN customers.id IS 'The unique product identifier';
-COMMENT ON COLUMN customers.object IS 'The serialized object type, set to "product"';
-COMMENT ON COLUMN customers.active IS 'The active status for the product, true or false.';
-COMMENT ON COLUMN customers.name IS 'The product name.';
-COMMENT ON COLUMN customers.caption IS 'The product caption, used for display.';
-COMMENT ON COLUMN customers.description IS 'The product general description.';
-COMMENT ON COLUMN customers.created IS 'The product creation date.';
-COMMENT ON COLUMN customers.statementDescriptor IS 'The product statement descriptor used on charge statements.';
-COMMENT ON COLUMN customers.type IS 'The product type, either service or good.';
-COMMENT ON COLUMN customers.unitLabel IS 'The product unit label.';
-COMMENT ON COLUMN customers.url IS 'The product URL used for more information.';
-COMMENT ON COLUMN customers.metadata IS 'The product metadata JSON object, currently a feature list.';
+COMMENT ON TABLE  products IS 'Products that are offered as services.';
+COMMENT ON COLUMN products.id IS 'The unique product identifier';
+COMMENT ON COLUMN products.object IS 'The serialized object type, set to "product"';
+COMMENT ON COLUMN products.active IS 'The active status for the product, true or false.';
+COMMENT ON COLUMN products.name IS 'The product name.';
+COMMENT ON COLUMN products.caption IS 'The product caption, used for display.';
+COMMENT ON COLUMN products.description IS 'The product general description.';
+COMMENT ON COLUMN products.created IS 'The product creation date.';
+COMMENT ON COLUMN products.statementDescriptor IS 'The product statement descriptor used on charge statements.';
+COMMENT ON COLUMN products.type IS 'The product type, either service or good.';
+COMMENT ON COLUMN products.unitLabel IS 'The product unit label.';
+COMMENT ON COLUMN products.url IS 'The product URL used for more information.';
+COMMENT ON COLUMN products.metadata IS 'The product metadata JSON object, currently a feature list.';
 
 
 
