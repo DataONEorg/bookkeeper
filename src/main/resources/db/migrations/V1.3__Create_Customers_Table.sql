@@ -33,7 +33,7 @@ COMMENT ON COLUMN customers.object IS 'The serialized object type, set to "custo
 COMMENT ON COLUMN customers.balance IS 'The customer balance, in pence of the currency (i.e. USD cents).';
 COMMENT ON COLUMN customers.address IS 'The customer address, stored as a JSON address object.';
 COMMENT ON COLUMN customers.created IS 'The customer creation date.';
-COMMENT ON COLUMN customers.currency IS 'The customer currency, defaults to "USD";
+COMMENT ON COLUMN customers.currency IS 'The customer currency, defaults to "USD".';
 COMMENT ON COLUMN customers.delinquent IS 'The customer delinquency status, true or false';
 COMMENT ON COLUMN customers.description IS 'The customer description';
 COMMENT ON COLUMN customers.discount IS 'The customer discount, stored as a JSON Discount object.';
