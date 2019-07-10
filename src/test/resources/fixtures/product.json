@@ -1,0 +1,60 @@
+{
+  "id": "725C2F79-7E0B-4018-94F3-C16D05F23CCC",
+  "object": "product",
+  "active": true,
+  "name": "Organization",
+  "caption": "Small institutions or groups",
+  "description": "Create multiple portals for your work and projects. Help others understand and access your data.",
+  "created": 1559768309,
+  "statementDescriptor": "DataONE Membership Plan - Organization",
+  "type": "service",
+  "unitLabel": "membership",
+  "url": "https://dataone.org/memberships/organization",
+  "metadata": {
+    "features": [
+      {
+        "name": "custom_portal",
+        "label": "Branded Portals",
+        "description": "Showcase your research, data, results, and usage metrics by building a custom web portal.",
+        "quota": {
+            "id": null,
+            "object":"quota",
+            "name":"custom_portal_count",
+            "softLimit": 3,
+            "hardLimit": 3,
+            "unit": "portal"
+          }
+      },
+      {
+        "name": "custom_search_filters",
+        "label": "Custom Search Filters",
+        "description": "Create custom search filters in your portal to allow scientists to search your holdings using filters appropriate to your field of science.",
+        "quota": null
+      },
+      {
+        "name": "fair_data_assessment",
+        "label": "FAIR Data Assessments",
+        "description": "Access quality metric reports using the FAIR data suite of checks.",
+        "quota": null
+      },
+      {
+        "name": "custom_quality_metrics",
+        "label": "Custom Quality Metrics",
+        "description": "Create a suite of custom quality metadata checks specific to your datasets.",
+        "quota": null
+      },
+      {
+        "name": "aggregated_metrics",
+        "label": "Aggregated Metrics",
+        "description": "Access and share reports on aggregated usage metrics such as dataset views, data downloads, and dataset citations.",
+        "quota": null
+      },
+      {
+        "name": "dataone_voting_member",
+        "label": "DataONE Voting Member",
+        "description": "Vote on the direction and priorities at DataONE Community meetings.",
+        "quota": null
+      }
+    ]
+  }
+}
