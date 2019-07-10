@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS products (
     type text,
     unitLabel text,
     url text,
-    metadata json;
+    metadata json
 );
 ALTER SEQUENCE products_id_seq OWNED BY products.id;
 
