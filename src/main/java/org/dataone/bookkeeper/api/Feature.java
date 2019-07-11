@@ -36,9 +36,19 @@ public class Feature {
 
     /**
      * Construct a Feature
+     * @param name
+     * @param label
+     * @param description
+     * @param quota
      */
-    public Feature(String name, String label, String description, Quota quota) {
-
+    public Feature(@NotNull @NotEmpty String name,
+                   @NotNull @NotEmpty String label,
+                   @NotNull @NotEmpty String description,
+                   @NotEmpty Quota quota) {
+        this.name = name;
+        this.label = label;
+        this.description = description;
+        this.quota = quota;
     }
 
     /**
