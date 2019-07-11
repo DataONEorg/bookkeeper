@@ -164,11 +164,12 @@ public class EmbeddedPostgresqlTest {
             Statement statement = connection.createStatement();
             String sql =
                 "INSERT INTO customers " +
-                    "(object, balance, address, created, currency, delinquent, " +
+                    "(object, orcid, balance, address, created, currency, delinquent, " +
                     "description, discount, email, invoicePrefix, invoiceSettings, " +
                     "metadata, givenName, surName, phone) " +
                 "VALUES " +
                     "('customer', " +
+                    "'http://orcid.org/0000-0002-8121-2341', " +
                     "0, " +
                     "'{\"line1\": \"735 State Street\", " +
                     " \"line2\": \"Suite 300\", " +
