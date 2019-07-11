@@ -6,6 +6,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * Quotas represent limits placed on services resources (storage, etc.)
+ */
 public class Quota {
     /* The quota id (assigned by db layer) */
     private String id;
