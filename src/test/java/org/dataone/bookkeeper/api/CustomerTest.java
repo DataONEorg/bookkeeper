@@ -45,7 +45,7 @@ class CustomerTest {
      * Test serialization to JSON
      */
     @Test
-    @DisplayName("test Customer model serialization")
+    @DisplayName("Test Customer model serialization")
     public void serializesToJSON() throws Exception {
         // Build the Customer instance
         final Customer customer = new Customer(ID, OBJECT, ORCID, BALANCE, ADDRESS, CREATED,
