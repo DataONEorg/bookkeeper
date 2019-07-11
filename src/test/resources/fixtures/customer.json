@@ -1,0 +1,26 @@
+{
+  "id": "BEAAE3CD-7FA9-4B41-A337-2F5692D5F14E",
+  "object": "customer",
+  "orcid": "http://orcid.org/0000-0002-8121-2341",
+  "balance": 0,
+  "address": {
+    "line1": "735 State Street",
+    "line2": "Suite 300",
+    "city": "Santa Barbara",
+    "state": "CA",
+    "postalCode": "93106",
+    "country": "USA"
+  },
+  "created": 1562866734,
+  "currency": "USD",
+  "delinquent": false,
+  "description": null,
+  "discount": null,
+  "email": "cjones@nceas.ucsb.edu",
+  "invoicePrefix": null,
+  "invoiceSettings": null,
+  "metadata": null,
+  "givenName": "Christopher",
+  "surName": "Jones",
+  "phone": "805-893-2500"
+}
