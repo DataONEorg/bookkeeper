@@ -3,13 +3,15 @@ package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
-import org.apache.xpath.operations.Quo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Test the quota model
+ */
 class QuotaTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
     private final static String QUOTA_JSON = "fixtures/quota.json";
