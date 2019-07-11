@@ -4,7 +4,6 @@
 --- Create the customers table
 CREATE SEQUENCE customers_id_seq;
 
--- TODO: Decide on quotaId - accommodate multiple customer quotas
 CREATE TABLE IF NOT EXISTS customers (
     id bigint DEFAULT nextval('customers_id_seq') PRIMARY KEY,
     object text NOT NULL,
@@ -21,8 +20,7 @@ CREATE TABLE IF NOT EXISTS customers (
     metadata json,
     givenName text,
     surName text,
-    phone text,
-    quotaId bigint NOT NULL REFERENCES quotas (id)
+    phone text
 );
 ALTER SEQUENCE customers_id_seq OWNED BY customers.id;
 CREATE INDEX customers_givenName_idx ON customers USING btree(givenName);
@@ -44,4 +42,3 @@ COMMENT ON COLUMN customers.metadata IS 'The customer metadata, stored as a JSON
 COMMENT ON COLUMN customers.givenName IS 'The customer given name';
 COMMENT ON COLUMN customers.surName IS 'The customer sur name';
 COMMENT ON COLUMN customers.phone IS 'The customer phone';
-COMMENT ON COLUMN customers.quotaId IS 'The quota id applied to this customer id.';
