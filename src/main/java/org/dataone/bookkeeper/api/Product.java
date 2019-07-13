@@ -14,9 +14,7 @@ import javax.validation.constraints.Pattern;
 public class Product {
 
     /* The product id */
-    @NotEmpty
-    @NotNull
-    private String id;
+    private Long id;
 
     /* The product object type */
     @NotEmpty
@@ -95,7 +93,7 @@ public class Product {
      * @param url
      * @param metadata
      */
-    public Product (String id,
+    public Product (Long id,
                     String object,
                     boolean active,
                     String name,
@@ -128,7 +126,7 @@ public class Product {
      * @return id
      */
     @JsonProperty
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -137,7 +135,7 @@ public class Product {
      * @param id
      */
     @JsonProperty
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

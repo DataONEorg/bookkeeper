@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
  */
 public class Quota {
     /* The quota id (assigned by db layer) */
-    private String id;
+    private Long id;
 
     /* The quota object type */
     @NotEmpty
@@ -46,7 +46,7 @@ public class Quota {
         super();
     }
 
-    public Quota(String id, String object, String name,
+    public Quota(Long id, String object, String name,
                  int soft_limit, int hard_limit, String unit) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
@@ -65,7 +65,7 @@ public class Quota {
      * @return
      */
     @JsonProperty
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -74,7 +74,7 @@ public class Quota {
      * @param id
      */
     @JsonProperty
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

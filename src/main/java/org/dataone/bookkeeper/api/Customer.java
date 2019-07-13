@@ -5,15 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Customers represent individuals that order products.
  */
 public class Customer {
     /* The customer unique id */
-    @NotEmpty
-    @NotNull
-    private String id;
+    private Long id;
 
     /* The customer object type (must be "customer" */
     @NotEmpty
@@ -92,6 +92,8 @@ public class Customer {
     @NotEmpty
     private String phone;
 
+    /* The customer quota list, if any */
+    private List<Quota> quotas = new LinkedList<Quota>();
     /**
      * Construct an empty Customer
      */
@@ -118,8 +120,9 @@ public class Customer {
      * @param givenName
      * @param surName
      * @param phone
+     * @param quotas
      */
-    public Customer(@NotEmpty @NotNull String id,
+    public Customer(Long id,
                     @NotEmpty @NotNull @Pattern(regexp = "customer") String object,
                     @NotEmpty @NotNull @Pattern(regexp = "http?://orcid\\.org/[\\d]{4}-[\\d]{4}-[\\d]{4}-[\\d]{3}[0-9X]") String orcid,
                     @NotEmpty @NotNull int balance,
@@ -135,7 +138,8 @@ public class Customer {
                     @NotEmpty JsonNode metadata,
                     @NotEmpty @NotNull String givenName,
                     @NotEmpty @NotNull String surName,
-                    @NotEmpty String phone) {
+                    @NotEmpty String phone,
+                    List<Quota> quotas) {
         super();
         this.id = id;
         this.object = object;
@@ -154,13 +158,14 @@ public class Customer {
         this.givenName = givenName;
         this.surName = surName;
         this.phone = phone;
+        this.quotas = quotas;
     }
 
     /**
      * Get the customer identifier
      * @return id
      */
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -168,7 +173,7 @@ public class Customer {
      * Set the customer identifier
      * @param id
      */
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -429,5 +434,21 @@ public class Customer {
      */
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * Get the customer quotas
+     * @return
+     */
+    public List<Quota> getQuotas() {
+        return quotas;
+    }
+
+    /**
+     * Set the customer quotas
+     * @param quotas
+     */
+    public void setQuotas(List<Quota> quotas) {
+        this.quotas = quotas;
     }
 }
