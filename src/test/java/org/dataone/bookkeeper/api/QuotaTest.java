@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuotaTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
     private final static String QUOTA_JSON = "fixtures/quota.json";
-    private static final String ID = null;
+    private static final Long ID = 1L;
     private static final String OBJECT = "quota";
     private static final String NAME = "custom_portal_count";
     private static final int SOFTLIMIT = 3;

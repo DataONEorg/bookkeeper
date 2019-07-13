@@ -1,5 +1,5 @@
 {
-    "id": "725C2F79-7E0B-4018-94F3-C16D05F23CCC",
+    "id": 1,
     "object": "product",
     "active": true,
     "name": "Organization",
@@ -17,7 +17,7 @@
                 "label": "Branded Portals",
                 "description": "Showcase your research, data, results, and usage metrics by building a custom web portal.",
                 "quota": {
-                        "id": null,
+                        "id": 1,
                         "object":"quota",
                         "name":"custom_portal_count",
                         "softLimit": 3,

@@ -1,20 +1,12 @@
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Test the Product model
@@ -25,7 +17,7 @@ public class ProductTest {
     private final static String PRODUCT_JSON = "fixtures/product.json";
 
     // Set fields for the Product instance to test
-    private final static String ID = "725C2F79-7E0B-4018-94F3-C16D05F23CCC";
+    private final static Long ID = 1L;
     private final static String OBJECT = "product";
     private final static boolean ACTIVE = true;
     private final static String NAME = "Organization";
@@ -45,13 +37,14 @@ public class ProductTest {
     private final static Feature FEATURE6 = new Feature();
 
     // Build a quota for feature 1
+    private static final Long QUOTA_ID = 1L;
     private static final String QUOTA_TYPE = "quota";
     private static final String QUOTA_NAME = "custom_portal_count";
     private static final int QUOTA_SOFT_LIMIT = 3;
     private static final int QUOTA_HARD_LIMIT = 3;
     private static final String QUOTA_UNIT = "portal";
 
-    private static final Quota QUOTA = new Quota(null, QUOTA_TYPE, QUOTA_NAME,
+    private static final Quota QUOTA = new Quota(QUOTA_ID, QUOTA_TYPE, QUOTA_NAME,
         QUOTA_SOFT_LIMIT, QUOTA_HARD_LIMIT, QUOTA_UNIT);
 
     static {

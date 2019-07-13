@@ -6,6 +6,9 @@ import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CustomerTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
     private final static String PRODUCT_JSON = "fixtures/customer.json";
-    private final static String ID = "BEAAE3CD-7FA9-4B41-A337-2F5692D5F14E";
+    private final static Long ID = 1L;
     private final static String OBJECT = "customer";
     private final String ORCID = "http://orcid.org/0000-0002-8121-2341";
     private final int BALANCE = 0;
@@ -40,7 +43,7 @@ class CustomerTest {
     private final String GIVENNAME = "Christopher";
     private final String SURNAME = "Jones";
     private final String PHONE = "805-893-2500";
-
+    private final List<Quota> QUOTAS = new LinkedList<Quota>();
     /**
      * Test serialization to JSON
      */
@@ -50,8 +53,7 @@ class CustomerTest {
         // Build the Customer instance
         final Customer customer = new Customer(ID, OBJECT, ORCID, BALANCE, ADDRESS, CREATED,
             CURRENCY, DELINQUENT, DESCRIPTION, DISCOUNT, EMAIL, INVOICEPREFIX, INVOICESETTINGS,
-            METADATA, GIVENNAME, SURNAME, PHONE
-        );
+            METADATA, GIVENNAME, SURNAME, PHONE, QUOTAS);
 
         // Test the Customer instance
         final String expected = MAPPER.writeValueAsString(
