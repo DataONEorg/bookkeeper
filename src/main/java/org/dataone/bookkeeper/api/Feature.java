@@ -2,6 +2,7 @@ package org.dataone.bookkeeper.api;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * A Feature describes an aspect of a Product, with optional limits.
@@ -113,5 +114,31 @@ public class Feature {
      */
     public void setQuota(Quota quota) {
         this.quota = quota;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o the object to be compared
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Feature feature = (Feature) o;
+        return Objects.equals(getName(), feature.getName()) &&
+            Objects.equals(getLabel(), feature.getLabel()) &&
+            Objects.equals(getDescription(), feature.getDescription()) &&
+            Objects.equals(getQuota(), feature.getQuota());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return hashcode
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getName(), getLabel(), getDescription(), getQuota());
     }
 }
