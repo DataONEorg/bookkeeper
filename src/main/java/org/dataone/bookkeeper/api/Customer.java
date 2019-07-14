@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Customers represent individuals that order products.
@@ -450,5 +451,48 @@ public class Customer {
      */
     public void setQuotas(List<Quota> quotas) {
         this.quotas = quotas;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o the object to be compared
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return getBalance() == customer.getBalance() &&
+            getCreated() == customer.getCreated() &&
+            isDelinquent() == customer.isDelinquent() &&
+            Objects.equals(getId(), customer.getId()) &&
+            Objects.equals(getObject(), customer.getObject()) &&
+            Objects.equals(getOrcid(), customer.getOrcid()) &&
+            Objects.equals(getAddress(), customer.getAddress()) &&
+            Objects.equals(getCurrency(), customer.getCurrency()) &&
+            Objects.equals(getDescription(), customer.getDescription()) &&
+            Objects.equals(getDiscount(), customer.getDiscount()) &&
+            Objects.equals(getEmail(), customer.getEmail()) &&
+            Objects.equals(getInvoicePrefix(), customer.getInvoicePrefix()) &&
+            Objects.equals(getInvoiceSettings(), customer.getInvoiceSettings()) &&
+            Objects.equals(getMetadata(), customer.getMetadata()) &&
+            Objects.equals(getGivenName(), customer.getGivenName()) &&
+            Objects.equals(getSurName(), customer.getSurName()) &&
+            Objects.equals(getPhone(), customer.getPhone()) &&
+            Objects.equals(getQuotas(), customer.getQuotas());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getObject(), getOrcid(), getBalance(), getAddress(),
+            getCreated(), getCurrency(), isDelinquent(), getDescription(), getDiscount(),
+            getEmail(), getInvoicePrefix(), getInvoiceSettings(), getMetadata(),
+            getGivenName(), getSurName(), getPhone(), getQuotas());
     }
 }

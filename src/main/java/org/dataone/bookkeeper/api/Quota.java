@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.Objects;
 
 /**
  * Quotas represent limits placed on services resources (storage, etc.)
@@ -166,5 +167,33 @@ public class Quota {
     @JsonProperty
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o the object to be compared
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Quota quota = (Quota) o;
+        return getSoftLimit() == quota.getSoftLimit() &&
+            getHardLimit() == quota.getHardLimit() &&
+            Objects.equals(getId(), quota.getId()) &&
+            Objects.equals(getObject(), quota.getObject()) &&
+            Objects.equals(getName(), quota.getName()) &&
+            Objects.equals(getUnit(), quota.getUnit());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getObject(), getName(), getSoftLimit(), getHardLimit(), getUnit());
     }
 }
