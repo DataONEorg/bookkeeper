@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.Objects;
 
 /**
  * Products represent a given offering to be purchased
@@ -335,5 +336,41 @@ public class Product {
     @JsonProperty
     public void setMetadata(JsonNode metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o the object to be compared
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return isActive() == product.isActive() &&
+            getCreated() == product.getCreated() &&
+            Objects.equals(getId(), product.getId()) &&
+            Objects.equals(getObject(), product.getObject()) &&
+            Objects.equals(getName(), product.getName()) &&
+            Objects.equals(getCaption(), product.getCaption()) &&
+            Objects.equals(getDescription(), product.getDescription()) &&
+            Objects.equals(getStatementDescriptor(), product.getStatementDescriptor()) &&
+            Objects.equals(getType(), product.getType()) &&
+            Objects.equals(getUnitLabel(), product.getUnitLabel()) &&
+            Objects.equals(getUrl(), product.getUrl()) &&
+            Objects.equals(getMetadata(), product.getMetadata());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return hashcode
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getObject(), isActive(), getName(),
+            getCaption(), getDescription(), getCreated(), getStatementDescriptor(),
+            getType(), getUnitLabel(), getUrl(), getMetadata());
     }
 }
