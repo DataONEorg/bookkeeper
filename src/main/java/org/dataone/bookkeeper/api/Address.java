@@ -1,5 +1,7 @@
 package org.dataone.bookkeeper.api;
 
+import java.util.Objects;
+
 /**
  * Addresses are a part of Customers, storing their mailing address information.
  */
@@ -44,7 +46,7 @@ public class Address {
         super();
         this.line1 = line1;
         this.line2 = line2;
-        this.city = city ;
+        this.city = city;
         this.state = state;
         this.postalCode = postalCode;
         this.country = country;
@@ -144,5 +146,33 @@ public class Address {
      */
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o
+     * @return true if the objects are equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(getLine1(), address.getLine1()) &&
+            Objects.equals(getLine2(), address.getLine2()) &&
+            Objects.equals(getCity(), address.getCity()) &&
+            Objects.equals(getState(), address.getState()) &&
+            Objects.equals(getPostalCode(), address.getPostalCode()) &&
+            Objects.equals(getCountry(), address.getCountry());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return hash
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getLine1(), getLine2(), getCity(), getState(), getPostalCode(), getCountry());
     }
 }
