@@ -27,14 +27,29 @@ class AddressTest {
     @Test
     @DisplayName("Test Address model serialization")
     public void serializesToJSON() throws Exception {
-        // Build the Customer instance
+        // Build the Address instance
         final Address address = new Address(LINE1, LINE2, CITY, STATE, POSTALCODE, COUNTRY);
 
-        // Test the Customer instance
+        // Test the Address instance
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture("fixtures/address.json"), Address.class));
         assertThat(MAPPER.writeValueAsString(address)).isEqualTo(expected);
 
+    }
+
+    /**
+     * Test deserialization from JSON
+     */
+    @Test
+    @DisplayName("Test Address model desrialization")
+    public void deserializesFromJSON() throws Exception {
+        // Build the Address instance
+        final Address address = new Address(LINE1, LINE2, CITY, STATE, POSTALCODE, COUNTRY);
+
+        // Test the Address instance
+        final Address deserializedAddress =
+        MAPPER.readValue(fixture("fixtures/address.json"), Address.class);
+        assertThat(deserializedAddress).isEqualTo(address);
     }
 
 }
