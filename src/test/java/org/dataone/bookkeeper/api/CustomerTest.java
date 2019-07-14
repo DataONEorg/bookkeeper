@@ -34,16 +34,17 @@ class CustomerTest {
     private final int CREATED = 1562866734;
     private final String CURRENCY = "USD";
     private final boolean DELINQUENT = false;
-    private final String DESCRIPTION = null;
-    private final JsonNode DISCOUNT = null;
+    private final String DESCRIPTION = "";
+    private final JsonNode DISCOUNT = MAPPER.createObjectNode();
     private final String EMAIL = "cjones@nceas.ucsb.edu";
-    private final String INVOICEPREFIX = null;
-    private final JsonNode INVOICESETTINGS = null;
-    private final JsonNode METADATA = null;
+    private final String INVOICEPREFIX = "";
+    private final JsonNode INVOICESETTINGS = MAPPER.createObjectNode();
+    private final JsonNode METADATA = MAPPER.createObjectNode();
     private final String GIVENNAME = "Christopher";
     private final String SURNAME = "Jones";
     private final String PHONE = "805-893-2500";
     private final List<Quota> QUOTAS = new LinkedList<Quota>();
+
     /**
      * Test serialization to JSON
      */
@@ -60,5 +61,22 @@ class CustomerTest {
             MAPPER.readValue(fixture("fixtures/customer.json"), Customer.class));
         assertThat(MAPPER.writeValueAsString(customer)).isEqualTo(expected);
 
+    }
+
+    /**
+     * Test deserialization from JSON
+     */
+    @Test
+    @DisplayName("Test Customer model deserialization")
+    public void desrerializesFromJSON() throws Exception {
+        // Build the Customer instance
+        final Customer customer = new Customer(ID, OBJECT, ORCID, BALANCE, ADDRESS, CREATED,
+            CURRENCY, DELINQUENT, DESCRIPTION, DISCOUNT, EMAIL, INVOICEPREFIX, INVOICESETTINGS,
+            METADATA, GIVENNAME, SURNAME, PHONE, QUOTAS);
+
+        // Test the Customer instance
+        final Customer dserializedCustomer =
+            MAPPER.readValue(fixture("fixtures/customer.json"), Customer.class);
+        assertThat(dserializedCustomer).isEqualTo(customer);
     }
 }
