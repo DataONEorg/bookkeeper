@@ -189,7 +189,7 @@ public class Quota {
 
     /**
      * Calculate a hash based on all fields
-     * @return
+     * @return hashcode
      */
     @Override
     public int hashCode() {
