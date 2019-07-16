@@ -8,8 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 
 public class QuotaDAOTest extends BaseTestCase {
 
@@ -38,8 +40,7 @@ public class QuotaDAOTest extends BaseTestCase {
     @Test
     @DisplayName("Test get quota by ID")
     public void testListQuotas() {
-        List<Quota> quotas = quotaDAO.listQuotas();
-        assertTrue(quotas.size() > 0);
+        assertTrue(quotaDAO.listQuotas().size() >= 11);
     }
 
     /**
@@ -49,8 +50,7 @@ public class QuotaDAOTest extends BaseTestCase {
     @DisplayName("Test get quota by quota ID")
     public void testGetQuotaById() {
 
-        List<Quota> quotas = quotaDAO.findQuotaById(1L);
-        assertTrue(quotas.size() == 1);
+        assertTrue(quotaDAO.findQuotaById(1L).size() == 1);
     }
 
     /**
@@ -70,8 +70,8 @@ public class QuotaDAOTest extends BaseTestCase {
             "VALUES " +
             "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 54321, 543210, "bytes", 500);
         });
-        List<Quota> quotas = quotaDAO.findQuotasByCustomerId(500L);
-        assertTrue(quotas.size() == 2);
+        assertTrue(quotaDAO.findQuotasByCustomerId(500L).size() == 2);
+        assertThat(quotaDAO.findQuotasByCustomerId(0L).isEmpty());
     }
 
 }
