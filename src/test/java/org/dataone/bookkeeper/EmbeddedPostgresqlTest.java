@@ -1,91 +1,26 @@
 package org.dataone.bookkeeper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opentable.db.postgres.embedded.EmbeddedPostgres;
-import com.opentable.db.postgres.embedded.FlywayPreparer;
-import com.opentable.db.postgres.junit.EmbeddedPostgresRules;
-import com.opentable.db.postgres.junit.PreparedDbRule;
 import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.api.Address;
-import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 /**
  * Test functionality of the embedded PostgeSQL database
  */
-public class EmbeddedPostgresqlTest {
-
-    // The embedded database reference
-    public static EmbeddedPostgres pg;
-
-    // A connection to the database
-    public static Connection connection;
-    // The Flyway database migrator used to manage database schema integrity
-    public static Flyway flyway;
-
-    /**
-     * Initialize test resources - start an embedded PostgreSQL database
-     */
-    @BeforeAll
-    public static void initAll() {
-        try {
-
-            // Try to optimize the PG database for testing with anti-persistence
-            // options (fsync, full_page_writes)
-            pg = EmbeddedPostgres.builder()
-                .setServerConfig("shared_buffers", "1024MB")
-                .setServerConfig("work_mem", "25MB")
-                .setServerConfig("fsync", "off")
-                .setServerConfig("full_page_writes", "off")
-                .start();
-
-            // Make a connection available to tests
-            connection = pg.getPostgresDatabase().getConnection();
-
-            // Run the production database migrations
-            flyway = Flyway.configure()
-                .dataSource(pg.getPostgresDatabase())
-                .locations("db/migrations")
-                .load();
-            flyway.migrate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
-    /**
-     * Clean up after all tests as needed
-     */
-    @AfterAll
-    public static void tearDownAll() {
-
-        // Clean the database
-        flyway.clean();
-
-        // Close the database
-        try {
-            pg.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail();
-        }
-
-    }
+public class EmbeddedPostgresqlTest extends BaseTestCase {
 
     /**
      * Test that we can query the embedded database
