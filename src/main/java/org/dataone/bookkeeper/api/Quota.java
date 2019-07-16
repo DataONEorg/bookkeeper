@@ -28,12 +28,12 @@ public class Quota {
     /* The quota soft limit */
     @NotEmpty
     @NotNull
-    private int softLimit;
+    private long softLimit;
 
     /* The quota hard limit */
     @NotEmpty
     @NotNull
-    private int hardLimit;
+    private long hardLimit;
 
     /* The quota unit */
     @NotEmpty
@@ -120,7 +120,7 @@ public class Quota {
      * @return softLimit
      */
     @JsonProperty
-    public long getSoftLimit() {
+    public @NotEmpty @NotNull long getSoftLimit() {
         return softLimit;
     }
 
@@ -129,7 +129,7 @@ public class Quota {
      * @param soft_limit
      */
     @JsonProperty
-    public void setSoftLimit(int soft_limit) {
+    public void setSoftLimit(@NotEmpty @NotNull long soft_limit) {
         this.softLimit = soft_limit;
     }
 
@@ -138,7 +138,7 @@ public class Quota {
      * @return hardLimit
      */
     @JsonProperty
-    public long getHardLimit() {
+    public @NotEmpty @NotNull long getHardLimit() {
         return hardLimit;
     }
 
@@ -147,7 +147,7 @@ public class Quota {
      * @param hard_limit
      */
     @JsonProperty
-    public void setHardLimit(int hard_limit) {
+    public void setHardLimit(@NotEmpty @NotNull long hard_limit) {
         this.hardLimit = hard_limit;
     }
 

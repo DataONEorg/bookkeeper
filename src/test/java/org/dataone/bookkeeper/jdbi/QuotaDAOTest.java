@@ -64,14 +64,22 @@ public class QuotaDAOTest extends BaseTestCase {
         {handle.execute("INSERT INTO quotas " +
             "(object, name, softLimit, hardLimit, unit, customerId) " +
             "VALUES " +
-            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 12345, 123450, "bytes", 500);
+            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 12345, 123450, "byte", 500);
         handle.execute("INSERT INTO quotas " +
             "(object, name, softLimit, hardLimit, unit, customerId) " +
             "VALUES " +
-            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 54321, 543210, "bytes", 500);
+            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 54321, 543210, "byte", 500);
         });
         assertTrue(quotaDAO.findQuotasByCustomerId(500L).size() == 2);
         assertThat(quotaDAO.findQuotasByCustomerId(0L).isEmpty());
     }
 
+    @Test
+    @DisplayName("Test inserting a quota")
+    public void testInsert() {
+        quotaDAO.insert("quota", "test_quota", 12345,
+            123450, "byte", 500L);
+        assertThat(quotaDAO.findQuotasByCustomerId(500L).size() > 0);
+
+    }
 }
