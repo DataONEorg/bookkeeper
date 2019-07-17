@@ -1,5 +1,7 @@
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotEmpty;
@@ -10,6 +12,7 @@ import java.util.Objects;
 /**
  * Quotas represent limits placed on services resources (storage, etc.)
  */
+@JsonInclude(Include.NON_NULL)
 public class Quota {
     /* The quota id (assigned by db layer) */
     private Long id;
@@ -28,17 +31,20 @@ public class Quota {
     /* The quota soft limit */
     @NotEmpty
     @NotNull
-    private long softLimit;
+    private Long softLimit;
 
     /* The quota hard limit */
     @NotEmpty
     @NotNull
-    private long hardLimit;
+    private Long hardLimit;
 
     /* The quota unit */
     @NotEmpty
     @NotNull
     private String unit;
+
+    /* the quota customer id */
+    private Long customerId;
 
     /**
      * Construct an empty Quota
@@ -47,8 +53,18 @@ public class Quota {
         super();
     }
 
+    /**
+     * Construct a quota
+     * @param id
+     * @param object
+     * @param name
+     * @param softLimit
+     * @param hardLimit
+     * @param unit
+     * @param customerId
+     */
     public Quota(Long id, String object, String name,
-                 int soft_limit, int hard_limit, String unit) {
+                 Long softLimit, Long hardLimit, String unit, Long customerId) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
                 this.id = id;
@@ -56,9 +72,10 @@ public class Quota {
         }
         this.object = object;
         this.name = name;
-        this.softLimit = soft_limit;
-        this.hardLimit = hard_limit;
+        this.softLimit = softLimit;
+        this.hardLimit = hardLimit;
         this.unit = unit;
+        this.customerId = customerId;
     }
 
     /**
@@ -120,17 +137,17 @@ public class Quota {
      * @return softLimit
      */
     @JsonProperty
-    public @NotEmpty @NotNull long getSoftLimit() {
+    public @NotEmpty @NotNull Long getSoftLimit() {
         return softLimit;
     }
 
     /**
      * Set the quota soft limit
-     * @param soft_limit
+     * @param softLimit
      */
     @JsonProperty
-    public void setSoftLimit(@NotEmpty @NotNull long soft_limit) {
-        this.softLimit = soft_limit;
+    public void setSoftLimit(@NotEmpty @NotNull Long softLimit) {
+        this.softLimit = softLimit;
     }
 
     /**
@@ -138,17 +155,17 @@ public class Quota {
      * @return hardLimit
      */
     @JsonProperty
-    public @NotEmpty @NotNull long getHardLimit() {
+    public @NotEmpty @NotNull Long getHardLimit() {
         return hardLimit;
     }
 
     /**
      * Set the quota hard limit
-     * @param hard_limit
+     * @param hardLimit
      */
     @JsonProperty
-    public void setHardLimit(@NotEmpty @NotNull long hard_limit) {
-        this.hardLimit = hard_limit;
+    public void setHardLimit(@NotEmpty @NotNull Long hardLimit) {
+        this.hardLimit = hardLimit;
     }
 
     /**
@@ -170,6 +187,24 @@ public class Quota {
     }
 
     /**
+     * Get the customer id
+     * @return customerId
+     */
+    @JsonProperty
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    /**
+     * Set the customer id
+     * @param customerId
+     */
+    @JsonProperty
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    /**
      * Determine object equality based on the equality of all fields
      * @param o the object to be compared
      * @return
@@ -181,6 +216,7 @@ public class Quota {
         Quota quota = (Quota) o;
         return getSoftLimit() == quota.getSoftLimit() &&
             getHardLimit() == quota.getHardLimit() &&
+            getCustomerId() == quota.getCustomerId() &&
             Objects.equals(getId(), quota.getId()) &&
             Objects.equals(getObject(), quota.getObject()) &&
             Objects.equals(getName(), quota.getName()) &&
@@ -194,6 +230,7 @@ public class Quota {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getObject(), getName(), getSoftLimit(), getHardLimit(), getUnit());
+        return Objects.hash(getId(), getObject(), getName(),
+            getSoftLimit(), getHardLimit(), getUnit(), getCustomerId());
     }
 }
