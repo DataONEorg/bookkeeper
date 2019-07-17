@@ -25,7 +25,6 @@ public class Feature {
     private String description;
 
     /* The optional feature quota */
-    @NotEmpty // Should be null if empty
     private Quota quota;
 
     /**
