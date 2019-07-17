@@ -1,5 +1,6 @@
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Feature model test")
 class FeatureTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
+    static {
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.setSerializationInclusion(Include.NON_EMPTY);
+    }
     private final static String FEATURE_JSON = "fixtures/feature.json";
     private final static String NAME = "custom_portal";
     private final static String LABEL = "Branded Portals";

@@ -1,5 +1,6 @@
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
@@ -14,6 +15,10 @@ import static io.dropwizard.testing.FixtureHelpers.fixture;
 @DisplayName("Product model test")
 public class ProductTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
+    static {
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.setSerializationInclusion(Include.NON_EMPTY);
+    }
     private final static String PRODUCT_JSON = "fixtures/product.json";
 
     // Set fields for the Product instance to test

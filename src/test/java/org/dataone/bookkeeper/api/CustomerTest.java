@@ -1,5 +1,6 @@
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
@@ -18,6 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Customer model test")
 class CustomerTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
+    static {
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.setSerializationInclusion(Include.NON_EMPTY);
+    }
     private final static String PRODUCT_JSON = "fixtures/customer.json";
     private final static Long ID = 1L;
     private final static String OBJECT = "customer";

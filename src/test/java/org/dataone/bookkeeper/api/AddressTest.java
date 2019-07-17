@@ -1,5 +1,6 @@
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class AddressTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
+    static {
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.setSerializationInclusion(Include.NON_EMPTY);
+    }
     private final static String ADDRESS_JSON = "fixtures/address.json";
     private static final String LINE1 = "735 State Street";
     private static final String LINE2 = "Suite 300";

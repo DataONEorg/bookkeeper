@@ -15,6 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class QuotaTest {
     private final static ObjectMapper MAPPER = Jackson.newObjectMapper();
+    static {
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.setSerializationInclusion(Include.NON_EMPTY);
+    }
     private final static String QUOTA_JSON = "fixtures/quota.json";
     private static final Long ID = 1L;
     private static final String OBJECT = "quota";
@@ -34,7 +38,6 @@ class QuotaTest {
         final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT, UNIT, CUSTOMER_ID);
         quota.getCustomerId();
         // Test the Customer instance
-        MAPPER.setSerializationInclusion(Include.NON_NULL);
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture("fixtures/quota.json"), Quota.class));
         assertThat(MAPPER.writeValueAsString(quota)).isEqualTo(expected);
