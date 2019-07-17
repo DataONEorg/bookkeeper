@@ -77,9 +77,24 @@ public class QuotaDAOTest extends BaseTestCase {
     @Test
     @DisplayName("Test inserting a quota")
     public void testInsert() {
-        quotaDAO.insert("quota", "test_quota", 12345,
-            123450, "byte", 500L);
+        quotaDAO.insert("quota", "test_quota", 12345L,
+            123450L, "byte", 500L);
         assertThat(quotaDAO.findQuotasByCustomerId(500L).size() > 0);
+
+    }
+
+    @Test
+    @DisplayName("Test updating a quota")
+    public void testUpdate() {
+        quotaDAO.insert("quota", "test_quota", 12345L,
+            123450L, "byte", 400L);
+        Quota quota = quotaDAO.findQuotasByCustomerId(400L).get(0);
+        Long quotaId = quota.getId();
+        quotaDAO.update(quotaId, "quota", "test_quota_2", 56789L,
+            567890L, "byte", 400L);
+        assertThat(quotaDAO.findQuotasByCustomerId(400L).get(0).getName() == "test_quota_2");
+        assertThat(quotaDAO.findQuotasByCustomerId(400L).get(0).getSoftLimit() == 56789);
+        assertThat(quotaDAO.findQuotasByCustomerId(400L).get(0).getHardLimit() == 567890);
 
     }
 }
