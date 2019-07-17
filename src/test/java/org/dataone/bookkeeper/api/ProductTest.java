@@ -40,12 +40,13 @@ public class ProductTest {
     private static final Long QUOTA_ID = 1L;
     private static final String QUOTA_TYPE = "quota";
     private static final String QUOTA_NAME = "custom_portal_count";
-    private static final int QUOTA_SOFT_LIMIT = 3;
-    private static final int QUOTA_HARD_LIMIT = 3;
+    private static final Long QUOTA_SOFT_LIMIT = 3L;
+    private static final Long QUOTA_HARD_LIMIT = 3L;
     private static final String QUOTA_UNIT = "portal";
+    private static final Long QUOTA_CUSTOMER_ID = null;
 
     private static final Quota QUOTA = new Quota(QUOTA_ID, QUOTA_TYPE, QUOTA_NAME,
-        QUOTA_SOFT_LIMIT, QUOTA_HARD_LIMIT, QUOTA_UNIT);
+        QUOTA_SOFT_LIMIT, QUOTA_HARD_LIMIT, QUOTA_UNIT, QUOTA_CUSTOMER_ID);
 
     static {
         FEATURE1.setName("custom_portal");
