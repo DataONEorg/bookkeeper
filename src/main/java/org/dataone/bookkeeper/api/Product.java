@@ -244,7 +244,7 @@ public class Product {
      * @param created
      */
     @JsonProperty
-    public void setCreated(int created) {
+    public void setCreated(Integer created) {
         this.created = created;
     }
 
