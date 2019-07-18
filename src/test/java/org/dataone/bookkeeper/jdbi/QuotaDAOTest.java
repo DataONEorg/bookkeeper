@@ -64,11 +64,11 @@ public class QuotaDAOTest extends BaseTestCase {
         {handle.execute("INSERT INTO quotas " +
             "(object, name, softLimit, hardLimit, unit, customerId) " +
             "VALUES " +
-            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 12345, 123450, "byte", 500);
+            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 12345, 123450, "megabyte", 500);
         handle.execute("INSERT INTO quotas " +
             "(object, name, softLimit, hardLimit, unit, customerId) " +
             "VALUES " +
-            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 54321, 543210, "byte", 500);
+            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 54321, 543210, "megabyte", 500);
         });
         assertTrue(quotaDAO.findQuotasByCustomerId(500).size() == 2);
         assertThat(quotaDAO.findQuotasByCustomerId(0).isEmpty());
@@ -86,12 +86,12 @@ public class QuotaDAOTest extends BaseTestCase {
     @Test
     @DisplayName("Test updating a quota")
     public void testUpdate() {
-        quotaDAO.insert("quota", "test_quota", 12345,
-            123450, "byte", 400);
+        quotaDAO.insert("quota", "test_storage_quota", 12345,
+            123450, "megabyte", 400);
         Quota quota = quotaDAO.findQuotasByCustomerId(400).get(0);
         Integer quotaId = quota.getId();
-        quotaDAO.update(quotaId, "quota", "test_quota_2", 56789,
-            567890, "byte", 400);
+        quotaDAO.update(quotaId, "quota", "test_storage_quota_2", 56789,
+            567890, "megabyte", 400);
         assertThat(quotaDAO.findQuotasByCustomerId(400).get(0).getName() == "test_quota_2");
         assertThat(quotaDAO.findQuotasByCustomerId(400).get(0).getSoftLimit() == 56789);
         assertThat(quotaDAO.findQuotasByCustomerId(400).get(0).getHardLimit() == 567890);
