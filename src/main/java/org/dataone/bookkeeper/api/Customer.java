@@ -254,7 +254,7 @@ public class Customer {
      * Set the customer creation date
      * @param created
      */
-    public void setCreated(int created) {
+    public void setCreated(Integer created) {
         this.created = created;
     }
 
@@ -463,10 +463,11 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return getBalance() == customer.getBalance() &&
-            getCreated() == customer.getCreated() &&
-            isDelinquent() == customer.isDelinquent() &&
+
+        return isDelinquent() == customer.isDelinquent() &&
             Objects.equals(getId(), customer.getId()) &&
+            Objects.equals(getBalance(), customer.getBalance()) &&
+            Objects.equals(getCreated(), customer.getCreated()) &&
             Objects.equals(getObject(), customer.getObject()) &&
             Objects.equals(getOrcid(), customer.getOrcid()) &&
             Objects.equals(getAddress(), customer.getAddress()) &&
@@ -481,6 +482,7 @@ public class Customer {
             Objects.equals(getSurName(), customer.getSurName()) &&
             Objects.equals(getPhone(), customer.getPhone()) &&
             Objects.equals(getQuotas(), customer.getQuotas());
+
     }
 
     /**
