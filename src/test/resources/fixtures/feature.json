@@ -3,7 +3,6 @@
     "label": "Branded Portals",
     "description": "Showcase your research, data, results, and usage metrics by building a custom web portal.",
     "quota": {
-        "id": null,
         "object":"quota",
         "name":"custom_portal_count",
         "softLimit": 3,
