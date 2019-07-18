@@ -78,7 +78,7 @@ public class EmbeddedPostgresqlTest extends BaseTestCase {
             // Check for 11 preset quotas
             Statement statement = connection.createStatement();
             ResultSet resultSet =
-                statement.executeQuery("SELECT * FROM quotas WHERE softLimit = 10995116277760;");
+                statement.executeQuery("SELECT * FROM quotas WHERE softLimit = 10485760;");
             assertTrue(resultSet.next());
             assertEquals(1, resultSet.getRow());
             assertFalse(resultSet.next());
