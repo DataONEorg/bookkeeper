@@ -28,8 +28,8 @@ class FeatureTest {
         null,
         "quota",
         "custom_portal_count",
-        3L,
-        3L,
+        3,
+        3,
         "portal",
         null
     );
