@@ -46,7 +46,7 @@ class AddressTest {
      * Test deserialization from JSON
      */
     @Test
-    @DisplayName("Test Address model desrialization")
+    @DisplayName("Test Address model deserialization")
     public void deserializesFromJSON() throws Exception {
         // Build the Address instance
         final Address address = new Address(LINE1, LINE2, CITY, STATE, POSTALCODE, COUNTRY);
