@@ -89,14 +89,15 @@ public class ProductTest {
     // Add the feature list to the metadata object
     private final static ObjectNode METADATA = MAPPER.createObjectNode();
     static {
+        // ArrayNode features = MAPPER.createArrayNode()
         METADATA.putArray("features")
-            .addPOJO(FEATURE1)
-            .addPOJO(FEATURE2)
-            .addPOJO(FEATURE3)
-            .addPOJO(FEATURE4)
-            .addPOJO(FEATURE5)
-            .addPOJO(FEATURE6);
-    }
+            .add(MAPPER.convertValue(FEATURE1, ObjectNode.class))
+            .add(MAPPER.convertValue(FEATURE2, ObjectNode.class))
+            .add(MAPPER.convertValue(FEATURE3, ObjectNode.class))
+            .add(MAPPER.convertValue(FEATURE4, ObjectNode.class))
+            .add(MAPPER.convertValue(FEATURE5, ObjectNode.class))
+            .add(MAPPER.convertValue(FEATURE6, ObjectNode.class));
+   }
     /**
      * Test serialization to JSON
      * @throws Exception
@@ -113,6 +114,24 @@ public class ProductTest {
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture("fixtures/product.json"), Product.class));
         assertThat(MAPPER.writeValueAsString(product)).isEqualTo(expected);
+    }
+
+    /**
+     * Test deserialization from JSON
+     */
+    @Test
+    @DisplayName("Test Product model deserialization")
+    public void deserializesFromJSON() throws Exception {
+        // Build the Product instance
+        final Product product = new Product(ID, OBJECT, ACTIVE, NAME,
+            CAPTION, DESCRIPTION, CREATED, STATEMENT_DESCRIPTOR, TYPE,
+            UNIT_LABEL, URL, METADATA);
+
+        // Test the Product instance
+        final Product deserializedProduct =
+            MAPPER.readValue(fixture("fixtures/product.json"), Product.class);
+        assertThat(deserializedProduct.getMetadata()).isEqualTo(product.getMetadata());
+
     }
 
 }
