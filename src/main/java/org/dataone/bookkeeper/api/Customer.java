@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 public class Customer {
     /* The customer unique id */
-    private Long id;
+    private Integer id;
 
     /* The customer object type (must be "customer" */
     @NotEmpty
@@ -31,7 +31,7 @@ public class Customer {
     /* The customer account balance */
     @NotEmpty
     @NotNull
-    private int balance;
+    private Integer balance;
 
     /* The customer address */
     @NotEmpty
@@ -41,7 +41,7 @@ public class Customer {
     /* The customer creation date, in seconds from the unix epoch */
     @NotEmpty
     @NotNull
-    private int created;
+    private Integer created;
 
     /* The customer default currency code */
     @NotEmpty
@@ -123,12 +123,12 @@ public class Customer {
      * @param phone
      * @param quotas
      */
-    public Customer(Long id,
+    public Customer(Integer id,
                     @NotEmpty @NotNull @Pattern(regexp = "customer") String object,
                     @NotEmpty @NotNull @Pattern(regexp = "http?://orcid\\.org/[\\d]{4}-[\\d]{4}-[\\d]{4}-[\\d]{3}[0-9X]") String orcid,
-                    @NotEmpty @NotNull int balance,
+                    @NotEmpty @NotNull Integer balance,
                     @NotEmpty @NotNull Address address,
-                    @NotEmpty @NotNull int created,
+                    @NotEmpty @NotNull Integer created,
                     @NotEmpty @NotNull @Pattern(regexp = "[A-Z]{3}") String currency,
                     @NotEmpty @NotNull boolean delinquent,
                     @NotEmpty String description,
@@ -166,7 +166,7 @@ public class Customer {
      * Get the customer identifier
      * @return id
      */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -174,7 +174,7 @@ public class Customer {
      * Set the customer identifier
      * @param id
      */
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -214,7 +214,7 @@ public class Customer {
      * Get the customer identifier
      * @return balance
      */
-    public int getBalance() {
+    public Integer getBalance() {
         return balance;
     }
 
@@ -222,7 +222,7 @@ public class Customer {
      * Set the customer balance
      * @param balance
      */
-    public void setBalance(int balance) {
+    public void setBalance(Integer balance) {
         this.balance = balance;
     }
 
@@ -246,7 +246,7 @@ public class Customer {
      * Get the customer creation date
      * @return created
      */
-    public int getCreated() {
+    public Integer getCreated() {
         return created;
     }
 

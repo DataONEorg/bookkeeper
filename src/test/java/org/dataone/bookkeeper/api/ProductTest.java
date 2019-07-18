@@ -22,13 +22,13 @@ public class ProductTest {
     private final static String PRODUCT_JSON = "fixtures/product.json";
 
     // Set fields for the Product instance to test
-    private final static Long ID = 1L;
+    private final static Integer ID = 1;
     private final static String OBJECT = "product";
     private final static boolean ACTIVE = true;
     private final static String NAME = "Organization";
     private final static String CAPTION = "Small institutions or groups";
     private final static String DESCRIPTION = "Create multiple portals for your work and projects. Help others understand and access your data.";
-    private final static int CREATED = 1559768309;
+    private final static Integer CREATED = 1559768309;
     private final static String STATEMENT_DESCRIPTOR = "DataONE Membership Plan - Organization";
     private final static String TYPE = "service";
     private final static String UNIT_LABEL = "membership";
@@ -42,13 +42,13 @@ public class ProductTest {
     private final static Feature FEATURE6 = new Feature();
 
     // Build a quota for feature 1
-    private static final Long QUOTA_ID = 1L;
+    private static final  Integer QUOTA_ID = 1;
     private static final String QUOTA_TYPE = "quota";
     private static final String QUOTA_NAME = "custom_portal_count";
-    private static final Long QUOTA_SOFT_LIMIT = 3L;
-    private static final Long QUOTA_HARD_LIMIT = 3L;
+    private static final  Integer QUOTA_SOFT_LIMIT = 3;
+    private static final  Integer QUOTA_HARD_LIMIT = 3;
     private static final String QUOTA_UNIT = "portal";
-    private static final Long QUOTA_CUSTOMER_ID = null;
+    private static final  Integer QUOTA_CUSTOMER_ID = null;
 
     private static final Quota QUOTA = new Quota(QUOTA_ID, QUOTA_TYPE, QUOTA_NAME,
         QUOTA_SOFT_LIMIT, QUOTA_HARD_LIMIT, QUOTA_UNIT, QUOTA_CUSTOMER_ID);

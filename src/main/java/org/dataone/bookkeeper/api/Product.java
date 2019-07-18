@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Product {
 
     /* The product id */
-    private Long id;
+    private Integer id;
 
     /* The product object type */
     @NotEmpty
@@ -49,7 +49,7 @@ public class Product {
     /* The product creation timestamp (from the unix epoch in seconds)*/
     @NotEmpty
     @NotNull
-    private int created;
+    private Integer created;
 
     /* The product statement descriptor shown on charge receipts */
     @Length(max = 100)
@@ -94,13 +94,13 @@ public class Product {
      * @param url
      * @param metadata
      */
-    public Product (Long id,
+    public Product (Integer id,
                     String object,
                     boolean active,
                     String name,
                     String caption,
                     String description,
-                    int created,
+                    Integer created,
                     String statementDescriptor,
                     String type,
                     String unitLabel,
@@ -127,7 +127,7 @@ public class Product {
      * @return id
      */
     @JsonProperty
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -136,7 +136,7 @@ public class Product {
      * @param id
      */
     @JsonProperty
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -235,7 +235,7 @@ public class Product {
      * @return
      */
     @JsonProperty
-    public int getCreated() {
+    public Integer getCreated() {
         return created;
     }
 

@@ -31,7 +31,7 @@ public interface QuotaDAO {
         "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
         "FROM quotas q " +
         "WHERE q.id = :id")
-    List<Quota> findQuotaById(@Bind("id") Long id);
+    List<Quota> findQuotaById(@Bind("id") Integer id);
 
     /**
      * Find quotas by customer identifier.
@@ -43,7 +43,7 @@ public interface QuotaDAO {
         "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
         "FROM quotas q " +
         "WHERE q.customerId = :customerId")
-    List<Quota> findQuotasByCustomerId(@Bind("customerId") Long customerId);
+    List<Quota> findQuotasByCustomerId(@Bind("customerId") Integer customerId);
 
     /**
      * Insert a quota with an optionally null customer ID
@@ -60,10 +60,10 @@ public interface QuotaDAO {
         "(:object, :name, :softLimit, :hardLimit, :unit, :customerId)")
     void insert(@Bind("object") String object,
                 @Bind("name") String name,
-                @Bind("softLimit") Long softLimit,
-                @Bind("hardLimit") Long hardLimit,
+                @Bind("softLimit") Integer softLimit,
+                @Bind("hardLimit") Integer hardLimit,
                 @Bind("unit") String unit,
-                @Bind("customerId") Long customerId);
+                @Bind("customerId") Integer customerId);
 
     /**
      * Update a quota by the quota id
@@ -82,12 +82,12 @@ public interface QuotaDAO {
         "unit = :unit, " +
         "customerId = :customerId " +
         "WHERE id = :id")
-    void update(@Bind("id") Long id,
+    void update(@Bind("id") Integer id,
                 @Bind("object") String object,
                 @Bind("name") String name,
-                @Bind("softLimit") Long softLimit,
-                @Bind("hardLimit") Long hardLimit,
+                @Bind("softLimit") Integer softLimit,
+                @Bind("hardLimit") Integer hardLimit,
                 @Bind("unit") String unit,
-                @Bind("customerId") Long customerId);
+                @Bind("customerId") Integer customerId);
 
 }

@@ -15,7 +15,7 @@ import java.util.Objects;
 @JsonInclude(Include.NON_NULL)
 public class Quota {
     /* The quota id (assigned by db layer) */
-    private Long id;
+    private Integer id;
 
     /* The quota object type */
     @NotEmpty
@@ -31,12 +31,12 @@ public class Quota {
     /* The quota soft limit */
     @NotEmpty
     @NotNull
-    private Long softLimit;
+    private Integer softLimit;
 
     /* The quota hard limit */
     @NotEmpty
     @NotNull
-    private Long hardLimit;
+    private Integer hardLimit;
 
     /* The quota unit */
     @NotEmpty
@@ -44,7 +44,7 @@ public class Quota {
     private String unit;
 
     /* the quota customer id */
-    private Long customerId;
+    private Integer customerId;
 
     /**
      * Construct an empty Quota
@@ -63,8 +63,8 @@ public class Quota {
      * @param unit
      * @param customerId
      */
-    public Quota(Long id, String object, String name,
-                 Long softLimit, Long hardLimit, String unit, Long customerId) {
+    public Quota(Integer id, String object, String name,
+                 Integer softLimit, Integer hardLimit, String unit, Integer customerId) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
                 this.id = id;
@@ -83,7 +83,7 @@ public class Quota {
      * @return
      */
     @JsonProperty
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -92,7 +92,7 @@ public class Quota {
      * @param id
      */
     @JsonProperty
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -137,7 +137,7 @@ public class Quota {
      * @return softLimit
      */
     @JsonProperty
-    public @NotEmpty @NotNull Long getSoftLimit() {
+    public @NotEmpty @NotNull Integer getSoftLimit() {
         return softLimit;
     }
 
@@ -146,7 +146,7 @@ public class Quota {
      * @param softLimit
      */
     @JsonProperty
-    public void setSoftLimit(@NotEmpty @NotNull Long softLimit) {
+    public void setSoftLimit(@NotEmpty @NotNull Integer softLimit) {
         this.softLimit = softLimit;
     }
 
@@ -155,7 +155,7 @@ public class Quota {
      * @return hardLimit
      */
     @JsonProperty
-    public @NotEmpty @NotNull Long getHardLimit() {
+    public @NotEmpty @NotNull Integer getHardLimit() {
         return hardLimit;
     }
 
@@ -164,7 +164,7 @@ public class Quota {
      * @param hardLimit
      */
     @JsonProperty
-    public void setHardLimit(@NotEmpty @NotNull Long hardLimit) {
+    public void setHardLimit(@NotEmpty @NotNull Integer hardLimit) {
         this.hardLimit = hardLimit;
     }
 
@@ -191,7 +191,7 @@ public class Quota {
      * @return customerId
      */
     @JsonProperty
-    public Long getCustomerId() {
+    public Integer getCustomerId() {
         return customerId;
     }
 
@@ -200,7 +200,7 @@ public class Quota {
      * @param customerId
      */
     @JsonProperty
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
     }
 

@@ -20,13 +20,13 @@ class QuotaTest {
         MAPPER.setSerializationInclusion(Include.NON_EMPTY);
     }
     private final static String QUOTA_JSON = "fixtures/quota.json";
-    private static final Long ID = 1L;
+    private static final Integer ID = 1;
     private static final String OBJECT = "quota";
     private static final String NAME = "custom_portal_count";
-    private static final Long SOFTLIMIT = 3L;
-    private static final Long HARDLIMIT = 3L;
+    private static final Integer SOFTLIMIT = 3;
+    private static final Integer HARDLIMIT = 3;
     private static final String UNIT =  "portal";
-    private static final Long CUSTOMER_ID = null;
+    private static final Integer CUSTOMER_ID = null;
 
     /**
      * Test serialization to JSON
