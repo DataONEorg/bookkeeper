@@ -5,7 +5,7 @@
 CREATE SEQUENCE customers_id_seq;
 
 CREATE TABLE IF NOT EXISTS customers (
-    id bigint DEFAULT nextval('customers_id_seq') PRIMARY KEY,
+    id integer DEFAULT nextval('customers_id_seq') PRIMARY KEY,
     object text NOT NULL,
     orcid text NOT NULL,
     balance integer,

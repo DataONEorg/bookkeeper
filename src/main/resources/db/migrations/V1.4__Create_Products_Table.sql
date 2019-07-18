@@ -5,7 +5,7 @@
 CREATE SEQUENCE products_id_seq;
 
 CREATE TABLE IF NOT EXISTS products (
-    id bigint DEFAULT nextval('products_id_seq') PRIMARY KEY,
+    id integer DEFAULT nextval('products_id_seq') PRIMARY KEY,
     object text NOT NULL,
     active boolean,
     name text,

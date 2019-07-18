@@ -5,13 +5,13 @@
 CREATE SEQUENCE IF NOT EXISTS quotas_id_seq;
 
 CREATE TABLE IF NOT EXISTS quotas (
-    id bigint DEFAULT nextval('quotas_id_seq') PRIMARY KEY,
+    id integer DEFAULT nextval('quotas_id_seq') PRIMARY KEY,
     object text NOT NULL,
     name text NOT NULL,
     softLimit bigint NOT NULL,
     hardLimit bigint NOT NULL,
     unit text NOT NULL,
-    customerId bigint
+    customerId integer
 );
 ALTER SEQUENCE quotas_id_seq OWNED BY quotas.id;
 
