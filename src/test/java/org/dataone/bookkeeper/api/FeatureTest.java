@@ -48,4 +48,19 @@ class FeatureTest {
             MAPPER.readValue(fixture(FEATURE_JSON), Feature.class));
         assertThat(MAPPER.writeValueAsString(feature)).isEqualTo(expected);
     }
+
+    /**
+     * Test deserialization from JSON
+     */
+    @Test
+    @DisplayName("Test Feature model deserialization")
+    public void deserializesFromJSON() throws Exception {
+        // Build the Feature instance
+        final Feature feature = new Feature(NAME, LABEL, DESCRIPTION, QUOTA);
+
+        // Test the Feature instance
+        final Feature deserializedFeature =
+            MAPPER.readValue(fixture("fixtures/feature.json"), Feature.class);
+        assertThat(deserializedFeature).isEqualTo(feature);
+    }
 }
