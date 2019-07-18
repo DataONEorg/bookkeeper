@@ -349,8 +349,8 @@ public class Product {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
         return isActive() == product.isActive() &&
-            getCreated() == product.getCreated() &&
             Objects.equals(getId(), product.getId()) &&
+            Objects.equals(getCreated(), product.getCreated()) &&
             Objects.equals(getObject(), product.getObject()) &&
             Objects.equals(getName(), product.getName()) &&
             Objects.equals(getCaption(), product.getCaption()) &&
