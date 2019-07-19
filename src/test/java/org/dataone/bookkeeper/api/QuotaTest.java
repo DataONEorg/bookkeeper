@@ -44,4 +44,18 @@ class QuotaTest {
 
     }
 
+    /**
+     * Test deserialization from JSON
+     */
+    @Test
+    @DisplayName("Test Quota model deserialization")
+    public void deserializesFromJSON() throws Exception {
+        // Build the Quota instance
+        final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT, UNIT, CUSTOMER_ID);
+
+        // Test the Quota instance
+        final Quota deserializedQuota =
+            MAPPER.readValue(fixture("fixtures/quota.json"), Quota.class);
+        assertThat(deserializedQuota).isEqualTo(quota);
+    }
 }

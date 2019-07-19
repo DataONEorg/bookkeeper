@@ -214,13 +214,13 @@ public class Quota {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Quota quota = (Quota) o;
-        return getSoftLimit() == quota.getSoftLimit() &&
-            getHardLimit() == quota.getHardLimit() &&
-            getCustomerId() == quota.getCustomerId() &&
-            Objects.equals(getId(), quota.getId()) &&
+        return Objects.equals(getId(), quota.getId()) &&
             Objects.equals(getObject(), quota.getObject()) &&
             Objects.equals(getName(), quota.getName()) &&
-            Objects.equals(getUnit(), quota.getUnit());
+            Objects.equals(getSoftLimit(), quota.getSoftLimit()) &&
+            Objects.equals(getHardLimit(), quota.getHardLimit()) &&
+            Objects.equals(getUnit(), quota.getUnit()) &&
+            Objects.equals(getCustomerId(), quota.getCustomerId());
     }
 
     /**
@@ -230,7 +230,7 @@ public class Quota {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getObject(), getName(),
-            getSoftLimit(), getHardLimit(), getUnit(), getCustomerId());
+        return Objects.hash(getId(), getObject(), getName(), getSoftLimit(),
+            getHardLimit(), getUnit(), getCustomerId());
     }
 }
