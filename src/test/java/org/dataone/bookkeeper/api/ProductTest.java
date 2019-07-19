@@ -130,7 +130,7 @@ public class ProductTest {
         // Test the Product instance
         final Product deserializedProduct =
             MAPPER.readValue(fixture("fixtures/product.json"), Product.class);
-        assertThat(deserializedProduct.getMetadata()).isEqualTo(product.getMetadata());
+        assertThat(deserializedProduct).isEqualTo(product);
 
     }
 
