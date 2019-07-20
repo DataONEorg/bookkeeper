@@ -1,6 +1,7 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.BaseTestCase;
+import org.dataone.bookkeeper.api.Quota;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,6 @@ public class QuotaDAOTest extends BaseTestCase {
 
     // The QuotaDAO to test
     private QuotaDAO quotaDAO;
-
 
     // A list of quota ids used in testing
     private List<Integer> quotaIds = new ArrayList<Integer>();
@@ -65,7 +65,7 @@ public class QuotaDAOTest extends BaseTestCase {
      * Test getting the full Quota list
      */
     @Test
-    @DisplayName("Test get quota by ID")
+    @DisplayName("Test listing the quotas")
     public void testListQuotas() {
         assertTrue(quotaDAO.listQuotas().size() >= 11);
     }
@@ -77,7 +77,7 @@ public class QuotaDAOTest extends BaseTestCase {
     @DisplayName("Test get quota by quota ID")
     public void testGetQuotaById() {
 
-        assertTrue(quotaDAO.findQuotaById(1).size() == 1);
+        assertTrue(quotaDAO.findQuotasById(1).size() == 1);
     }
 
     /**
@@ -85,7 +85,7 @@ public class QuotaDAOTest extends BaseTestCase {
      */
     @Test
     @DisplayName("Test get quota by customer ID")
-    public void testGetQuotaByCustomerId() {
+    public void testGetQuotasByCustomerId() {
 
         try {
             Integer customerId = insertTestCustomer(getRandomId());
@@ -98,6 +98,25 @@ public class QuotaDAOTest extends BaseTestCase {
         } catch (SQLException e) {
             fail();
         }
+    }
+
+    /**
+     * Test inserting a Quota instance
+     */
+    @Test
+    @DisplayName("Test inserting a Quota instance")
+    public void testInsertWithQuota() {
+        try {
+            Integer quotaId = getRandomId();
+            Integer customerId = null;
+            Quota quota = createTestQuota(quotaId, customerId);
+            this.quotaIds.add(quotaId);
+            quotaDAO.insert(quota);
+            assertThat(getQuotaCountById(quotaId) == 1);
+        } catch (Exception e) {
+            fail();
+        }
+
     }
 
     /**
