@@ -15,6 +15,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -223,10 +224,27 @@ public class BaseTestCase {
      * @return
      */
     public Integer getRandomId() {
-        int randomInt = ThreadLocalRandom.current().nextInt();
+        int randomInt = ThreadLocalRandom.current().nextInt(1, 100000000);
         return new Integer(randomInt);
     }
 
+    /**
+     * Create a test Quota instance given the quotaId and customerId
+     * @param quotaId
+     * @param customerId
+     * @return
+     */
+    public Quota createTestQuota(@NotNull Integer quotaId, Integer customerId) {
+        Quota quota = new Quota();
+        quota.setId(quotaId);
+        quota.setObject("quota");
+        quota.setName("test_quota_" + quotaId);
+        quota.setSoftLimit(4000000);
+        quota.setHardLimit(5000000);
+        quota.setUnit("megabyte");
+        quota.setCustomerId(customerId);
+        return quota;
+    }
     /**
      * Return the number of quotas in the database for the given quota name
      * @param quotaName
