@@ -1,22 +1,33 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.BaseTestCase;
-import org.dataone.bookkeeper.api.Quota;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.List;
-import java.util.Optional;
-
+/**
+ * Test the Quota data access object
+ */
 public class QuotaDAOTest extends BaseTestCase {
 
     // The QuotaDAO to test
     private QuotaDAO quotaDAO;
+
+
+    // A list of quota ids used in testing
+    private List<Integer> quotaIds = new ArrayList<Integer>();
+
+    // A list of customer ids used in testing
+    private List<Integer> customerIds = new ArrayList<Integer>();
 
     /**
      * Set up the DAO for testing
@@ -31,7 +42,23 @@ public class QuotaDAOTest extends BaseTestCase {
      */
     @AfterEach
     public void tearDown() {
-        // Nothing yet
+        // Remove test quota entries
+        for (Integer quotaId : this.quotaIds) {
+            try {
+                removeTestQuota(quotaId);
+            } catch (SQLException e) {
+                fail();
+            }
+        }
+
+        // Remove test customer entries
+        for (Integer customerId : this.customerIds) {
+            try {
+                removeTestCustomer(customerId);
+            } catch (SQLException e) {
+                fail();
+            }
+        }
     }
 
     /**
@@ -60,41 +87,79 @@ public class QuotaDAOTest extends BaseTestCase {
     @DisplayName("Test get quota by customer ID")
     public void testGetQuotaByCustomerId() {
 
-        dbi.useHandle(handle ->
-        {handle.execute("INSERT INTO quotas " +
-            "(object, name, softLimit, hardLimit, unit, customerId) " +
-            "VALUES " +
-            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 12345, 123450, "megabyte", 500);
-        handle.execute("INSERT INTO quotas " +
-            "(object, name, softLimit, hardLimit, unit, customerId) " +
-            "VALUES " +
-            "(?, ?, ?, ?, ?, ?)", "quota", "test_customer_quota", 54321, 543210, "megabyte", 500);
-        });
-        assertTrue(quotaDAO.findQuotasByCustomerId(500).size() == 2);
-        assertThat(quotaDAO.findQuotasByCustomerId(0).isEmpty());
+        try {
+            Integer customerId = insertTestCustomer(getRandomId());
+            this.customerIds.add(customerId); // To be deleted
+            Integer quotaId = insertTestQuotaWithCustomer(getRandomId(), customerId);
+            this.quotaIds.add(quotaId); // To be deleted
+            assertTrue(quotaDAO.findQuotasByCustomerId(customerId).size() == 1);
+            assertThat(quotaDAO.findQuotasByCustomerId(0).isEmpty());
+
+        } catch (SQLException e) {
+            fail();
+        }
     }
 
+    /**
+     * Test inserting a quota
+     */
     @Test
     @DisplayName("Test inserting a quota")
     public void testInsert() {
-        quotaDAO.insert("quota", "test_quota", 12345,
-            123450, "byte", 500);
-        assertThat(quotaDAO.findQuotasByCustomerId(500).size() > 0);
+        try {
+            Integer customerId = insertTestCustomer(getRandomId());
+            this.customerIds.add(customerId); // To be deleted
+            String quotaName = "test_quota_" + getRandomId().toString();
+            quotaDAO.insert("quota", quotaName, 12345,
+                123450, "byte", null);
+            assertThat(getQuotaCountByName(quotaName) > 0);
+            Integer quotaId = getQuotaIdByName(quotaName);
+            this.quotaIds.add(quotaId); // To be deleted
+        } catch (SQLException e) {
+            fail();
+        }
+
 
     }
 
+    /**
+     * Test updating a quota
+     */
     @Test
     @DisplayName("Test updating a quota")
     public void testUpdate() {
-        quotaDAO.insert("quota", "test_storage_quota", 12345,
-            123450, "megabyte", 400);
-        Quota quota = quotaDAO.findQuotasByCustomerId(400).get(0);
-        Integer quotaId = quota.getId();
-        quotaDAO.update(quotaId, "quota", "test_storage_quota_2", 56789,
-            567890, "megabyte", 400);
-        assertThat(quotaDAO.findQuotasByCustomerId(400).get(0).getName() == "test_quota_2");
-        assertThat(quotaDAO.findQuotasByCustomerId(400).get(0).getSoftLimit() == 56789);
-        assertThat(quotaDAO.findQuotasByCustomerId(400).get(0).getHardLimit() == 567890);
+        try {
+            Integer customerId = insertTestCustomer(getRandomId());
+            this.customerIds.add(customerId); // To be deleted
+            Integer quotaId = insertTestQuotaWithCustomer(getRandomId(), customerId);
+            this.quotaIds.add(quotaId); // To be deleted
+            String quotaName = "test_quota_" + getRandomId().toString();
+            quotaDAO.update(quotaId, "quota", quotaName, 56789,
+                567890, "megabyte", customerId);
+            assertThat(getQuotaById(quotaId).getName() == "test_storage_quota_2");
+            assertThat(getQuotaById(quotaId).getSoftLimit() == 56789);
+            assertThat(getQuotaById(quotaId).getHardLimit() == 567890);
+        } catch (SQLException e) {
+            fail();
+        }
+    }
+
+    /**
+     * Test deleting a quota
+     */
+    @Test
+    @DisplayName("Test deleting a quota")
+    public void testDelete() {
+        try {
+            Integer customerId = insertTestCustomer(getRandomId());
+            this.customerIds.add(customerId); // To be deleted
+            Integer quotaId = insertTestQuotaWithCustomer(getRandomId(), customerId);
+            quotaDAO.delete(quotaId);
+            assertThat(getQuotaCountById(quotaId) == 0);
+            // this.quotaIds.add(quotaId); // Already deleted
+        } catch (SQLException e) {
+            fail();
+        }
 
     }
 }
