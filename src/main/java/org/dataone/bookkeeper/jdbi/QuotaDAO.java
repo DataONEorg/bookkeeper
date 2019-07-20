@@ -90,4 +90,10 @@ public interface QuotaDAO {
                 @Bind("unit") String unit,
                 @Bind("customerId") Integer customerId);
 
+    /**
+     * Delete a quota given the quota id
+     * @param id
+     */
+    @SqlUpdate("DELETE FROM quotas WHERE id = :id")
+    void delete(@Bind("id") Integer id);
 }
