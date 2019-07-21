@@ -58,49 +58,17 @@ public interface QuotaDAO {
     void insert(@BindBean Quota quota);
 
     /**
-     * Insert a quota with an optionally null customer ID
-     * @param object
-     * @param name
-     * @param softLimit
-     * @param hardLimit
-     * @param unit
-     * @param customerId
+     * Update a quota for a given id
+     * @param quota
      */
-    @SqlUpdate("INSERT INTO quotas " +
-        "(object, name, softLimit, hardLimit, unit, customerId) " +
-        "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :unit, :customerId)")
-    void insert(@Bind("object") String object,
-                @Bind("name") String name,
-                @Bind("softLimit") Integer softLimit,
-                @Bind("hardLimit") Integer hardLimit,
-                @Bind("unit") String unit,
-                @Bind("customerId") Integer customerId);
-
-    /**
-     * Update a quota by the quota id
-     * @param id
-     * @param object
-     * @param name
-     * @param softLimit
-     * @param hardLimit
-     * @param unit
-     * @param customerId
-     */
-    @SqlUpdate("UPDATE quotas " +
+   @SqlUpdate("UPDATE quotas " +
         "SET object = :object, " +
         "name = :name, " +
         "softLimit = :softLimit," +
         "unit = :unit, " +
         "customerId = :customerId " +
         "WHERE id = :id")
-    void update(@Bind("id") Integer id,
-                @Bind("object") String object,
-                @Bind("name") String name,
-                @Bind("softLimit") Integer softLimit,
-                @Bind("hardLimit") Integer hardLimit,
-                @Bind("unit") String unit,
-                @Bind("customerId") Integer customerId);
+    void update(@BindBean Quota quota);
 
     /**
      * Delete a quota given the quota id

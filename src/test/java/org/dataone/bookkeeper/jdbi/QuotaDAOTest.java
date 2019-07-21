@@ -120,28 +120,6 @@ public class QuotaDAOTest extends BaseTestCase {
     }
 
     /**
-     * Test inserting a quota
-     */
-    @Test
-    @DisplayName("Test inserting a quota")
-    public void testInsert() {
-        try {
-            Integer customerId = insertTestCustomer(getRandomId());
-            this.customerIds.add(customerId); // To be deleted
-            String quotaName = "test_quota_" + getRandomId().toString();
-            quotaDAO.insert("quota", quotaName, 12345,
-                123450, "byte", null);
-            assertThat(getQuotaCountByName(quotaName) > 0);
-            Integer quotaId = getQuotaIdByName(quotaName);
-            this.quotaIds.add(quotaId); // To be deleted
-        } catch (SQLException e) {
-            fail();
-        }
-
-
-    }
-
-    /**
      * Test updating a quota
      */
     @Test
@@ -149,13 +127,20 @@ public class QuotaDAOTest extends BaseTestCase {
     public void testUpdate() {
         try {
             Integer customerId = insertTestCustomer(getRandomId());
-            this.customerIds.add(customerId); // To be deleted
+            this.customerIds.add(customerId); // Clean up
             Integer quotaId = insertTestQuotaWithCustomer(getRandomId(), customerId);
-            this.quotaIds.add(quotaId); // To be deleted
+            this.quotaIds.add(quotaId); // Clean up
+            Quota quota = new Quota();
+            quota.setId(quotaId);
+            quota.setObject("quota");
             String quotaName = "test_quota_" + getRandomId().toString();
-            quotaDAO.update(quotaId, "quota", quotaName, 56789,
-                567890, "megabyte", customerId);
-            assertThat(getQuotaById(quotaId).getName() == "test_storage_quota_2");
+            quota.setName(quotaName);
+            quota.setSoftLimit(56789);
+            quota.setHardLimit(567890);
+            quota.setUnit("megabyte");
+            quota.setCustomerId(customerId);
+            quotaDAO.update(quota);
+            assertThat(getQuotaById(quotaId).getName() == quotaName);
             assertThat(getQuotaById(quotaId).getSoftLimit() == 56789);
             assertThat(getQuotaById(quotaId).getHardLimit() == 567890);
         } catch (SQLException e) {
