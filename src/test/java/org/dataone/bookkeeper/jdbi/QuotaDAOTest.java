@@ -169,14 +169,16 @@ public class QuotaDAOTest extends BaseTestCase {
     @Test
     @DisplayName("Test deleting a quota")
     public void testDelete() {
+        Integer customerId;
+        Integer quotaId = null;
         try {
-            Integer customerId = insertTestCustomer(getRandomId());
-            this.customerIds.add(customerId); // To be deleted
-            Integer quotaId = insertTestQuotaWithCustomer(getRandomId(), customerId);
+            customerId = insertTestCustomer(getRandomId());
+            this.customerIds.add(customerId); // Clean up
+             quotaId = insertTestQuotaWithCustomer(getRandomId(), customerId);
             quotaDAO.delete(quotaId);
             assertThat(getQuotaCountById(quotaId) == 0);
-            // this.quotaIds.add(quotaId); // Already deleted
         } catch (SQLException e) {
+            this.quotaIds.add(quotaId); // Clean up on fail
             fail();
         }
 
