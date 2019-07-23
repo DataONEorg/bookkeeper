@@ -64,7 +64,8 @@ public interface QuotaDAO {
    @SqlUpdate("UPDATE quotas " +
         "SET object = :object, " +
         "name = :name, " +
-        "softLimit = :softLimit," +
+        "softLimit = :softLimit, " +
+        "hardLimit = :hardLimit, " +
         "unit = :unit, " +
         "customerId = :customerId " +
         "WHERE id = :id")
