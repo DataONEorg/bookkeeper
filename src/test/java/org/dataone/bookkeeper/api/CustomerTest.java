@@ -1,8 +1,8 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,11 +40,11 @@ class CustomerTest {
     private final String CURRENCY = "USD";
     private final boolean DELINQUENT = false;
     private final String DESCRIPTION = "";
-    private final JsonNode DISCOUNT = MAPPER.createObjectNode();
+    private final ObjectNode DISCOUNT = MAPPER.createObjectNode();
     private final String EMAIL = "cjones@nceas.ucsb.edu";
     private final String INVOICEPREFIX = "";
-    private final JsonNode INVOICESETTINGS = MAPPER.createObjectNode();
-    private final JsonNode METADATA = MAPPER.createObjectNode();
+    private final ObjectNode INVOICESETTINGS = MAPPER.createObjectNode();
+    private final ObjectNode METADATA = MAPPER.createObjectNode();
     private final String GIVENNAME = "Christopher";
     private final String SURNAME = "Jones";
     private final String PHONE = "805-893-2500";
