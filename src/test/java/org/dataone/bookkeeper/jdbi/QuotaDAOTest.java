@@ -77,8 +77,8 @@ public class QuotaDAOTest extends BaseTestCase {
      * Test getting a single quota by ID
      */
     @Test
-    @DisplayName("Test get quota by quota ID")
-    public void testGetQuotaById() {
+    @DisplayName("Test get quota")
+    public void testGetQuota() {
 
         assertTrue(quotaDAO.getQuota(1).getId().equals(1));
     }
