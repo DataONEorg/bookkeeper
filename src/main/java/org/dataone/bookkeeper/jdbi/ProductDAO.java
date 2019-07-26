@@ -36,7 +36,7 @@ public interface ProductDAO {
         "unitLabel, url, metadata::json as metadata FROM products WHERE id = :id")
     @RegisterRowMapper(ProductMapper.class)
     @UseRowMapper(ProductMapper.class)
-    List<Product> findProductsById(@Bind("id") Integer id);
+    Product getProduct(@Bind("id") Integer id);
 
     /**
      * Find products by name

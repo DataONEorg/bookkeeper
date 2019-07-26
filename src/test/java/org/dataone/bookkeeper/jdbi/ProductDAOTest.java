@@ -72,23 +72,21 @@ public class ProductDAOTest extends BaseTestCase {
      * Test getting a single product by ID
      */
     @Test
-    @DisplayName("Test get product by product ID")
-    public void testFindProductsById() {
+    @DisplayName("Test getting a product")
+    public void testGetProduct() {
         // Insert a new product
-        Integer product1Id = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
-        this.productIds.add(product1Id);
-        Integer product2Id = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
-        this.productIds.add(product2Id);
+        Integer productId = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
+        this.productIds.add(productId);
 
-        assertTrue(productDAO.findProductsById(product1Id).size() == 1);
-        assertTrue(productDAO.findProductsById(product2Id).size() == 1);
+        Product returnedProduct = productDAO.getProduct(productId);
+        assertTrue(returnedProduct.getId().equals(productId));
     }
 
     /**
      * Test getting a single product by name
      */
     @Test
-    @DisplayName("Test get product by product name")
+    @DisplayName("Test gettting a product by name")
     public void testFindProductsByName() {
         // Insert a new product
         Integer productId = DAOHelper.getRandomId();
@@ -104,7 +102,7 @@ public class ProductDAOTest extends BaseTestCase {
      * Test getting a single product by active status
      */
     @Test
-    @DisplayName("Test get product by product active status")
+    @DisplayName("Test gettting a product by active status")
     public void testFindProductsByActiveStatus() {
         // Insert a new product
         Integer productId = DAOHelper.getRandomId();
@@ -120,7 +118,7 @@ public class ProductDAOTest extends BaseTestCase {
      * Test getting a single product by description
      */
     @Test
-    @DisplayName("Test get product by product description")
+    @DisplayName("Test getting a product by description")
     public void testFindProductsByDescription() {
         // Insert a new product
         Integer productId = DAOHelper.getRandomId();
