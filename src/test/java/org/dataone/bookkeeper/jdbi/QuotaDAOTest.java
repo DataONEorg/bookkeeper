@@ -80,7 +80,7 @@ public class QuotaDAOTest extends BaseTestCase {
     @DisplayName("Test get quota by quota ID")
     public void testGetQuotaById() {
 
-        assertTrue(quotaDAO.findQuotasById(1).size() == 1);
+        assertTrue(quotaDAO.getQuota(1).getId().equals(1));
     }
 
     /**

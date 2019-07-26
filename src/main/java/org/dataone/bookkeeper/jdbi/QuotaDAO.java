@@ -32,7 +32,7 @@ public interface QuotaDAO {
         "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
         "FROM quotas q " +
         "WHERE q.id = :id")
-    List<Quota> findQuotasById(@Bind("id") Integer id);
+    Quota getQuota(@Bind("id") Integer id);
 
     /**
      * Find quotas by customer identifier.
