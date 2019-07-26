@@ -1,6 +1,7 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -60,7 +61,7 @@ public class Customer {
 
     /* The customer discount settings as a JSON object */
     @NotEmpty
-    private JsonNode discount;
+    private ObjectNode discount;
 
     /* The customer email address */
     @NotEmpty
@@ -73,11 +74,11 @@ public class Customer {
 
     /* The customer invoice settings */
     @NotEmpty
-    private JsonNode invoiceSettings;
+    private ObjectNode invoiceSettings;
 
     /* The customer metadata (extended information as needed) */
     @NotEmpty
-    private JsonNode metadata;
+    private ObjectNode metadata;
 
     /* The customer given name */
     @NotEmpty
@@ -132,11 +133,11 @@ public class Customer {
                     @NotEmpty @NotNull @Pattern(regexp = "[A-Z]{3}") String currency,
                     @NotEmpty @NotNull boolean delinquent,
                     @NotEmpty String description,
-                    @NotEmpty JsonNode discount,
+                    @NotEmpty ObjectNode discount,
                     @NotEmpty @NotNull String email,
                     @NotEmpty String invoicePrefix,
-                    @NotEmpty JsonNode invoiceSettings,
-                    @NotEmpty JsonNode metadata,
+                    @NotEmpty ObjectNode invoiceSettings,
+                    @NotEmpty ObjectNode metadata,
                     @NotEmpty @NotNull String givenName,
                     @NotEmpty @NotNull String surName,
                     @NotEmpty String phone,
@@ -318,7 +319,7 @@ public class Customer {
      * Set the customer discount
      * @param discount
      */
-    public void setDiscount(JsonNode discount) {
+    public void setDiscount(ObjectNode discount) {
         this.discount = discount;
     }
 
@@ -366,7 +367,7 @@ public class Customer {
      * Set the customer invoice settings
      * @param invoiceSettings
      */
-    public void setInvoiceSettings(JsonNode invoiceSettings) {
+    public void setInvoiceSettings(ObjectNode invoiceSettings) {
         this.invoiceSettings = invoiceSettings;
     }
 
@@ -382,7 +383,7 @@ public class Customer {
      * Set the customer metadata
      * @param metadata
      */
-    public void setMetadata(JsonNode metadata) {
+    public void setMetadata(ObjectNode metadata) {
         this.metadata = metadata;
     }
 
