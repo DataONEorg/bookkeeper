@@ -2,9 +2,9 @@ package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Quota;
-import org.dataone.bookkeeper.helpers.CustomerDAOHelper;
+import org.dataone.bookkeeper.helpers.CustomerHelper;
 import org.dataone.bookkeeper.helpers.DAOHelper;
-import org.dataone.bookkeeper.helpers.QuotaDAOHelper;
+import org.dataone.bookkeeper.helpers.QuotaHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +48,7 @@ public class QuotaDAOTest extends BaseTestCase {
         // Remove test quota entries
         for (Integer quotaId : this.quotaIds) {
             try {
-                QuotaDAOHelper.removeTestQuota(quotaId);
+                QuotaHelper.removeTestQuota(quotaId);
             } catch (SQLException e) {
                 fail();
             }
@@ -57,7 +57,7 @@ public class QuotaDAOTest extends BaseTestCase {
         // Remove test customer entries
         for (Integer customerId : this.customerIds) {
             try {
-                CustomerDAOHelper.removeTestCustomer(customerId);
+                CustomerHelper.removeTestCustomer(customerId);
             } catch (SQLException e) {
                 fail();
             }
@@ -91,9 +91,9 @@ public class QuotaDAOTest extends BaseTestCase {
     public void testGetQuotasByCustomerId() {
 
         try {
-            Integer customerId = CustomerDAOHelper.insertTestCustomer(DAOHelper.getRandomId());
+            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
             this.customerIds.add(customerId); // To be deleted
-            Integer quotaId = QuotaDAOHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
+            Integer quotaId = QuotaHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
             this.quotaIds.add(quotaId); // To be deleted
             assertTrue(quotaDAO.findQuotasByCustomerId(customerId).size() == 1);
             assertThat(quotaDAO.findQuotasByCustomerId(0).isEmpty());
@@ -112,10 +112,10 @@ public class QuotaDAOTest extends BaseTestCase {
         try {
             Integer quotaId = DAOHelper.getRandomId();
             Integer customerId = null;
-            Quota quota = QuotaDAOHelper.createTestQuota(quotaId, customerId);
+            Quota quota = QuotaHelper.createTestStorageQuota(quotaId, customerId);
             this.quotaIds.add(quotaId);
             quotaDAO.insert(quota);
-            assertThat(QuotaDAOHelper.getQuotaCountById(quotaId) == 1);
+            assertThat(QuotaHelper.getQuotaCountById(quotaId) == 1);
         } catch (Exception e) {
             fail();
         }
@@ -129,9 +129,9 @@ public class QuotaDAOTest extends BaseTestCase {
     @DisplayName("Test updating a quota")
     public void testUpdate() {
         try {
-            Integer customerId = CustomerDAOHelper.insertTestCustomer(DAOHelper.getRandomId());
+            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
             this.customerIds.add(customerId); // Clean up
-            Integer quotaId = QuotaDAOHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
+            Integer quotaId = QuotaHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
             this.quotaIds.add(quotaId); // Clean up
             Quota quota = new Quota();
             quota.setId(quotaId);
@@ -143,9 +143,9 @@ public class QuotaDAOTest extends BaseTestCase {
             quota.setUnit("megabyte");
             quota.setCustomerId(customerId);
             quotaDAO.update(quota);
-            assertThat(QuotaDAOHelper.getQuotaById(quotaId).getName() == quotaName);
-            assertThat(QuotaDAOHelper.getQuotaById(quotaId).getSoftLimit() == 56789);
-            assertThat(QuotaDAOHelper.getQuotaById(quotaId).getHardLimit() == 567890);
+            assertThat(QuotaHelper.getQuotaById(quotaId).getName() == quotaName);
+            assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 56789);
+            assertThat(QuotaHelper.getQuotaById(quotaId).getHardLimit() == 567890);
         } catch (SQLException e) {
             fail();
         }
@@ -160,11 +160,11 @@ public class QuotaDAOTest extends BaseTestCase {
         Integer customerId;
         Integer quotaId = null;
         try {
-            customerId = CustomerDAOHelper.insertTestCustomer(DAOHelper.getRandomId());
+            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
             this.customerIds.add(customerId); // Clean up
-             quotaId = QuotaDAOHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
+             quotaId = QuotaHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
             quotaDAO.delete(quotaId);
-            assertThat(QuotaDAOHelper.getQuotaCountById(quotaId) == 0);
+            assertThat(QuotaHelper.getQuotaCountById(quotaId) == 0);
         } catch (SQLException e) {
             this.quotaIds.add(quotaId); // Clean up on fail
             fail();
