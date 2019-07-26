@@ -1,12 +1,16 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -69,7 +73,7 @@ public class Product {
     private String url;
 
     /* The product metadata hash of product features and other metadata */
-    private JsonNode metadata;
+    private ObjectNode metadata;
 
 
     /**
@@ -105,7 +109,7 @@ public class Product {
                     String type,
                     String unitLabel,
                     String url,
-                    JsonNode metadata
+                    ObjectNode metadata
     ) {
         super();
         this.id = id;
@@ -131,6 +135,13 @@ public class Product {
         return id;
     }
 
+    /**
+     * Get the id as a primitive int
+     * @return
+     */
+    public int getIdAsInt() {
+        return getId().intValue();
+    }
     /**
      * Set the product id
      * @param id
@@ -249,6 +260,15 @@ public class Product {
     }
 
     /**
+     * Get the creation date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getCreatedTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            return formatter.format(new Date(getCreated().intValue() * 1000));
+    }
+    /**
      * Get the product statement descriptor
      * @return
      */
@@ -325,7 +345,7 @@ public class Product {
      * @return
      */
     @JsonProperty
-    public JsonNode getMetadata() {
+    public ObjectNode getMetadata() {
         return metadata;
     }
 
@@ -334,8 +354,21 @@ public class Product {
      * @param metadata
      */
     @JsonProperty
-    public void setMetadata(JsonNode metadata) {
+    public void setMetadata(ObjectNode metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * Return the metadata hash as a JSON string
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String getMetadataJSON() throws JsonProcessingException {
+        if ( metadata != null ) {
+            return new ObjectMapper().writeValueAsString(getMetadata());
+        } else {
+            return "{}";
+        }
     }
 
     /**
