@@ -1,6 +1,5 @@
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.validation.constraints.NotEmpty;
@@ -311,7 +310,7 @@ public class Customer {
      * Get the customer discount
      * @return discount
      */
-    public JsonNode getDiscount() {
+    public ObjectNode getDiscount() {
         return discount;
     }
 
@@ -359,7 +358,7 @@ public class Customer {
      * Get the customer invoice settings
      * @return invoiceSettings
      */
-    public JsonNode getInvoiceSettings() {
+    public ObjectNode getInvoiceSettings() {
         return invoiceSettings;
     }
 
@@ -375,7 +374,7 @@ public class Customer {
      * Get the customer metadata
      * @return metadata
      */
-    public JsonNode getMetadata() {
+    public ObjectNode getMetadata() {
         return metadata;
     }
 
