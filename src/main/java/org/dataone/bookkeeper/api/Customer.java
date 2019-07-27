@@ -94,7 +94,7 @@ public class Customer {
     private String phone;
 
     /* The customer quota list, if any */
-    private List<Quota> quotas = new LinkedList<Quota>();
+    private ObjectNode quotas;
     /**
      * Construct an empty Customer
      */
@@ -140,7 +140,7 @@ public class Customer {
                     @NotEmpty @NotNull String givenName,
                     @NotEmpty @NotNull String surName,
                     @NotEmpty String phone,
-                    List<Quota> quotas) {
+                    ObjectNode quotas) {
         super();
         this.id = id;
         this.object = object;
@@ -441,7 +441,7 @@ public class Customer {
      * Get the customer quotas
      * @return
      */
-    public List<Quota> getQuotas() {
+    public ObjectNode getQuotas() {
         return quotas;
     }
 
@@ -449,7 +449,7 @@ public class Customer {
      * Set the customer quotas
      * @param quotas
      */
-    public void setQuotas(List<Quota> quotas) {
+    public void setQuotas(ObjectNode quotas) {
         this.quotas = quotas;
     }
 

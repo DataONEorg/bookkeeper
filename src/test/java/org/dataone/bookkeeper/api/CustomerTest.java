@@ -7,9 +7,6 @@ import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,7 +45,7 @@ class CustomerTest {
     private final String GIVENNAME = "Christopher";
     private final String SURNAME = "Jones";
     private final String PHONE = "805-893-2500";
-    private final List<Quota> QUOTAS = new LinkedList<Quota>();
+    private final ObjectNode QUOTAS = null;
 
     /**
      * Test serialization to JSON
