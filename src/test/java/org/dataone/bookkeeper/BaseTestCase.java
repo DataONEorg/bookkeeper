@@ -2,9 +2,9 @@ package org.dataone.bookkeeper;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
@@ -76,7 +76,7 @@ public class BaseTestCase {
 
             // Create a Dropwizard environment for testing
             environment = new Environment("bookkeeper",
-                new ObjectMapper(), Validators.newValidator(), metricRegistry,
+                Jackson.newObjectMapper(), Validators.newValidator(), metricRegistry,
                 ClassLoader.getSystemClassLoader());
 
             // Set up a PostgreSQL datasource for testing (DAOs)
