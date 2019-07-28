@@ -2,8 +2,8 @@ package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.dropwizard.jackson.Jackson;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
@@ -365,7 +365,7 @@ public class Product {
      */
     public String getMetadataJSON() throws JsonProcessingException {
         if ( metadata != null ) {
-            return new ObjectMapper().writeValueAsString(getMetadata());
+            return Jackson.newObjectMapper().writeValueAsString(getMetadata());
         } else {
             return "{}";
         }
