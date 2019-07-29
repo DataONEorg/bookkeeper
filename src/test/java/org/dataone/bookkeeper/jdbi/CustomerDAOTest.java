@@ -3,13 +3,17 @@ package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
+import org.dataone.bookkeeper.helpers.DAOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -46,4 +50,17 @@ public class CustomerDAOTest extends BaseTestCase {
         }
     }
 
+    @Test
+    @DisplayName("Test listing the customers")
+    public void testListProducts() {
+        // Insert a new product
+        Integer customerId = null;
+        try {
+            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+        } catch (SQLException e) {
+            fail(e);
+        }
+        this.customerIds.add(customerId);
+        assertTrue(customerDAO.listCustomers().size() >= 1);
+    }
 }
