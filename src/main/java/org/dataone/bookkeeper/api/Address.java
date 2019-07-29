@@ -1,5 +1,8 @@
 package org.dataone.bookkeeper.api;
 
+import io.dropwizard.jackson.Jackson;
+
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -30,6 +33,27 @@ public class Address {
      */
     public Address() {
         super();
+    }
+
+    /**
+     * Construct an Address from a JSON string
+     * @param json
+     */
+    public Address(String json) throws IOException {
+        super();
+
+        // Return an empty Address instance when the JSON object is empty
+        if ( ! json.equals("{}") ) {
+
+            // Otherwise try to build the Address
+            Address address = Jackson.newObjectMapper().readValue(json, Address.class);
+            this.line1 = address.line1;
+            this.line2 = address.line2;
+            this.city = address.city;
+            this.state = address.state;
+            this.postalCode = address.postalCode;
+            this.country = address.country;
+        }
     }
 
     /**
