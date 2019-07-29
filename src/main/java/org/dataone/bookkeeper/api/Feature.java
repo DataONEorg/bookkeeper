@@ -1,7 +1,10 @@
 package org.dataone.bookkeeper.api;
 
+import io.dropwizard.jackson.Jackson;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -32,6 +35,25 @@ public class Feature {
      */
     public Feature() {
         super();
+    }
+
+    /**
+     * Create a Feature from a JSON string
+     * @param json
+     */
+    public Feature(String json) throws IOException {
+        super();
+
+        // Return an empty Feature instance when the JSON object is empty
+        if ( ! json.equals("{}") ) {
+
+            // Otherwise try to build the Feature
+            Feature feature = Jackson.newObjectMapper().readValue(json, Feature.class);
+            this.name = feature.name;
+            this.label = feature.label;
+            this.description = feature.description;
+            this.quota = feature.quota;
+        }
     }
 
     /**
