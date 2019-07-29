@@ -3,10 +3,12 @@ package org.dataone.bookkeeper.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -51,6 +53,29 @@ public class Quota {
      */
     public Quota() {
         super();
+    }
+
+    /**
+     * Construct a Quota from a JSON string
+     * @param json
+     * @throws IOException
+     */
+    public Quota(String json) throws IOException {
+        super();
+
+        // Return an empty Quota instance when the JSON object is empty
+        if ( ! json.equals("{}") ) {
+
+            // Otherwise try to build the Quota
+            Quota quota = Jackson.newObjectMapper().readValue(json, Quota.class);
+            this.id = quota.id;
+            this.object = quota.object;
+            this.name = quota.name;
+            this.softLimit = quota.softLimit;
+            this.hardLimit = quota.hardLimit;
+            this.unit = quota.unit;
+            this.customerId = quota.customerId;
+        }
     }
 
     /**
