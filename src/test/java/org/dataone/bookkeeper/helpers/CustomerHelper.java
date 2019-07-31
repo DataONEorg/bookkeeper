@@ -21,9 +21,8 @@ public class CustomerHelper {
                     "(id, object, orcid, balance, address, created, currency, delinquent, " +
                     "description, discount, email, invoicePrefix, invoiceSettings, " +
                     "metadata, givenName, surName, phone) " +
-                    "VALUES (?, ?, ?, ?, to_json(?), to_timestamp(?), ?, ?, " +
-                    "?, to_json(?), ?, ?, to_json(?), " +
-                    "to_json(?), ?, ?, ?)",
+                    "VALUES (?, ?, ?, ?, ?::json, to_timestamp(?), ?, ?, " +
+                    "?, ?::json, ?, ?, ?::json, ?::json, ?, ?, ?)",
                 customerId,
                 "customer",
                 "http://orcid.org/0000-0002-8121-2341",
