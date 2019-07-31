@@ -1,11 +1,6 @@
 package org.dataone.bookkeeper.jdbi;
 
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.BaseTestCase;
-import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
 import org.dataone.bookkeeper.helpers.DAOHelper;
@@ -18,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -74,23 +70,33 @@ public class CustomerDAOTest extends BaseTestCase {
         assertTrue(customerDAO.listCustomers().size() >= 1);
     }
 
+    /**
+     * Test listing a customer with storage and portal quotas
+     */
     @Test
-    @DisplayName("Test listing customers with associated portal quotas")
-    public void testListCustomersWithPortalQuota() {
+    @DisplayName("Test listing customers with associated storage and portal quotas")
+    public void testListCustomersWithStorageAndPortalQuotas() {
 
         try {
             // Insert a customer
             final Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
             this.customerIds.add(customerId);
 
-            // Insert a portal quota for the customer
-            final Integer quotaId =
-                QuotaHelper.insertTestQuotaWithCustomer(DAOHelper.getRandomId(), customerId);
+            // Insert a storage and portal quotas for the customer
+            final Map<Integer, Quota> quotas =
+                QuotaHelper.insertTestStorageAndPortalQuotasWithCustomer(
+                    DAOHelper.getRandomId(), DAOHelper.getRandomId(), customerId);
                 customerDAO.listCustomers().forEach(customer -> {
                     customer.getQuotas()
                         .forEach(quota -> {
-                            assertTrue(quota.getId().equals(quotaId));
-                            assertTrue(quota.getCustomerId().equals(customerId));
+                            Quota expectedQuota = quotas.get(quota.getId());
+                            assertTrue(quota.getId().equals(expectedQuota.getId()));
+                            assertTrue(quota.getObject().equals(expectedQuota.getObject()));
+                            assertTrue(quota.getName().equals(expectedQuota.getName()));
+                            assertTrue(quota.getSoftLimit().equals(expectedQuota.getSoftLimit()));
+                            assertTrue(quota.getHardLimit().equals(expectedQuota.getHardLimit()));
+                            assertTrue(quota.getUnit().equals(expectedQuota.getUnit()));
+                            assertTrue(quota.getCustomerId().equals(expectedQuota.getCustomerId()));
                         });
                 });
         } catch (SQLException e) {
