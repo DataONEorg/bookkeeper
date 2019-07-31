@@ -6,7 +6,9 @@ import org.dataone.bookkeeper.jdbi.mappers.CustomerMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.UseRowReducer;
 
 import java.util.List;
@@ -90,4 +92,32 @@ public interface CustomerDAO {
     @RegisterBeanMapper(value = Quota.class)
     @UseRowReducer(CustomerQuotasReducer.class)
     Customer findCustomerByEmail(@Bind("email") String email);
+
+    /**
+     * Interface to insert a customer
+     * @param customer the customer to insert
+     */
+    @SqlUpdate("INSERT INTO customers " +
+        "(id, object, orcid, balance, address, created, currency, delinquent, " +
+        "description, discount, email, invoicePrefix, invoiceSettings, " +
+        "metadata, givenName, surName, phone) " +
+        "VALUES (" +
+        ":getId, " +
+        ":getObject, " +
+        ":getOrcid, " +
+        ":getBalance, " +
+        ":getAddress, " +
+        "to_timestamp(:getCreated), " +
+        ":getCurrency, " +
+        ":isDelinquent, " +
+        ":getDescription, " +
+        ":getDiscountJSON::json, " +
+        ":getEmail, " +
+        ":getInvoicePrefix, " +
+        ":getInvoiceSettingsJSON::json, " +
+        ":getMetadataJSON::json, " +
+        ":getGivenName, " +
+        ":getSurName, " +
+        ":getPhone)")
+    void insert(@BindMethods Customer customer);
 }
