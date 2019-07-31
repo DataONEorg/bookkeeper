@@ -37,6 +37,12 @@ public interface CustomerDAO {
     /** The query used to find an individual customer */
     String SELECT_ONE = SELECT_ALL + "WHERE c.id = :id";
 
+    /** The query used to find a customer by ORCID identifier */
+    String SELECT_ORCID = SELECT_ALL + "WHERE c.orcid = :orcid";
+
+    /** The query used to find a customer by email */
+    String SELECT_EMAIL = SELECT_ALL + "WHERE c.email = :email";
+
     /**
      * Interface to list all customers with their quotas
      * @return customers The list of customers
@@ -49,6 +55,7 @@ public interface CustomerDAO {
 
     /**
      * Interface to get a individual customer
+     * @param id the customer identifier
      * @return customer The individual customer
      */
     @SqlQuery(SELECT_ONE)
@@ -56,4 +63,26 @@ public interface CustomerDAO {
     @RegisterBeanMapper(value = Quota.class)
     @UseRowReducer(CustomerQuotasReducer.class)
     Customer getCustomer(@Bind("id") Integer id);
+
+    /**
+     * Interface to get a customer by ORCID identifier
+     * @param orcid the customer ORCID identifier
+     * @return customer the customer with the given ORCID identifier
+     */
+    @SqlQuery(SELECT_ORCID)
+    @RegisterRowMapper(CustomerMapper.class)
+    @RegisterBeanMapper(value = Quota.class)
+    @UseRowReducer(CustomerQuotasReducer.class)
+    Customer findCustomerByOrcid(@Bind("orcid") String orcid);
+
+    /**
+     * Interface to get a customer by email
+     * @param email the customer email
+     * @return customer the customer with the given email
+     */
+    @SqlQuery(SELECT_EMAIL)
+    @RegisterRowMapper(CustomerMapper.class)
+    @RegisterBeanMapper(value = Quota.class)
+    @UseRowReducer(CustomerQuotasReducer.class)
+    Customer findCustomerByEmail(@Bind("email") String email);
 }
