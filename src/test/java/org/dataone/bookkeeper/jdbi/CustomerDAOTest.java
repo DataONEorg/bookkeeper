@@ -102,9 +102,5 @@ public class CustomerDAOTest extends BaseTestCase {
         } catch (SQLException e) {
             fail(e);
         }
-
-        // Add a portal quota for the customer
-
-
     }
 }
