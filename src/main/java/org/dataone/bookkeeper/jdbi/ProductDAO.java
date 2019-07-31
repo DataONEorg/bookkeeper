@@ -72,6 +72,10 @@ public interface ProductDAO {
     @UseRowMapper(ProductMapper.class)
     List<Product> findProductsByDescription(@Bind("description") String description);
 
+    /**
+     * Insert a product
+     * @param product the product to insert
+     */
     @SqlUpdate("INSERT INTO products (" +
         "id, " +
         "object , " +
@@ -100,6 +104,10 @@ public interface ProductDAO {
         ":getMetadataJSON::json)")
     void insert(@BindMethods Product product);
 
+    /**
+     * Update a product
+     * @param product the product to update
+     */
     @SqlUpdate("UPDATE products SET " +
         "object = :getObject, " +
         "active = :isActive, " +
