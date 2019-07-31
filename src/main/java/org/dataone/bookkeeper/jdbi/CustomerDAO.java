@@ -18,7 +18,7 @@ import java.util.List;
 public interface CustomerDAO {
 
     /** The query used to find all customers with their quotas */
-    String SELECT_ALL =
+    String SELECT_CLAUSE =
         "SELECT " +
             "c.id AS c_id, c.object AS c_object, c.orcid AS c_orcid, c.balance AS c_balance, " +
             "c.address AS c_address, date_part('epoch', c.created)::int AS c_created, " +
@@ -31,17 +31,22 @@ public interface CustomerDAO {
             "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
         "FROM customers c " +
         "LEFT JOIN quotas q " +
-        "ON c.id = q.customerId " +
-        "ORDER BY c.surName, c.givenName, q.name ";
+        "ON c.id = q.customerId ";
+
+    /** Clause to order listed results */
+    String ORDER_CLAUSE = "ORDER BY c.surName, c.givenName, q.name ";
+
+    /** The full ordered query */
+    String SELECT_ALL = SELECT_CLAUSE + ORDER_CLAUSE;
 
     /** The query used to find an individual customer */
-    String SELECT_ONE = SELECT_ALL + "WHERE c.id = :id";
+    String SELECT_ONE = SELECT_CLAUSE + "WHERE c.id = :id";
 
     /** The query used to find a customer by ORCID identifier */
-    String SELECT_ORCID = SELECT_ALL + "WHERE c.orcid = :orcid";
+    String SELECT_ORCID = SELECT_CLAUSE + "WHERE c.orcid = :orcid";
 
     /** The query used to find a customer by email */
-    String SELECT_EMAIL = SELECT_ALL + "WHERE c.email = :email";
+    String SELECT_EMAIL = SELECT_CLAUSE + "WHERE c.email = :email";
 
     /**
      * Interface to list all customers with their quotas
