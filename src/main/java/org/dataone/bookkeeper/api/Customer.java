@@ -386,14 +386,11 @@ public class Customer {
         this.metadata = metadata;
     }
 
-/**
- * Get the customer identifier
- */
     /**
      * Get the customer given name
      * @return givenName
      */
- String getGivenName() {
+    public String getGivenName() {
         return givenName;
     }
 
