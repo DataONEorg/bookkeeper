@@ -1,6 +1,7 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.BaseTestCase;
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
 import org.dataone.bookkeeper.helpers.DAOHelper;
@@ -102,5 +103,21 @@ public class CustomerDAOTest extends BaseTestCase {
         } catch (SQLException e) {
             fail(e);
         }
+    }
+
+    /**
+     * Test getting a customer by id
+     * @throws SQLException
+     */
+    @Test
+    @DisplayName("Test getting a customer by id")
+    public void testGetCustomerById() throws SQLException {
+        // Insert a customer
+        final Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+        this.customerIds.add(customerId);
+
+        // Get the customer
+        Customer customer = customerDAO.getCustomer(customerId);
+        assertTrue(((Customer) customer).getId().equals(customerId));
     }
 }
