@@ -5,6 +5,8 @@ import org.dataone.bookkeeper.api.Quota;
 
 import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A delegate class with helper methods for manipulating the quotas table during testing
@@ -32,6 +34,49 @@ public class QuotaHelper {
                 "megabyte", customerId)
         );
         return quotaId;
+    }
+
+    /**
+     * Insert test storage and portal quotas into the quotas table  for the given cusomer id
+     * @param storageQuotaId
+     * @param portalQuotaId
+     * @param customerId
+     * @return
+     * @throws SQLException
+     */
+    public static Map<Integer, Quota> insertTestStorageAndPortalQuotasWithCustomer(
+        Integer storageQuotaId, Integer portalQuotaId, Integer customerId)
+        throws SQLException {
+        // Create storage and portal quotas
+        Map<Integer, Quota> quotas = new HashMap<Integer, Quota>();
+        quotas.put(storageQuotaId, QuotaHelper.createTestStorageQuota(storageQuotaId, customerId));
+        quotas.put(portalQuotaId, QuotaHelper.createTestPortalQuota(portalQuotaId, customerId));
+
+        String insertStatement = "INSERT INTO quotas " +
+            "(id, object, name, softLimit, hardLimit, unit, customerId) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Insert them into the database for the given customer id
+        BaseTestCase.dbi.useHandle(handle -> {
+            handle.execute(insertStatement,
+                storageQuotaId,
+                quotas.get(storageQuotaId).getObject(),
+                quotas.get(storageQuotaId).getName(),
+                quotas.get(storageQuotaId).getSoftLimit(),
+                quotas.get(storageQuotaId).getHardLimit(),
+                quotas.get(storageQuotaId).getUnit(),
+                quotas.get(storageQuotaId).getCustomerId()
+            );
+            handle.execute(insertStatement,
+                portalQuotaId,
+                quotas.get(portalQuotaId).getObject(),
+                quotas.get(portalQuotaId).getName(),
+                quotas.get(portalQuotaId).getSoftLimit(),
+                quotas.get(portalQuotaId).getHardLimit(),
+                quotas.get(portalQuotaId).getUnit(),
+                quotas.get(portalQuotaId).getCustomerId()
+            );
+        });
+        return quotas;
     }
 
     /**
