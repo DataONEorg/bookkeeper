@@ -1,18 +1,12 @@
 package org.dataone.bookkeeper.jdbi;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
-import org.dataone.bookkeeper.jdbi.mappers.CustomerMapper;
 import org.jdbi.v3.core.result.LinkedHashMapRowReducer;
 import org.jdbi.v3.core.result.RowView;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
-import org.jdbi.v3.sqlobject.statement.UseRowMapper;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -20,6 +14,7 @@ import java.util.Map;
  * with a customer into a list based on a SQL join between
  * the customers and quotas tables.
  */
+@RegisterBeanMapper(value = Quota.class)
 public class CustomerQuotasReducer implements LinkedHashMapRowReducer<Integer, Customer> {
 
     /**
@@ -28,31 +23,18 @@ public class CustomerQuotasReducer implements LinkedHashMapRowReducer<Integer, C
      * @param rowView The view of the result set row from the joined tables
      */
     @Override
-    @UseRowMapper(CustomerMapper.class) // TODO: Does this work?
-    @RegisterBeanMapper(value = Quota.class, prefix = "q")
     public void accumulate(Map<Integer, Customer> map, RowView rowView) {
-        ObjectMapper mapper = Jackson.newObjectMapper();
+        // Build a customer from the resultset if one isn't in the map given the id
         Customer customer =
-            map.computeIfAbsent(rowView.getColumn("id", Integer.class),
+            map.computeIfAbsent(rowView.getColumn("c_id", Integer.class),
             id -> rowView.getRow(Customer.class));
 
-        if ( rowView.getColumn("q.id", Integer.class) != null ) {
-            // TODO: Migrated to ObjectNode from List<Quota>, so fix this
-            //customer.getQuotas().add(rowView.getRow(Quota.class));
-            ObjectNode quotasObject = customer.getQuotas();
-            if (quotasObject == null) {
-                quotasObject = mapper.createObjectNode();
+        // Otherwise, for the same customer id, add quotas to the quota list
+        if ( rowView.getColumn("id", Integer.class) != null ) {
+            if ( customer.getQuotas() == null ) {
+                customer.setQuotas(new LinkedList<Quota>());
             }
-            if (quotasObject.get("quotas") == null ) {
-                quotasObject.set("quotas", mapper.createArrayNode());
-            }
-            ArrayNode quotas = (ArrayNode) customer.getQuotas().get("quotas");
-            try {
-                // TODO: Is converting the Quota to ObjectNode better here than string?
-                quotas.add(mapper.writeValueAsString(rowView.getRow(Quota.class)));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace(); // TODO: Decide how to throw or log
-            }
+            customer.getQuotas().add(rowView.getRow(Quota.class));
         }
     }
 }
