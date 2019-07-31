@@ -137,7 +137,7 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test inserting a Product instance")
     public void testInsert() {
         try {
-            Integer productId = getRandomId();
+            Integer productId = DAOHelper.getRandomId();
             Product product = ProductHelper.createTestProduct(productId);
             this.productIds.add(productId);
             productDAO.insert(product);
