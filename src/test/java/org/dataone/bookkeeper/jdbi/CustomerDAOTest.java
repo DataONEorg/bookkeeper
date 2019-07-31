@@ -1,5 +1,6 @@
 package org.dataone.bookkeeper.jdbi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
@@ -120,4 +121,22 @@ public class CustomerDAOTest extends BaseTestCase {
         Customer customer = customerDAO.getCustomer(customerId);
         assertTrue(((Customer) customer).getId().equals(customerId));
     }
+
+    /**
+     * Test getting a customer by ORCID identifier
+     * @throws SQLException
+     */
+    @Test
+    @DisplayName("Test finding a customer by ORCID identifier")
+    public void testFindCustomerByOrcid() throws SQLException, JsonProcessingException {
+        // Insert a customer
+        final Customer expectedCustomer = CustomerHelper.insertTestCustomer(
+            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+        this.customerIds.add(expectedCustomer.getId());
+
+        // Get the customer
+        Customer customer = customerDAO.findCustomerByOrcid(expectedCustomer.getOrcid());
+        assertTrue(((Customer) customer).getId().equals(expectedCustomer.getId()));
+    }
+
 }
