@@ -3,4 +3,5 @@
 
 --- Add the customer id foreign key constraint
 ALTER TABLE quotas
-    ADD CONSTRAINT quotas_customer_id_fk FOREIGN KEY (customerId) REFERENCES customers (id);
+    ADD CONSTRAINT quotas_customer_id_fk
+    FOREIGN KEY (customerId) REFERENCES customers (id) ON DELETE CASCADE;
