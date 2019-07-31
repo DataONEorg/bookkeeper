@@ -139,4 +139,21 @@ public class CustomerDAOTest extends BaseTestCase {
         assertTrue(((Customer) customer).getId().equals(expectedCustomer.getId()));
     }
 
+    /**
+     * Test getting a customer by email
+     * @throws SQLException
+     * @throws JsonProcessingException
+     */
+    @Test
+    @DisplayName("Test finding a customer by email")
+    public void testFindCustomerByEmail() throws SQLException, JsonProcessingException {
+        // Insert a customer
+        final Customer expectedCustomer = CustomerHelper.insertTestCustomer(
+            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+        this.customerIds.add(expectedCustomer.getId());
+
+        // Get the customer
+        Customer customer = customerDAO.findCustomerByEmail(expectedCustomer.getEmail());
+        assertTrue(((Customer) customer).getId().equals(expectedCustomer.getId()));
+    }
 }
