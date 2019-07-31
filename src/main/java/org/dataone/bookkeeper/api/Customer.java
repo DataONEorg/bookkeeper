@@ -1,6 +1,8 @@
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -451,6 +453,45 @@ public class Customer {
     }
 
     /**
+     * Return the discount hash as a JSON string
+     * @return discount the discount JSON string
+     * @throws JsonProcessingException
+     */
+    public String getDiscountJSON() throws JsonProcessingException {
+        if ( discount != null ) {
+            return Jackson.newObjectMapper().writeValueAsString(getDiscount());
+        } else {
+            return "{}";
+        }
+    }
+
+    /**
+     * Return the invoice settings hash as a JSON string
+     * @return invoiceSettings the invoice settings JSON string
+     * @throws JsonProcessingException
+     */
+    public String getInvoiceSettingsJSON() throws JsonProcessingException {
+        if ( invoiceSettings != null ) {
+            return Jackson.newObjectMapper().writeValueAsString(getInvoiceSettings());
+        } else {
+            return "{}";
+        }
+    }
+
+    /**
+     * Return the metadata as a JSON string
+     * @return metadata the metadata JSON string
+     * @throws JsonProcessingException
+     */
+    public String getMetadataJSON() throws JsonProcessingException {
+        if ( metadata != null ) {
+            return Jackson.newObjectMapper().writeValueAsString(getMetadata());
+        } else {
+            return "{}";
+        }
+    }
+
+    /**
      * Determine object equality based on the equality of all fields
      * @param o the object to be compared
      * @return
@@ -479,7 +520,6 @@ public class Customer {
             Objects.equals(getSurName(), customer.getSurName()) &&
             Objects.equals(getPhone(), customer.getPhone()) &&
             Objects.equals(getQuotas(), customer.getQuotas());
-
     }
 
     /**
