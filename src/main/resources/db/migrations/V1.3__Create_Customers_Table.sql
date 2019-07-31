@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS customers (
     phone text
 );
 ALTER SEQUENCE customers_id_seq OWNED BY customers.id;
-CREATE INDEX customers_givenName_idx ON customers USING btree(givenName);
+CREATE INDEX customers_orcid_idx ON customers USING btree(orcid);
+CREATE INDEX customers_email_idx ON customers USING btree(email);
 
 COMMENT ON TABLE customers IS 'Customers that have ordered products and have quotas.';
 COMMENT ON COLUMN customers.id IS 'The unique customer identifier.';
