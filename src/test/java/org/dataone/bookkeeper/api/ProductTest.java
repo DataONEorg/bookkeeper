@@ -34,7 +34,7 @@ public class ProductTest {
 
         // Test the Product instance
         final String expected = MAPPER.writeValueAsString(
-            MAPPER.readValue(fixture("fixtures/product.json"), Product.class));
+            MAPPER.readValue(fixture(PRODUCT_JSON), Product.class));
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -49,7 +49,7 @@ public class ProductTest {
 
         // Test the Product instance
         final Product deserializedProduct =
-            MAPPER.readValue(fixture("fixtures/product.json"), Product.class);
+            MAPPER.readValue(fixture(PRODUCT_JSON), Product.class);
         assertThat(deserializedProduct).isEqualTo(product);
 
     }
