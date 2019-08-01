@@ -171,4 +171,19 @@ public class CustomerHelper {
             );
         return customer;
     }
+
+    /**
+     * Return the number of customers given the customer id
+     * @param customerId the id of the customer
+     * @return count the number of customers
+     */
+    public static Integer getCustomerCountById(Integer customerId) {
+        Integer count = BaseTestCase.dbi.withHandle(handle ->
+            handle.createQuery("SELECT count(*) FROM customers WHERE id = :id")
+                .bind("id", customerId)
+                .mapTo(Integer.class)
+                .one()
+        );
+        return count;
+    }
 }
