@@ -31,7 +31,7 @@ COMMENT ON TABLE customers IS 'Customers that have ordered products and have quo
 COMMENT ON COLUMN customers.id IS 'The unique customer identifier.';
 COMMENT ON COLUMN customers.object IS 'The serialized object type, set to "customer".';
 COMMENT ON COLUMN customers.orcid IS 'The unique customer ORCID identifier.';
-COMMENT ON COLUMN customers.balance IS 'The customer balance, in pence of the currency (i.e. USD cents).';
+COMMENT ON COLUMN customers.balance IS 'The customer balance, in the smallest unit of the currency (i.e. USD cents).';
 COMMENT ON COLUMN customers.address IS 'The customer address, stored as a JSON address object.';
 COMMENT ON COLUMN customers.created IS 'The customer creation date.';
 COMMENT ON COLUMN customers.currency IS 'The customer currency, defaults to "USD".';
