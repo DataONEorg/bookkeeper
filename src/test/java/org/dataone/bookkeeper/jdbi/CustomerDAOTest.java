@@ -175,4 +175,32 @@ public class CustomerDAOTest extends BaseTestCase {
 
         assertTrue(customer.getId().equals(expectedCustomer.getId()));
     }
+
+    @Test
+    @DisplayName("Test updating a customer")
+    public void testUpdate() throws SQLException, JsonProcessingException {
+        // Insert a new test customer
+        Customer expectedCustomer = CustomerHelper.insertTestCustomer(
+            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+        this.customerIds.add(expectedCustomer.getId());
+
+        // Now update the customer locally
+        expectedCustomer.setBalance(50000);
+        expectedCustomer.setDelinquent(true);
+        expectedCustomer.setDescription("My updated customer description");
+        expectedCustomer.setEmail("you@me.com");
+        expectedCustomer.setPhone("202-222-2222");
+
+        // Push the changes to the database
+        customerDAO.update(expectedCustomer);
+
+        // Get the updated customer from the database
+        Customer updatedCustomer = CustomerHelper.getCustomerById(expectedCustomer.getId());
+
+        assertTrue(updatedCustomer.getBalance().equals(expectedCustomer.getBalance()));
+        assertTrue(updatedCustomer.isDelinquent() == expectedCustomer.isDelinquent());
+        assertTrue(updatedCustomer.getDescription().equals(expectedCustomer.getDescription()));
+        assertTrue(updatedCustomer.getEmail().equals(expectedCustomer.getEmail()));
+        assertTrue(updatedCustomer.getPhone().equals(expectedCustomer.getPhone()));
+    }
 }
