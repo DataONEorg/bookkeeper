@@ -466,6 +466,19 @@ public class Customer {
     }
 
     /**
+     * Return the address hash as a JSON string
+     * @return address the address JSON string
+     * @throws JsonProcessingException
+     */
+    public String getAddressJSON() throws JsonProcessingException {
+        if ( address != null ) {
+            return Jackson.newObjectMapper().writeValueAsString(getAddress());
+        } else {
+            return "{}";
+        }
+    }
+
+    /**
      * Return the invoice settings hash as a JSON string
      * @return invoiceSettings the invoice settings JSON string
      * @throws JsonProcessingException
@@ -479,7 +492,7 @@ public class Customer {
     }
 
     /**
-     * Return the metadata as a JSON string
+     * Return the metadata hash as a JSON string
      * @return metadata the metadata JSON string
      * @throws JsonProcessingException
      */
