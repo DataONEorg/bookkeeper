@@ -51,7 +51,7 @@ public interface CustomerDAO {
     String SELECT_EMAIL = SELECT_CLAUSE + "WHERE c.email = :email";
 
     /**
-     * Interface to list all customers with their quotas
+     * List all customers with their quotas
      * @return customers The list of customers
      */
     @SqlQuery(SELECT_ALL)
@@ -61,7 +61,7 @@ public interface CustomerDAO {
     List<Customer> listCustomers();
 
     /**
-     * Interface to get a individual customer
+     * Get an individual customer
      * @param id the customer identifier
      * @return customer The individual customer
      */
@@ -72,7 +72,7 @@ public interface CustomerDAO {
     Customer getCustomer(@Bind("id") Integer id);
 
     /**
-     * Interface to get a customer by ORCID identifier
+     * Get a customer by ORCID identifier
      * @param orcid the customer ORCID identifier
      * @return customer the customer with the given ORCID identifier
      */
@@ -83,7 +83,7 @@ public interface CustomerDAO {
     Customer findCustomerByOrcid(@Bind("orcid") String orcid);
 
     /**
-     * Interface to get a customer by email
+     * Get a customer by email
      * @param email the customer email
      * @return customer the customer with the given email
      */
@@ -94,7 +94,7 @@ public interface CustomerDAO {
     Customer findCustomerByEmail(@Bind("email") String email);
 
     /**
-     * Interface to insert a customer
+     * Insert a customer
      * @param customer the customer to insert
      */
     @SqlUpdate("INSERT INTO customers " +
@@ -122,7 +122,7 @@ public interface CustomerDAO {
     void insert(@BindMethods Customer customer);
 
     /**
-     * Interface to update a customer
+     * Update a customer
      * @param customer the customer to update
      */
     @SqlUpdate("UPDATE customers SET " +
@@ -143,4 +143,11 @@ public interface CustomerDAO {
         "surName = :getSurName, " +
         "phone = :getPhone")
     void update(@BindMethods Customer customer);
+
+    /**
+     * Delete a customer
+     * @param id
+     */
+    @SqlUpdate("DELETE FROM customers WHERE id = :id")
+    void delete(@Bind("id") Integer id);
 }
