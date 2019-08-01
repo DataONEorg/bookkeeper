@@ -120,4 +120,27 @@ public interface CustomerDAO {
         ":getSurName, " +
         ":getPhone)")
     void insert(@BindMethods Customer customer);
+
+    /**
+     * Interface to update a customer
+     * @param customer the customer to update
+     */
+    @SqlUpdate("UPDATE customers SET " +
+        "object = :getObject, " +
+        "orcid = :getOrcid, " +
+        "balance = :getBalance, " +
+        "address = :getAddressJSON::json, " +
+        "created = to_timestamp(:getCreated), " +
+        "currency = :getCurrency, " +
+        "delinquent = :isDelinquent, " +
+        "description = :getDescription, " +
+        "discount = :getDiscountJSON::json, " +
+        "email = :getEmail, " +
+        "invoicePrefix = :getInvoicePrefix, " +
+        "invoiceSettings = :getInvoiceSettingsJSON::json, " +
+        "metadata = :getMetadataJSON::json, " +
+        "givenName = :getGivenName, " +
+        "surName = :getSurName, " +
+        "phone = :getPhone")
+    void update(@BindMethods Customer customer);
 }
