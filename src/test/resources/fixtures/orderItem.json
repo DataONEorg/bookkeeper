@@ -1,0 +1,9 @@
+{
+  "object": "order_item",
+  "amount": 500,
+  "currency": "USD",
+  "description": "DataONE Individual Membership",
+  "parent": 12345,
+  "quantity": 1,
+  "type": "sku"
+}
