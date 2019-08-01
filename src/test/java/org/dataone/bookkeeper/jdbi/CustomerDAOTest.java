@@ -156,4 +156,23 @@ public class CustomerDAOTest extends BaseTestCase {
         Customer customer = customerDAO.findCustomerByEmail(expectedCustomer.getEmail());
         assertTrue(((Customer) customer).getId().equals(expectedCustomer.getId()));
     }
+
+    /**
+     * Test inserting a customer
+     */
+    @Test
+    @DisplayName("Test inserting a customer")
+    public void testInsert() {
+        // Create a Customer to insert
+        Customer expectedCustomer = CustomerHelper.createCustomer(DAOHelper.getRandomId());
+        this.customerIds.add(expectedCustomer.getId());
+
+        // Insert the customer
+        customerDAO.insert(expectedCustomer);
+
+        // Then get the customer to ensure it was inserted
+        Customer customer = CustomerHelper.getCustomerById(expectedCustomer.getId());
+
+        assertTrue(customer.getId().equals(expectedCustomer.getId()));
+    }
 }
