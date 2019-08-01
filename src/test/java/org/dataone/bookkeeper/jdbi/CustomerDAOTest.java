@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -202,5 +203,20 @@ public class CustomerDAOTest extends BaseTestCase {
         assertTrue(updatedCustomer.getDescription().equals(expectedCustomer.getDescription()));
         assertTrue(updatedCustomer.getEmail().equals(expectedCustomer.getEmail()));
         assertTrue(updatedCustomer.getPhone().equals(expectedCustomer.getPhone()));
+    }
+
+    @Test
+    @DisplayName("Test deleting a customer")
+    public void testDelete() throws SQLException, JsonProcessingException {
+        // Insert a new customer
+        Customer customer = CustomerHelper.insertTestCustomer(
+            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+        this.customerIds.add(customer.getId());
+
+        // Delete it
+        customerDAO.delete(customer.getId());
+
+        // It's gone, right?
+        assertThat(CustomerHelper.getCustomerCountById(customer.getId()) == 0);
     }
 }
