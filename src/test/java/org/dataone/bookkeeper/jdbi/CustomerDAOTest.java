@@ -119,7 +119,7 @@ public class CustomerDAOTest extends BaseTestCase {
 
         // Get the customer
         Customer customer = customerDAO.getCustomer(customerId);
-        assertTrue(((Customer) customer).getId().equals(customerId));
+        assertTrue(customer.getId().equals(customerId));
     }
 
     /**
@@ -136,7 +136,7 @@ public class CustomerDAOTest extends BaseTestCase {
 
         // Get the customer
         Customer customer = customerDAO.findCustomerByOrcid(expectedCustomer.getOrcid());
-        assertTrue(((Customer) customer).getId().equals(expectedCustomer.getId()));
+        assertTrue(customer.getId().equals(expectedCustomer.getId()));
     }
 
     /**
@@ -154,7 +154,7 @@ public class CustomerDAOTest extends BaseTestCase {
 
         // Get the customer
         Customer customer = customerDAO.findCustomerByEmail(expectedCustomer.getEmail());
-        assertTrue(((Customer) customer).getId().equals(expectedCustomer.getId()));
+        assertTrue(customer.getId().equals(expectedCustomer.getId()));
     }
 
     /**
