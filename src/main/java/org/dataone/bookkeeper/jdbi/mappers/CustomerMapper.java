@@ -8,6 +8,7 @@ import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.postgresql.util.PSQLException;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -44,9 +45,8 @@ public class CustomerMapper implements RowMapper<Customer> {
         ObjectMapper mapper = Jackson.newObjectMapper();
 
         try {
-
             // If we have quota fields in the resultset, build and add a quota
-            if (new Integer(rs.getInt("id")) != null ) {
+            if (new Integer(rs.getInt("id")) != null) {
                 quota = new Quota(
                     new Integer(rs.getInt("id")),
                     rs.getString("object"),
@@ -55,10 +55,14 @@ public class CustomerMapper implements RowMapper<Customer> {
                     new Integer(rs.getInt("hardLimit")),
                     rs.getString("unit"),
                     new Integer(rs.getInt("c_id"))
-                    );
+                );
                 quotas.add(quota);
             }
+        } catch (PSQLException psqle) {
+            // there are no quotas in the result, continue
+        }
 
+        try {
             // Create a customer instance from the resultset
             customer = new Customer(
                 new Integer(rs.getInt("c_id")),
