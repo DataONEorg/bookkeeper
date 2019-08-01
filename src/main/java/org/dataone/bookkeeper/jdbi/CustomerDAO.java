@@ -106,7 +106,7 @@ public interface CustomerDAO {
         ":getObject, " +
         ":getOrcid, " +
         ":getBalance, " +
-        ":getAddress, " +
+        ":getAddressJSON::json, " +
         "to_timestamp(:getCreated), " +
         ":getCurrency, " +
         ":isDelinquent, " +
