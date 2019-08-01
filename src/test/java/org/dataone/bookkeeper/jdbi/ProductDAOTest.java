@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.dataone.bookkeeper.helpers.DAOHelper.getRandomId;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -217,6 +216,5 @@ public class ProductDAOTest extends BaseTestCase {
             this.productIds.add(productId); // Clean up on fail
             fail();
         }
-
     }
 }
