@@ -153,57 +153,53 @@ public class ProductDAOTest extends BaseTestCase {
     @Test
     @DisplayName("Test updating a product")
     public void testUpdate() {
-        try {
-            // Insert a new product
-            Integer productId = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
+        // Insert a new product
+        Integer productId = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
 
-            // Set some product fields to be changed
-            this.productIds.add(productId); // Clean up
-            String objectString = "product";
-            String productName = "test_product_name_" + DAOHelper.getRandomId();
-            String productCaption = "My updated product caption";
-            String productDescription = "My updated product description";
-            String productStatementDescriptor = "My updated statement descriptor";
-            String productType = "service";
-            String productUnitLabel = "membership";
-            String productURL = "https://dataone.org/products/membership/organization";
+        // Set some product fields to be changed
+        this.productIds.add(productId); // Clean up
+        String objectString = "product";
+        String productName = "test_product_name_" + DAOHelper.getRandomId();
+        String productCaption = "My updated product caption";
+        String productDescription = "My updated product description";
+        String productStatementDescriptor = "My updated statement descriptor";
+        String productType = "service";
+        String productUnitLabel = "membership";
+        String productURL = "https://dataone.org/products/membership/organization";
 
-            // Build the new product
-            Product expectedProduct = new Product();
-            expectedProduct.setId(productId);
-            expectedProduct.setObject(objectString);
-            expectedProduct.setActive(true);
-            expectedProduct.setName(productName);
-            expectedProduct.setCaption(productCaption);
-            expectedProduct.setDescription(productDescription);
-            expectedProduct.setCreated(new Integer((int) Instant.now().getEpochSecond()));
-            expectedProduct.setStatementDescriptor(productStatementDescriptor);
-            expectedProduct.setType(productType);
-            expectedProduct.setUnitLabel(productUnitLabel);
-            expectedProduct.setUrl(productURL);
-            ObjectNode metadata = ProductHelper.createTestMetadata();
-            expectedProduct.setMetadata(metadata);
+        // Build the new product
+        Product expectedProduct = new Product();
+        expectedProduct.setId(productId);
+        expectedProduct.setObject(objectString);
+        expectedProduct.setActive(true);
+        expectedProduct.setName(productName);
+        expectedProduct.setCaption(productCaption);
+        expectedProduct.setDescription(productDescription);
+        expectedProduct.setCreated(new Integer((int) Instant.now().getEpochSecond()));
+        expectedProduct.setStatementDescriptor(productStatementDescriptor);
+        expectedProduct.setType(productType);
+        expectedProduct.setUnitLabel(productUnitLabel);
+        expectedProduct.setUrl(productURL);
+        ObjectNode metadata = ProductHelper.createTestMetadata();
+        expectedProduct.setMetadata(metadata);
 
-            // Update the existing product in the database
-            productDAO.update(expectedProduct);
+        // Update the existing product in the database
+        productDAO.update(expectedProduct);
 
-            // Get the updated product
-            Product updatedProduct = ProductHelper.getProductById(productId);
+        // Get the updated product
+        Product updatedProduct = ProductHelper.getProductById(productId);
 
-            // Compare fields
-            assertThat(updatedProduct.isActive() == true);
-            assertThat(updatedProduct.getObject() == objectString);
-            assertThat(updatedProduct.getName() == productName);
-            assertThat(updatedProduct.getCaption() == productCaption);
-            assertThat(updatedProduct.getDescription() == productDescription);
-            assertThat(updatedProduct.getStatementDescriptor() == productStatementDescriptor);
-            assertThat(updatedProduct.getType() == productType);
-            assertThat(updatedProduct.getUnitLabel() == productUnitLabel);
-            assertThat(updatedProduct.getUrl() == productURL);
-            assertThat(updatedProduct.getMetadata().equals(metadata));
-        } catch (Exception e) {
-            fail();
-        }
+        // Compare fields
+        assertThat(updatedProduct.isActive() == true);
+        assertThat(updatedProduct.getObject() == objectString);
+        assertThat(updatedProduct.getName() == productName);
+        assertThat(updatedProduct.getCaption() == productCaption);
+        assertThat(updatedProduct.getDescription() == productDescription);
+        assertThat(updatedProduct.getStatementDescriptor() == productStatementDescriptor);
+        assertThat(updatedProduct.getType() == productType);
+        assertThat(updatedProduct.getUnitLabel() == productUnitLabel);
+        assertThat(updatedProduct.getUrl() == productURL);
+        assertThat(updatedProduct.getMetadata().equals(metadata));
     }
 
     /**
