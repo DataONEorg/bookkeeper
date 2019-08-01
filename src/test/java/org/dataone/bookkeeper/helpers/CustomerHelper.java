@@ -6,6 +6,7 @@ import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Address;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
+import org.dataone.bookkeeper.jdbi.mappers.CustomerMapper;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -136,4 +137,38 @@ public class CustomerHelper {
     }
 
 
+    /**
+     * Get a customer given its id
+     * @param customerId
+     * @return customer the customer of the given id
+     */
+    public static Customer getCustomerById(Integer customerId) {
+        Customer customer = null;
+            customer = BaseTestCase.dbi.withHandle(handle ->
+                handle.createQuery(
+                    "SELECT " +
+                    "c.id AS c_id, " +
+                    "c.object AS c_object, " +
+                    "c.orcid AS c_orcid, " +
+                    "c.balance AS c_balance, " +
+                    "c.address AS c_address, " +
+                    "date_part('epoch', c.created)::int AS c_created, " +
+                    "c.currency AS c_currency, " +
+                    "c.delinquent AS c_delinquent, " +
+                    "c.description AS c_description, " +
+                    "c.discount::json AS c_discount, " +
+                    "c.email AS c_email, " +
+                    "c.invoicePrefix AS c_invoicePrefix, " +
+                    "c.invoiceSettings::json AS c_invoiceSettings, " +
+                    "c.metadata::json AS c_metadata, " +
+                    "c.givenName AS c_givenName, " +
+                    "c.surName AS c_surName, " +
+                    "c.phone AS c_phone " +
+                    "FROM customers c WHERE c.id = :id")
+                    .bind("id", customerId)
+                    .map(new CustomerMapper())
+                    .one()
+            );
+        return customer;
+    }
 }
