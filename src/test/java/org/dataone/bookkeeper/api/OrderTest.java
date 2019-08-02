@@ -3,6 +3,7 @@ package org.dataone.bookkeeper.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
+import org.dataone.bookkeeper.helpers.OrderHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,22 @@ public class OrderTest {
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture(ORDER_JSON), Order.class));
         assertThat(actual).isEqualTo(expected);
+    }
+
+    /**
+     * Test deserialization from JSON
+     */
+    @Test
+    @DisplayName("Test Order model deserialization")
+    public void deserializesFromJSON() throws Exception {
+        // Build the Order instance
+        final Order order = OrderHelper.createTestOrder(1,2,3,4);
+
+        // Test the Order instance
+        final Order deserializedOrder =
+            MAPPER.readValue(fixture(ORDER_JSON), Order.class);
+        assertThat(deserializedOrder).isEqualTo(order);
+
     }
 
 }
