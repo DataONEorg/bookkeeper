@@ -3,9 +3,11 @@ package org.dataone.bookkeeper.helpers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
+import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.api.OrderItem;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -104,4 +106,13 @@ public class OrderHelper {
     }
 
 
+    /**
+     * Remove test orders
+     * @param orderId
+     */
+    public static void removeTestOrder(Integer orderId) throws SQLException {
+        BaseTestCase.dbi.useHandle(handle ->
+            handle.execute("DELETE FROM orders WHERE id = ?", orderId)
+        );
+    }
 }
