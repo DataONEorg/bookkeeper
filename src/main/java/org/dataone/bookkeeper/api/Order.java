@@ -47,10 +47,10 @@ public class Order {
     @NotNull
     private String currency;
 
-    /* The order customer */
+    /* The order customer id */
     @NotEmpty
     @NotNull
-    private Customer customer;
+    private Integer customer;
 
     /* The order customer's email */
     @NotEmpty
@@ -107,7 +107,7 @@ public class Order {
         ObjectNode charge,
         @NotEmpty @NotNull Integer created,
         @NotEmpty @NotNull String currency,
-        @NotEmpty @NotNull Customer customer,
+        @NotEmpty @NotNull Integer customer,
         @NotEmpty @NotNull String email,
         List<OrderItem> items,
         ObjectNode metadata,
@@ -247,15 +247,15 @@ public class Order {
      * Get the order customer
      * @return customer the order customer
      */
-    public Customer getCustomer() {
+    public Integer getCustomer() {
         return customer;
     }
 
     /**
-     * Set the order customer
-     * @param customer the order customer
+     * Set the order customer id
+     * @param customer the order customer id
      */
-    public void setCustomer(Customer customer) {
+    public void setCustomer(Integer customer) {
         this.customer = customer;
     }
 
