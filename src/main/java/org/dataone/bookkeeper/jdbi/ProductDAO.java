@@ -88,8 +88,8 @@ public interface ProductDAO {
         "type, " +
         "unitLabel, " +
         "url, " +
-        "metadata) " +
-        "VALUES (" +
+        "metadata " +
+        ") VALUES (" +
         ":getId, " +
         ":getObject , " +
         ":isActive, " +
