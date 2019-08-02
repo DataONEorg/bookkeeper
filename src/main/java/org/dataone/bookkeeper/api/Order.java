@@ -1,12 +1,15 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -365,6 +368,26 @@ public class Order {
             return Jackson.newObjectMapper().writeValueAsString(getCharge());
         } else {
             return "{}";
+        }
+    }
+
+
+    /**
+     * Return the items list as a JSON array
+     * @return items the order items list
+     * @throws IOException
+     */
+    public String getItemsJSON() throws IOException {
+        if ( items != null ) {
+            ObjectMapper mapper = Jackson.newObjectMapper();
+            ArrayNode itemsArray = mapper.createArrayNode();
+
+            for (OrderItem item : items) {
+                itemsArray.add(mapper.readTree(mapper.writeValueAsString(item)));
+            }
+            return itemsArray.toString();
+        } else {
+            return "[]";
         }
     }
 
