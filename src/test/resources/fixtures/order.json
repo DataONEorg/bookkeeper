@@ -1,0 +1,44 @@
+{
+  "id": 1,
+  "object": "order",
+  "amount": 50000,
+  "amountReturned": 0,
+  "charge": {
+    "id": 3,
+    "object": "charge",
+    "amount": 50000,
+    "amountRefunded": 0,
+    "created": 1559768309,
+    "currency": "USD",
+    "customer": 2,
+    "description": "DataONE Order # 1",
+    "invoice": 4,
+    "metadata": {},
+    "order": 1,
+    "paid": true,
+    "statementDescriptor": "DataONE Order # 1",
+    "status": "succeeded"
+  },
+  "created": 1559768309,
+  "currency": "USD",
+  "customer": 2,
+  "email": "cjones@nceas.ucsb.edu",
+  "items": [
+    {
+      "object": "order_item",
+      "amount": 50000,
+      "currency": "USD",
+      "description": "DataONE Individual Membership",
+      "parent": 1000,
+      "quantity": 1,
+      "type": "sku"
+    }
+  ],
+  "metadata": {},
+  "status": "paid",
+  "statusTransitions": {
+    "created": 1559768309,
+    "paid": 1559768309
+  },
+  "updated": 1559768309
+}
