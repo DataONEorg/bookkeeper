@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS orders (
     amount integer,
     amountReturned integer,
     charge json,
-    created timestamp without time zone,
+    created timestamp with time zone,
     currency text,
     customer integer,
     email text,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS orders (
     metadata json,
     status text,
     statusTransitions json,
-    updated timestamp without time zone
+    updated timestamp with time zone
 );
 
 CREATE INDEX orders_customer_idx ON orders USING btree(customer);

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS customers (
     orcid text NOT NULL,
     balance integer,
     address json,
-    created timestamp without time zone,
+    created timestamp with time zone,
     currency text,
     delinquent boolean,
     description text,

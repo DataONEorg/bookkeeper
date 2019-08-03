@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS products (
     name text,
     caption text,
     description text,
-    created timestamp without time zone,
+    created timestamp with time zone,
     statementDescriptor text,
     type text,
     unitLabel text,
