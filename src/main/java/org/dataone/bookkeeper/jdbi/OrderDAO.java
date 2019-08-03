@@ -1,11 +1,13 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.api.Order;
+import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+import org.jdbi.v3.sqlobject.statement.UseRowMapper;
 
 import java.util.List;
 
@@ -21,16 +23,16 @@ public interface OrderDAO {
         "o.object, " +
         "o.amount, " +
         "o.amountReturned, " +
-        "o.charge::json, " +
-        "date_part('epoch', o.created)::int, " +
+        "o.charge::json AS charge, " +
+        "date_part('epoch', o.created)::int AS created, " +
         "o.currency, " +
         "o.customer, " +
         "o.email, " +
-        "o.items::json, " +
-        "o.metadata::json, " +
+        "o.items::json AS items, " +
+        "o.metadata::json AS metadata, " +
         "o.status, " +
-        "o.statusTransitions::json, " +
-        "date_part('epoch', o.updated)::int " +
+        "o.statusTransitions::json AS statusTransitions, " +
+        "date_part('epoch', o.updated)::int AS updated " +
         "FROM orders o ";
 
     /** Clause to order listed results */
@@ -49,6 +51,7 @@ public interface OrderDAO {
      */
     @SqlQuery(SELECT_ALL)
     @RegisterRowMapper(OrderMapper.class)
+    @UseRowMapper(OrderMapper.class)
     List<Order> listOrders();
 
     /**
@@ -58,6 +61,7 @@ public interface OrderDAO {
      */
     @SqlQuery(SELECT_ONE)
     @RegisterRowMapper(OrderMapper.class)
+    @UseRowMapper(OrderMapper.class)
     Order getOrder(@Bind("id") Integer id);
 
     /**
@@ -67,6 +71,7 @@ public interface OrderDAO {
      */
     @SqlQuery(SELECT_CUSTOMER)
     @RegisterRowMapper(OrderMapper.class)
+    @UseRowMapper(OrderMapper.class)
     List<Order> findOrdersByCustomerId(@Bind("customer") Integer customerId);
 
     /**
