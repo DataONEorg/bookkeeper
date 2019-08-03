@@ -40,7 +40,7 @@ public class OrderHelper {
         order.setMetadata(Jackson.newObjectMapper().createObjectNode());
         order.setStatus("paid");
         order.setStatusTransitions(OrderHelper.createTestStatusTransitions());
-        order.setUpdated(new Integer(1559768309)); // updated
+        order.setUpdated(new Integer(1559768309));
 
         return order;
     }
@@ -169,5 +169,49 @@ public class OrderHelper {
             fail(e);
         }
         return orderId;
+    }
+
+    public static Order insertTestOrder(Order order) {
+
+        try {
+            BaseTestCase.dbi.useHandle(handle ->
+                handle.execute("INSERT INTO orders (" +
+                        "id, " +
+                        "object, " +
+                        "amount, " +
+                        "amountReturned, " +
+                        "charge, " +
+                        "created, " +
+                        "currency, " +
+                        "customer, " +
+                        "email, " +
+                        "items, " +
+                        "metadata, " +
+                        "status, " +
+                        "statusTransitions, " +
+                        "updated " +
+                        ") VALUES (" +
+                        "?, ?, ?, ?, ?::json, to_timestamp(?), " +
+                        "?, ?, ?, ?::json, ?::json, ?, ?::json, to_timestamp(?))",
+                    order.getId(),
+                    order.getObject(),
+                    order.getAmount(),
+                    order.getAmountReturned(),
+                    order.getChargeJSON(),
+                    order.getCreated(),
+                    order.getCurrency(),
+                    order.getCustomer(),
+                    order.getEmail(),
+                    order.getItemsJSON(),
+                    order.getMetadataJSON(),
+                    order.getStatus(),
+                    order.getStatusTransitionsJSON(),
+                    order.getUpdated()
+                )
+            );
+        } catch (IOException e) {
+            fail(e);
+        }
+        return order;
     }
 }
