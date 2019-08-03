@@ -1,6 +1,7 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.BaseTestCase;
+import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
 import org.dataone.bookkeeper.helpers.DAOHelper;
 import org.dataone.bookkeeper.helpers.OrderHelper;
@@ -81,6 +82,26 @@ public class OrderDAOTest extends BaseTestCase {
             assertTrue(orderDAO.listOrders().size() >= 1);
         } catch (SQLException e) {
             fail(e);
+        }
+    }
+
+    @Test
+    @DisplayName("Test getting an order by id")
+    public void testGetOrder() {
+        try {
+            // Insert a new customer
+            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            this.customerIds.add(customerId);
+
+            // Create new order for the customer and insert it
+            Order expected = OrderHelper.insertTestOrder(
+                OrderHelper.createTestOrder(DAOHelper.getRandomId(),
+                customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId()));
+            Order order = orderDAO.getOrder(expected.getId());
+
+            assertTrue(order.equals(expected));
+        } catch (SQLException sqle) {
+            fail(sqle);
         }
     }
 }
