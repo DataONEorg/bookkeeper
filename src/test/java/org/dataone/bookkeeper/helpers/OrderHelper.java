@@ -7,9 +7,12 @@ import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.api.OrderItem;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A delegate class with helper methods for manipulating the orders table during testing
@@ -114,5 +117,57 @@ public class OrderHelper {
         BaseTestCase.dbi.useHandle(handle ->
             handle.execute("DELETE FROM orders WHERE id = ?", orderId)
         );
+    }
+
+    /**
+     * Insert a test order
+     * @param orderId the order id
+     * @return orderId the order id
+     */
+    public static Integer insertTestOrder(Integer orderId, Integer customerId) {
+
+        Order order = OrderHelper.createTestOrder(
+            orderId, customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId());
+
+        try {
+            BaseTestCase.dbi.useHandle(handle ->
+                handle.execute("INSERT INTO orders (" +
+                    "id, " +
+                    "object, " +
+                    "amount, " +
+                    "amountReturned, " +
+                    "charge, " +
+                    "created, " +
+                    "currency, " +
+                    "customer, " +
+                    "email, " +
+                    "items, " +
+                    "metadata, " +
+                    "status, " +
+                    "statusTransitions, " +
+                    "updated " +
+                    ") VALUES (" +
+                    "?, ?, ?, ?, ?::json, to_timestamp(?), " +
+                    "?, ?, ?, ?::json, ?::json, ?, ?::json, to_timestamp(?))",
+                    order.getId(),
+                    order.getObject(),
+                    order.getAmount(),
+                    order.getAmountReturned(),
+                    order.getChargeJSON(),
+                    order.getCreated(),
+                    order.getCurrency(),
+                    order.getCustomer(),
+                    order.getEmail(),
+                    order.getItemsJSON(),
+                    order.getMetadataJSON(),
+                    order.getStatus(),
+                    order.getStatusTransitionsJSON(),
+                    order.getUpdated()
+                )
+            );
+        } catch (IOException e) {
+            fail(e);
+        }
+        return orderId;
     }
 }
