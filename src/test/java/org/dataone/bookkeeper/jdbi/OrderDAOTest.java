@@ -104,4 +104,27 @@ public class OrderDAOTest extends BaseTestCase {
             fail(sqle);
         }
     }
+
+    @Test
+    @DisplayName("Test getting orders by customer id")
+    public void testFindOrdersByCustomerId() {
+        try {
+            // Insert a new customer
+            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            this.customerIds.add(customerId);
+
+            // Create new order for the customer and insert it
+            Order expected = OrderHelper.insertTestOrder(
+                OrderHelper.createTestOrder(DAOHelper.getRandomId(),
+                    customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId()));
+
+            // Get orders for the given customer id
+            List<Order> orders = orderDAO.findOrdersByCustomerId(customerId);
+            assertTrue(orders.size() == 1);
+            assertTrue(orders.get(0).getId().equals(expected.getId()));
+        } catch (SQLException e) {
+            fail(e);
+        }
+
+    }
 }
