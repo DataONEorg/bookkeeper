@@ -92,9 +92,9 @@ public interface OrderDAO {
         "metadata, " +
         "status, " +
         "statusTransitions, " +
-        "updated, " +
+        "updated " +
         ") VALUES (" +
-        ":getId" +
+        ":getId, " +
         ":getObject, " +
         ":getAmount, " +
         ":getAmountReturned, " +
