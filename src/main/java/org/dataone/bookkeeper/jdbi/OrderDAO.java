@@ -128,7 +128,7 @@ public interface OrderDAO {
         "status = :getStatus, " +
         "statusTransitions = :getStatusTransitionsJSON::json, " +
         "updated = to_timestamp(:getUpdated) " +
-        "WHERE id = :id")
+        "WHERE id = :getId")
     void update(@BindMethods Order order);
 
     /**
