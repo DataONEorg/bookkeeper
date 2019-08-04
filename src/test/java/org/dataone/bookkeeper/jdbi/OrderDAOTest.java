@@ -168,6 +168,7 @@ public class OrderDAOTest extends BaseTestCase {
         try {
             // Insert a new customer
             customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            this.customerIds.add(customerId);
 
             // Insert a new order for the customer
             Order expected =
@@ -177,6 +178,7 @@ public class OrderDAOTest extends BaseTestCase {
                         DAOHelper.getRandomId(), DAOHelper.getRandomId()
                     )
                 );
+            this.orderIds.add(expected.getId());
 
             // Update the order locally
             expected.setUpdated(
@@ -203,6 +205,33 @@ public class OrderDAOTest extends BaseTestCase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * Test deleting an order
+     */
+    @Test
+    @DisplayName("Test deleting an order")
+    public void testDelete() {
+        Integer customerId = null;
+        try {
+            // Insert a new customer
+            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            this.customerIds.add(customerId);
+
+            // Insert an order for the customer
+            Integer orderId = OrderHelper.insertTestOrder(DAOHelper.getRandomId(), customerId);
+
+            // Delete it
+            orderDAO.delete(orderId);
+
+            // Try to get a count of the orders with that id
+            Integer count = OrderHelper.getTestOrderCountById(orderId);
+
+            assertTrue(count == 0);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
