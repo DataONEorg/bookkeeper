@@ -75,7 +75,7 @@ public class Order {
     /* The order status transitions (history of status/timestamp key/value pairs*/
     private ObjectNode statusTransitions;
 
-    /* The order update date (seconds since the epoch */
+    /* The order update date (seconds since the epoch) */
     private Integer updated;
 
     /**
@@ -451,7 +451,7 @@ public class Order {
     public int hashCode() {
 
         return Objects.hash(getId(), getObject(), getAmount(), getAmountReturned(),
-            getCharge(), getCreated(), getCurrency(), getCustomer(), getEmail(),
-            getItems(), getMetadata(), getStatus(), getStatusTransitions(), getUpdated());
+            getCharge(), getCreated(), getCurrency(), getCustomer(), getEmail(), getItems(),
+            getMetadata(), getStatus(), getStatusTransitions(), getUpdated());
     }
 }
