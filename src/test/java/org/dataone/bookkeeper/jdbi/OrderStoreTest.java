@@ -3,7 +3,7 @@ package org.dataone.bookkeeper.jdbi;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
-import org.dataone.bookkeeper.helpers.DAOHelper;
+import org.dataone.bookkeeper.helpers.StoreHelper;
 import org.dataone.bookkeeper.helpers.OrderHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test the order data access object
  */
-public class OrderDAOTest extends BaseTestCase {
+public class OrderStoreTest extends BaseTestCase {
 
-    // The OrderDAO to test
-    private OrderDAO orderDAO;
+    // The OrderStore to test
+    private OrderStore orderStore;
 
     // A list of order ids used in testing
     private List<Integer> orderIds = new ArrayList<Integer>();
@@ -34,11 +34,11 @@ public class OrderDAOTest extends BaseTestCase {
     private List<Integer> customerIds = new ArrayList<Integer>();
 
     /**
-     * Set up the DAO for testing
+     * Set up the Store for testing
      */
     @BeforeEach
     public void init() {
-        orderDAO = dbi.onDemand(OrderDAO.class);
+        orderStore = dbi.onDemand(OrderStore.class);
     }
 
     /**
@@ -73,14 +73,14 @@ public class OrderDAOTest extends BaseTestCase {
     public void testListOrders() {
         try {
             // Insert a new customer
-            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
             // Insert a new order for the customer
-            Integer orderId = OrderHelper.insertTestOrder(DAOHelper.getRandomId(), customerId);
+            Integer orderId = OrderHelper.insertTestOrder(StoreHelper.getRandomId(), customerId);
 
             // Test listing the orders
-            assertTrue(orderDAO.listOrders().size() >= 1);
+            assertTrue(orderStore.listOrders().size() >= 1);
         } catch (SQLException e) {
             fail(e);
         }
@@ -91,14 +91,14 @@ public class OrderDAOTest extends BaseTestCase {
     public void testGetOrder() {
         try {
             // Insert a new customer
-            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
             // Create new order for the customer and insert it
             Order expected = OrderHelper.insertTestOrder(
-                OrderHelper.createTestOrder(DAOHelper.getRandomId(),
-                customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId()));
-            Order order = orderDAO.getOrder(expected.getId());
+                OrderHelper.createTestOrder(StoreHelper.getRandomId(),
+                customerId, StoreHelper.getRandomId(), StoreHelper.getRandomId()));
+            Order order = orderStore.getOrder(expected.getId());
 
             assertTrue(order.equals(expected));
         } catch (SQLException sqle) {
@@ -114,17 +114,17 @@ public class OrderDAOTest extends BaseTestCase {
     public void testFindOrdersByCustomerId() {
         try {
             // Insert a new customer
-            Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
             // Create new order for the customer and insert it
             Order expected = OrderHelper.insertTestOrder(
-                OrderHelper.createTestOrder(DAOHelper.getRandomId(),
-                    customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId()));
+                OrderHelper.createTestOrder(StoreHelper.getRandomId(),
+                    customerId, StoreHelper.getRandomId(), StoreHelper.getRandomId()));
             this.orderIds.add(expected.getId());
 
             // Get orders for the given customer id
-            List<Order> orders = orderDAO.findOrdersByCustomerId(customerId);
+            List<Order> orders = orderStore.findOrdersByCustomerId(customerId);
             assertTrue(orders.size() == 1);
             assertTrue(orders.get(0).getId().equals(expected.getId()));
         } catch (SQLException e) {
@@ -141,14 +141,14 @@ public class OrderDAOTest extends BaseTestCase {
         Integer customerId = null;
         try {
             // Insert a new customer
-            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
 
             // Create a new order for the customer
             Order expected = OrderHelper.createTestOrder(
-                DAOHelper.getRandomId(), customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId());
+                StoreHelper.getRandomId(), customerId, StoreHelper.getRandomId(), StoreHelper.getRandomId());
 
             // Insert the order
-            orderDAO.insert(expected);
+            orderStore.insert(expected);
 
             // Fetch the order by id
             Integer count = OrderHelper.getTestOrderCountById(expected.getId());
@@ -167,15 +167,15 @@ public class OrderDAOTest extends BaseTestCase {
         Integer customerId = null;
         try {
             // Insert a new customer
-            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
             // Insert a new order for the customer
             Order expected =
                 OrderHelper.insertTestOrder(
                     OrderHelper.createTestOrder(
-                        DAOHelper.getRandomId(), customerId,
-                        DAOHelper.getRandomId(), DAOHelper.getRandomId()
+                        StoreHelper.getRandomId(), customerId,
+                        StoreHelper.getRandomId(), StoreHelper.getRandomId()
                     )
                 );
             this.orderIds.add(expected.getId());
@@ -192,7 +192,7 @@ public class OrderDAOTest extends BaseTestCase {
             );
             expected.setAmount(new Integer(60000));
 
-            orderDAO.update(expected);
+            orderStore.update(expected);
 
             Order updated = OrderHelper.getTestOrderById(expected.getId());
 
@@ -216,14 +216,14 @@ public class OrderDAOTest extends BaseTestCase {
         Integer customerId = null;
         try {
             // Insert a new customer
-            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
             // Insert an order for the customer
-            Integer orderId = OrderHelper.insertTestOrder(DAOHelper.getRandomId(), customerId);
+            Integer orderId = OrderHelper.insertTestOrder(StoreHelper.getRandomId(), customerId);
 
             // Delete it
-            orderDAO.delete(orderId);
+            orderStore.delete(orderId);
 
             // Try to get a count of the orders with that id
             Integer count = OrderHelper.getTestOrderCountById(orderId);

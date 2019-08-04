@@ -15,7 +15,7 @@ import java.util.List;
  * The order data access interfaces used to create, read, update, and delete
  * orders from the database
  */
-public interface OrderDAO {
+public interface OrderStore {
 
     /** The query used to find all orders */
     String SELECT_CLAUSE = "SELECT " +

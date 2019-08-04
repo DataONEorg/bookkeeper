@@ -3,7 +3,7 @@ package org.dataone.bookkeeper.jdbi;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Product;
-import org.dataone.bookkeeper.helpers.DAOHelper;
+import org.dataone.bookkeeper.helpers.StoreHelper;
 import org.dataone.bookkeeper.helpers.ProductHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,20 +22,20 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test the Product data access object
  */
-public class ProductDAOTest extends BaseTestCase {
+public class ProductStoreTest extends BaseTestCase {
 
-    // The ProductDAO to test
-    private ProductDAO productDAO;
+    // The ProductStore to test
+    private ProductStore productStore;
 
     // A list of product ids used in testing
     private List<Integer> productIds = new ArrayList<Integer>();
 
     /**
-     * Set up the DAO for testing
+     * Set up the Store for testing
      */
     @BeforeEach
     public void init() {
-        productDAO = dbi.onDemand(ProductDAO.class);
+        productStore = dbi.onDemand(ProductStore.class);
     }
 
     /**
@@ -60,11 +60,11 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test listing the products")
     public void testListProducts() {
         // Insert a new product
-        Integer product1Id = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
+        Integer product1Id = ProductHelper.insertTestProduct(StoreHelper.getRandomId());
         this.productIds.add(product1Id);
-        Integer product2Id = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
+        Integer product2Id = ProductHelper.insertTestProduct(StoreHelper.getRandomId());
         this.productIds.add(product2Id);
-        assertTrue(productDAO.listProducts().size() >= 2);
+        assertTrue(productStore.listProducts().size() >= 2);
     }
 
     /**
@@ -74,10 +74,10 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test getting a product")
     public void testGetProduct() {
         // Insert a new product
-        Integer productId = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
+        Integer productId = ProductHelper.insertTestProduct(StoreHelper.getRandomId());
         this.productIds.add(productId);
 
-        Product returnedProduct = productDAO.getProduct(productId);
+        Product returnedProduct = productStore.getProduct(productId);
         assertTrue(returnedProduct.getId().equals(productId));
     }
 
@@ -88,12 +88,12 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test gettting a product by name")
     public void testFindProductsByName() {
         // Insert a new product
-        Integer productId = DAOHelper.getRandomId();
+        Integer productId = StoreHelper.getRandomId();
         Product product = ProductHelper.createTestProduct(productId);
         this.productIds.add(productId);
-        productDAO.insert(product);
+        productStore.insert(product);
 
-        assertTrue(productDAO.findProductsByName(
+        assertTrue(productStore.findProductsByName(
             product.getName()).get(0).getName().equals(product.getName()));
     }
 
@@ -104,12 +104,12 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test gettting a product by active status")
     public void testFindProductsByActiveStatus() {
         // Insert a new product
-        Integer productId = DAOHelper.getRandomId();
+        Integer productId = StoreHelper.getRandomId();
         Product product = ProductHelper.createTestProduct(productId);
         this.productIds.add(productId);
-        productDAO.insert(product);
+        productStore.insert(product);
 
-        assertTrue(productDAO.findProductsByActiveStatus(
+        assertTrue(productStore.findProductsByActiveStatus(
             product.isActive()).get(0).isActive() == product.isActive());
     }
 
@@ -120,12 +120,12 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test getting a product by description")
     public void testFindProductsByDescription() {
         // Insert a new product
-        Integer productId = DAOHelper.getRandomId();
+        Integer productId = StoreHelper.getRandomId();
         Product product = ProductHelper.createTestProduct(productId);
         this.productIds.add(productId);
-        productDAO.insert(product);
+        productStore.insert(product);
 
-        assertTrue(productDAO.findProductsByDescription(
+        assertTrue(productStore.findProductsByDescription(
             product.getDescription()).get(0).getDescription().equals(product.getDescription()));
     }
 
@@ -136,10 +136,10 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test inserting a Product instance")
     public void testInsert() {
         try {
-            Integer productId = DAOHelper.getRandomId();
+            Integer productId = StoreHelper.getRandomId();
             Product product = ProductHelper.createTestProduct(productId);
             this.productIds.add(productId);
-            productDAO.insert(product);
+            productStore.insert(product);
             assertThat( ProductHelper.getProductCountById(productId) == 1);
         } catch (Exception e) {
             fail();
@@ -153,12 +153,12 @@ public class ProductDAOTest extends BaseTestCase {
     @DisplayName("Test updating a product")
     public void testUpdate() {
         // Insert a new product
-        Integer productId = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
+        Integer productId = ProductHelper.insertTestProduct(StoreHelper.getRandomId());
 
         // Set some product fields to be changed
         this.productIds.add(productId); // Clean up
         String objectString = "product";
-        String productName = "test_product_name_" + DAOHelper.getRandomId();
+        String productName = "test_product_name_" + StoreHelper.getRandomId();
         String productCaption = "My updated product caption";
         String productDescription = "My updated product description";
         String productStatementDescriptor = "My updated statement descriptor";
@@ -183,7 +183,7 @@ public class ProductDAOTest extends BaseTestCase {
         expectedProduct.setMetadata(metadata);
 
         // Update the existing product in the database
-        productDAO.update(expectedProduct);
+        productStore.update(expectedProduct);
 
         // Get the updated product
         Product updatedProduct = ProductHelper.getProductById(productId);
@@ -209,8 +209,8 @@ public class ProductDAOTest extends BaseTestCase {
     public void testDelete() {
         Integer productId = null;
         try {
-            productId = ProductHelper.insertTestProduct(DAOHelper.getRandomId());
-            productDAO.delete(productId);
+            productId = ProductHelper.insertTestProduct(StoreHelper.getRandomId());
+            productStore.delete(productId);
             assertThat(ProductHelper.getProductCountById(productId) == 0);
         } catch (Exception e) {
             this.productIds.add(productId); // Clean up on fail

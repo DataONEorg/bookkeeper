@@ -14,7 +14,7 @@ import java.util.List;
  * quotas from the database
  */
 @RegisterBeanMapper(Quota.class)
-public interface QuotaDAO {
+public interface QuotaStore {
 
     /**
      * List all quotas

@@ -17,7 +17,7 @@ import java.util.List;
  * The customer data access interfaces used to create, read, update, and delete
  * customers from the database
  */
-public interface CustomerDAO {
+public interface CustomerStore {
 
     /** The query used to find all customers with their quotas */
     String SELECT_CLAUSE =

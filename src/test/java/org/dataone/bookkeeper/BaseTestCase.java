@@ -79,7 +79,7 @@ public class BaseTestCase {
                 Jackson.newObjectMapper(), Validators.newValidator(), metricRegistry,
                 ClassLoader.getSystemClassLoader());
 
-            // Set up a PostgreSQL datasource for testing (DAOs)
+            // Set up a PostgreSQL datasource for testing (Stores)
 
             dataSourceFactory.setUrl("jdbc:postgresql://localhost:5432/postgres");
             dataSourceFactory.setUser("postgres");

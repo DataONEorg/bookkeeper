@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * A delegate class with helper methods for all testing
  */
-public class DAOHelper {
+public class StoreHelper {
 
     /**
      * Generate a random Integer for use as test case identifiers

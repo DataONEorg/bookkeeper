@@ -128,7 +128,7 @@ public class OrderHelper {
     public static Integer insertTestOrder(Integer orderId, Integer customerId) {
 
         Order order = OrderHelper.createTestOrder(
-            orderId, customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId());
+            orderId, customerId, StoreHelper.getRandomId(), StoreHelper.getRandomId());
 
         try {
             BaseTestCase.dbi.useHandle(handle ->

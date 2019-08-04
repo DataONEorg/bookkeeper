@@ -15,7 +15,7 @@ import java.util.List;
  * The product data access interfaces used to create, read, update, and delete
  * products from the database
  */
-public interface ProductDAO {
+public interface ProductStore {
 
     /**
      * List all products

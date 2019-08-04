@@ -5,7 +5,7 @@ import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
-import org.dataone.bookkeeper.helpers.DAOHelper;
+import org.dataone.bookkeeper.helpers.StoreHelper;
 import org.dataone.bookkeeper.helpers.QuotaHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,20 +24,20 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test the product data access object
  */
-public class CustomerDAOTest extends BaseTestCase {
+public class CustomerStoreTest extends BaseTestCase {
 
-    /* The CustomerDAO to test */
-    private CustomerDAO customerDAO;
+    /* The CustomerStore to test */
+    private CustomerStore customerStore;
 
     // A list of customer ids used in testing
     private List<Integer> customerIds = new ArrayList<Integer>();
 
     /**
-     * Set up the DAO for testing
+     * Set up the Store for testing
      */
     @BeforeEach
     public void init() {
-        customerDAO = dbi.onDemand(CustomerDAO.class);
+        customerStore = dbi.onDemand(CustomerStore.class);
     }
 
     /**
@@ -64,13 +64,13 @@ public class CustomerDAOTest extends BaseTestCase {
         // Insert a new product
         Integer customerId = null;
         try {
-            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
         } catch (SQLException e) {
             fail(e);
         }
-        assertTrue(customerDAO.listCustomers().size() >= 1);
+        assertTrue(customerStore.listCustomers().size() >= 1);
     }
 
     /**
@@ -82,14 +82,14 @@ public class CustomerDAOTest extends BaseTestCase {
 
         try {
             // Insert a customer
-            final Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+            final Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
 
             // Insert a storage and portal quotas for the customer
             final Map<Integer, Quota> quotas =
                 QuotaHelper.insertTestStorageAndPortalQuotasWithCustomer(
-                    DAOHelper.getRandomId(), DAOHelper.getRandomId(), customerId);
-                customerDAO.listCustomers().forEach(customer -> {
+                    StoreHelper.getRandomId(), StoreHelper.getRandomId(), customerId);
+                customerStore.listCustomers().forEach(customer -> {
                     customer.getQuotas()
                         .forEach(quota -> {
                             Quota expectedQuota = quotas.get(quota.getId());
@@ -115,11 +115,11 @@ public class CustomerDAOTest extends BaseTestCase {
     @DisplayName("Test getting a customer by id")
     public void testGetCustomerById() throws SQLException {
         // Insert a customer
-        final Integer customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+        final Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
         this.customerIds.add(customerId);
 
         // Get the customer
-        Customer customer = customerDAO.getCustomer(customerId);
+        Customer customer = customerStore.getCustomer(customerId);
         assertTrue(customer.getId().equals(customerId));
     }
 
@@ -132,11 +132,11 @@ public class CustomerDAOTest extends BaseTestCase {
     public void testFindCustomerByOrcid() throws SQLException, JsonProcessingException {
         // Insert a customer
         final Customer expectedCustomer = CustomerHelper.insertTestCustomer(
-            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+            CustomerHelper.createCustomer(StoreHelper.getRandomId()));
         this.customerIds.add(expectedCustomer.getId());
 
         // Get the customer
-        Customer customer = customerDAO.findCustomerByOrcid(expectedCustomer.getOrcid());
+        Customer customer = customerStore.findCustomerByOrcid(expectedCustomer.getOrcid());
         assertTrue(customer.getId().equals(expectedCustomer.getId()));
     }
 
@@ -150,11 +150,11 @@ public class CustomerDAOTest extends BaseTestCase {
     public void testFindCustomerByEmail() throws SQLException, JsonProcessingException {
         // Insert a customer
         final Customer expectedCustomer = CustomerHelper.insertTestCustomer(
-            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+            CustomerHelper.createCustomer(StoreHelper.getRandomId()));
         this.customerIds.add(expectedCustomer.getId());
 
         // Get the customer
-        Customer customer = customerDAO.findCustomerByEmail(expectedCustomer.getEmail());
+        Customer customer = customerStore.findCustomerByEmail(expectedCustomer.getEmail());
         assertTrue(customer.getId().equals(expectedCustomer.getId()));
     }
 
@@ -165,11 +165,11 @@ public class CustomerDAOTest extends BaseTestCase {
     @DisplayName("Test inserting a customer")
     public void testInsert() {
         // Create a Customer to insert
-        Customer expectedCustomer = CustomerHelper.createCustomer(DAOHelper.getRandomId());
+        Customer expectedCustomer = CustomerHelper.createCustomer(StoreHelper.getRandomId());
         this.customerIds.add(expectedCustomer.getId());
 
         // Insert the customer
-        customerDAO.insert(expectedCustomer);
+        customerStore.insert(expectedCustomer);
 
         // Then get the customer to ensure it was inserted
         Customer customer = CustomerHelper.getCustomerById(expectedCustomer.getId());
@@ -182,7 +182,7 @@ public class CustomerDAOTest extends BaseTestCase {
     public void testUpdate() throws SQLException, JsonProcessingException {
         // Insert a new test customer
         Customer expectedCustomer = CustomerHelper.insertTestCustomer(
-            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+            CustomerHelper.createCustomer(StoreHelper.getRandomId()));
         this.customerIds.add(expectedCustomer.getId());
 
         // Now update the customer locally
@@ -193,7 +193,7 @@ public class CustomerDAOTest extends BaseTestCase {
         expectedCustomer.setPhone("202-222-2222");
 
         // Push the changes to the database
-        customerDAO.update(expectedCustomer);
+        customerStore.update(expectedCustomer);
 
         // Get the updated customer from the database
         Customer updatedCustomer = CustomerHelper.getCustomerById(expectedCustomer.getId());
@@ -210,11 +210,11 @@ public class CustomerDAOTest extends BaseTestCase {
     public void testDelete() throws SQLException, JsonProcessingException {
         // Insert a new customer
         Customer customer = CustomerHelper.insertTestCustomer(
-            CustomerHelper.createCustomer(DAOHelper.getRandomId()));
+            CustomerHelper.createCustomer(StoreHelper.getRandomId()));
         this.customerIds.add(customer.getId());
 
         // Delete it
-        customerDAO.delete(customer.getId());
+        customerStore.delete(customer.getId());
 
         // It's gone, right?
         assertThat(CustomerHelper.getCustomerCountById(customer.getId()) == 0);
