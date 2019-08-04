@@ -6,6 +6,7 @@ import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.api.OrderItem;
+import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -171,6 +172,11 @@ public class OrderHelper {
         return orderId;
     }
 
+    /**
+     * Insert a test order
+     * @param order the order to insert
+     * @return the inserted order
+     */
     public static Order insertTestOrder(Order order) {
 
         try {
@@ -215,6 +221,11 @@ public class OrderHelper {
         return order;
     }
 
+    /**
+     * Get the number of orders for a given order id
+     * @param orderId the order id
+     * @return count the number of orders
+     */
     public static Integer getTestOrderCountById(Integer orderId) {
         Integer count = BaseTestCase.dbi.withHandle(handle ->
             handle.createQuery("SELECT count(*) FROM orders WHERE id = :id")
@@ -223,5 +234,35 @@ public class OrderHelper {
                 .one()
         );
         return count;
+    }
+
+    /**
+     * Get an order by id
+     * @param orderId the order id
+     * @return order the order
+     */
+    public static Order getTestOrderById(Integer orderId) {
+        Order order = BaseTestCase.dbi.withHandle(handle ->
+            handle.createQuery("SELECT " +
+                "id, " +
+                "object, " +
+                "amount, " +
+                "amountReturned, " +
+                "charge, " +
+                "date_part('epoch', created)::int AS created, " +
+                "currency, " +
+                "customer, " +
+                "email, " +
+                "items, " +
+                "metadata, " +
+                "status, " +
+                "statusTransitions, " +
+                "date_part('epoch',updated)::int AS updated " +
+                "FROM orders WHERE id = :id")
+                .bind("id", orderId)
+                .map(new OrderMapper())
+                .one()
+        );
+        return order;
     }
 }
