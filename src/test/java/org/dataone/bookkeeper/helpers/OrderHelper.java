@@ -214,4 +214,14 @@ public class OrderHelper {
         }
         return order;
     }
+
+    public static Integer getTestOrderCountById(Integer orderId) {
+        Integer count = BaseTestCase.dbi.withHandle(handle ->
+            handle.createQuery("SELECT count(*) FROM orders WHERE id = :id")
+                .bind("id", orderId)
+                .mapTo(Integer.class)
+                .one()
+        );
+        return count;
+    }
 }
