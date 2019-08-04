@@ -105,6 +105,9 @@ public class OrderDAOTest extends BaseTestCase {
         }
     }
 
+    /**
+     * Test getting orders by customer id
+     */
     @Test
     @DisplayName("Test getting orders by customer id")
     public void testFindOrdersByCustomerId() {
@@ -117,6 +120,7 @@ public class OrderDAOTest extends BaseTestCase {
             Order expected = OrderHelper.insertTestOrder(
                 OrderHelper.createTestOrder(DAOHelper.getRandomId(),
                     customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId()));
+            this.orderIds.add(expected.getId());
 
             // Get orders for the given customer id
             List<Order> orders = orderDAO.findOrdersByCustomerId(customerId);
@@ -125,6 +129,35 @@ public class OrderDAOTest extends BaseTestCase {
         } catch (SQLException e) {
             fail(e);
         }
+    }
+
+    /**
+     * Test inserting an order
+     */
+    @Test
+    @DisplayName("Test inserting an order")
+    public void testInsert() {
+        Integer customerId = null;
+        try {
+            // Insert a new customer
+            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+
+            // Create a new order for the customer
+            Order expected = OrderHelper.createTestOrder(
+                DAOHelper.getRandomId(), customerId, DAOHelper.getRandomId(), DAOHelper.getRandomId());
+
+            // Insert the order
+            orderDAO.insert(expected);
+
+            // Fetch the order by id
+            Integer count = OrderHelper.getTestOrderCountById(expected.getId());
+
+            assertTrue(count == 1);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        this.customerIds.add(customerId);
 
     }
 }
