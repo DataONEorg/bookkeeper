@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,6 +159,50 @@ public class OrderDAOTest extends BaseTestCase {
             e.printStackTrace();
         }
         this.customerIds.add(customerId);
+    }
+
+    @Test
+    @DisplayName("Test updating an order")
+    public void testUpdate() {
+        Integer customerId = null;
+        try {
+            // Insert a new customer
+            customerId = CustomerHelper.insertTestCustomer(DAOHelper.getRandomId());
+
+            // Insert a new order for the customer
+            Order expected =
+                OrderHelper.insertTestOrder(
+                    OrderHelper.createTestOrder(
+                        DAOHelper.getRandomId(), customerId,
+                        DAOHelper.getRandomId(), DAOHelper.getRandomId()
+                    )
+                );
+
+            // Update the order locally
+            expected.setUpdated(
+                new Integer((int) Instant.now().getEpochSecond())
+            );
+            expected.setStatus("canceled");
+            expected.setEmail("you@me.com");
+            expected.setCurrency("JPY");
+            expected.setCreated(
+                new Integer((int) Instant.now().getEpochSecond())
+            );
+            expected.setAmount(new Integer(60000));
+
+            orderDAO.update(expected);
+
+            Order updated = OrderHelper.getTestOrderById(expected.getId());
+
+            assertTrue(updated.getUpdated().equals(expected.getUpdated()));
+            assertTrue(updated.getStatus().equals(expected.getStatus()));
+            assertTrue(updated.getEmail().equals(expected.getEmail()));
+            assertTrue(updated.getCurrency().equals(expected.getCurrency()));
+            assertTrue(updated.getCreated().equals(expected.getCreated()));
+            assertTrue(updated.getAmount().equals(expected.getAmount()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }
