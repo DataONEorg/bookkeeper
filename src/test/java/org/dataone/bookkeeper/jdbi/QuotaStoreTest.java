@@ -140,12 +140,14 @@ public class QuotaStoreTest extends BaseTestCase {
             quota.setName(quotaName);
             quota.setSoftLimit(56789);
             quota.setHardLimit(567890);
+            quota.setUsage(96789);
             quota.setUnit("megabyte");
             quota.setCustomerId(customerId);
             quotaStore.update(quota);
             assertThat(QuotaHelper.getQuotaById(quotaId).getName() == quotaName);
             assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 56789);
             assertThat(QuotaHelper.getQuotaById(quotaId).getHardLimit() == 567890);
+            assertThat(QuotaHelper.getQuotaById(quotaId).getUsage() == 96789);
         } catch (SQLException e) {
             fail();
         }

@@ -20,7 +20,7 @@ public interface QuotaStore {
      * List all quotas
      */
     @SqlQuery(  "SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId " +
         "FROM quotas q")
     List<Quota> listQuotas();
 
@@ -29,7 +29,7 @@ public interface QuotaStore {
      * @param id
      */
     @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId " +
         "FROM quotas q " +
         "WHERE q.id = :id")
     Quota getQuota(@Bind("id") Integer id);
@@ -41,7 +41,7 @@ public interface QuotaStore {
      * @param customerId
      */
     @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId " +
         "FROM quotas q " +
         "WHERE q.customerId = :customerId")
     List<Quota> findQuotasByCustomerId(@Bind("customerId") Integer customerId);
@@ -52,9 +52,9 @@ public interface QuotaStore {
      * @param quota
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, name, softLimit, hardLimit, unit, customerId) " +
+        "(object, name, softLimit, hardLimit, usage, unit, customerId) " +
         "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :unit, :customerId)")
+        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :customerId)")
     void insert(@BindBean Quota quota);
 
     /**
@@ -66,7 +66,8 @@ public interface QuotaStore {
         "name = :name, " +
         "softLimit = :softLimit, " +
         "hardLimit = :hardLimit, " +
-        "unit = :unit, " +
+       "unit = :unit, " +
+        "usage = :usage, " +
         "customerId = :customerId " +
         "WHERE id = :id")
     void update(@BindBean Quota quota);

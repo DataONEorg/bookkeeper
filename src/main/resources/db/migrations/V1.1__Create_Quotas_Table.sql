@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS quotas (
     name text NOT NULL,
     softLimit bigint NOT NULL,
     hardLimit bigint NOT NULL,
+    usage bigint,
     unit text NOT NULL,
     customerId integer
 );
@@ -24,5 +25,6 @@ COMMENT ON COLUMN quotas.object IS 'The serialized object type, set to "quota"';
 COMMENT ON COLUMN quotas.name IS 'The quota name';
 COMMENT ON COLUMN quotas.softLimit IS 'The soft limit of the resource.';
 COMMENT ON COLUMN quotas.hardLimit IS 'The hard limit of the resource.';
+COMMENT ON COLUMN quotas.usage IS 'The current observed usage of the quota.';
 COMMENT ON COLUMN quotas.unit IS 'The named unit of the quota.';
 COMMENT ON COLUMN quotas.customerId IS 'The customer id to which the quota is applied.';

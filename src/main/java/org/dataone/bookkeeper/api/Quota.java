@@ -40,10 +40,17 @@ public class Quota {
     @NotNull
     private Integer hardLimit;
 
+    /* The usage of the quota */
+    private Integer usage;
+
     /* The quota unit */
     @NotEmpty
     @NotNull
     private String unit;
+
+    // TODO: Integrate a usage field
+    // /* The usage amount of the quota */
+    // private Integer usage;
 
     /* the quota customer id */
     private Integer customerId;
@@ -73,6 +80,7 @@ public class Quota {
             this.name = quota.name;
             this.softLimit = quota.softLimit;
             this.hardLimit = quota.hardLimit;
+            this.usage = quota.usage;
             this.unit = quota.unit;
             this.customerId = quota.customerId;
         }
@@ -86,10 +94,11 @@ public class Quota {
      * @param softLimit
      * @param hardLimit
      * @param unit
+     * @param usage
      * @param customerId
      */
-    public Quota(Integer id, String object, String name,
-                 Integer softLimit, Integer hardLimit, String unit, Integer customerId) {
+    public Quota(Integer id, String object, String name, Integer softLimit,
+                 Integer hardLimit, Integer usage, String unit, Integer customerId) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
                 this.id = id;
@@ -100,6 +109,7 @@ public class Quota {
         this.softLimit = softLimit;
         this.hardLimit = hardLimit;
         this.unit = unit;
+        this.usage = usage;
         this.customerId = customerId;
     }
 
@@ -193,6 +203,25 @@ public class Quota {
         this.hardLimit = hardLimit;
     }
 
+
+    /**
+     * Get the quota usage
+     * @return usage
+     */
+    @JsonProperty
+    public Integer getUsage() {
+        return usage;
+    }
+
+    /**
+     * Set the quota usage
+     * @param usage
+     */
+    @JsonProperty
+    public void setUsage(Integer usage) {
+        this.usage = usage;
+    }
+
     /**
      * Get the quota unit
      * @return unit
@@ -244,6 +273,7 @@ public class Quota {
             Objects.equals(getName(), quota.getName()) &&
             Objects.equals(getSoftLimit(), quota.getSoftLimit()) &&
             Objects.equals(getHardLimit(), quota.getHardLimit()) &&
+            Objects.equals(getUsage(), quota.getUsage()) &&
             Objects.equals(getUnit(), quota.getUnit()) &&
             Objects.equals(getCustomerId(), quota.getCustomerId());
     }
@@ -256,6 +286,6 @@ public class Quota {
     public int hashCode() {
 
         return Objects.hash(getId(), getObject(), getName(), getSoftLimit(),
-            getHardLimit(), getUnit(), getCustomerId());
+            getHardLimit(), getUsage(), getUnit(), getCustomerId());
     }
 }

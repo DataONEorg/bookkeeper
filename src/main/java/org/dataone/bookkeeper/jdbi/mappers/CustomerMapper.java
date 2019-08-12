@@ -53,6 +53,7 @@ public class CustomerMapper implements RowMapper<Customer> {
                     rs.getString("name"),
                     new Integer(rs.getInt("softLimit")),
                     new Integer(rs.getInt("hardLimit")),
+                    new Integer(rs.getInt("usage")),
                     rs.getString("unit"),
                     new Integer(rs.getInt("c_id"))
                 );

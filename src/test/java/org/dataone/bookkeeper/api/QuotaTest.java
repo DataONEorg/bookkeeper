@@ -25,6 +25,7 @@ class QuotaTest {
     private static final String NAME = "custom_portal_count";
     private static final Integer SOFTLIMIT = 3;
     private static final Integer HARDLIMIT = 3;
+    private static final Integer USAGE = null;
     private static final String UNIT =  "portal";
     private static final Integer CUSTOMER_ID = null;
 
@@ -35,7 +36,7 @@ class QuotaTest {
     @DisplayName("Test Quota model serialization")
     public void serializesToJSON() throws Exception {
         // Build the Customer instance
-        final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT, UNIT, CUSTOMER_ID);
+        final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT, USAGE, UNIT, CUSTOMER_ID);
         quota.getCustomerId();
         // Test the Customer instance
         final String expected = MAPPER.writeValueAsString(
@@ -51,7 +52,7 @@ class QuotaTest {
     @DisplayName("Test Quota model deserialization")
     public void deserializesFromJSON() throws Exception {
         // Build the Quota instance
-        final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT, UNIT, CUSTOMER_ID);
+        final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT, USAGE, UNIT, CUSTOMER_ID);
 
         // Test the Quota instance
         final Quota deserializedQuota =
