@@ -48,10 +48,6 @@ public class Quota {
     @NotNull
     private String unit;
 
-    // TODO: Integrate a usage field
-    // /* The usage amount of the quota */
-    // private Integer usage;
-
     /* the quota customer id */
     private Integer customerId;
 
