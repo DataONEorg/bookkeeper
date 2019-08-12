@@ -68,7 +68,7 @@ public class CustomerMapper implements RowMapper<Customer> {
             customer = new Customer(
                 new Integer(rs.getInt("c_id")),
                 rs.getString("c_object"),
-                rs.getString("c_orcid"),
+                rs.getString("c_subject"),
                 new Integer(rs.getInt("c_balance")),
                 mapper.readValue(rs.getString("c_address"), Address.class),
                 new Integer(rs.getInt("c_created")),

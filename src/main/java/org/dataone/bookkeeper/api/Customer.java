@@ -7,7 +7,6 @@ import io.dropwizard.jackson.Jackson;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,11 +23,10 @@ public class Customer {
     @Pattern(regexp = "customer")
     private String object;
 
-    /* The customer unique ORCID id as the full http or https URL */
+    /* The customer unique subject id as the full http or https URL */
     @NotEmpty
     @NotNull
-    @Pattern(regexp = "http?://orcid\\.org/[\\d]{4}-[\\d]{4}-[\\d]{4}-[\\d]{3}[0-9X]")
-    private String orcid;
+    private String subject;
 
     /* The customer account balance */
     @NotEmpty
@@ -108,7 +106,7 @@ public class Customer {
      * Construct a Customer
      * @param id
      * @param object
-     * @param orcid
+     * @param subject
      * @param balance
      * @param address
      * @param created
@@ -127,7 +125,7 @@ public class Customer {
      */
     public Customer(Integer id,
                     @NotEmpty @NotNull @Pattern(regexp = "customer") String object,
-                    @NotEmpty @NotNull @Pattern(regexp = "http?://orcid\\.org/[\\d]{4}-[\\d]{4}-[\\d]{4}-[\\d]{3}[0-9X]") String orcid,
+                    @NotEmpty @NotNull String subject,
                     @NotEmpty @NotNull Integer balance,
                     @NotEmpty @NotNull Address address,
                     @NotEmpty @NotNull Integer created,
@@ -146,7 +144,7 @@ public class Customer {
         super();
         this.id = id;
         this.object = object;
-        this.orcid = orcid;
+        this.subject = subject;
         this.balance = balance;
         this.address = address;
         this.created = created;
@@ -197,19 +195,19 @@ public class Customer {
     }
 
     /**
-     * Get the customer ORCID identifier
-     * @return orcid
+     * Get the customer subject identifier
+     * @return subject
      */
-    public String getOrcid() {
-        return orcid;
+    public String getSubject() {
+        return subject;
     }
 
     /**
-     * Set the customer ORCID identifier
-     * @param orcid
+     * Set the customer subject identifier
+     * @param subject
      */
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     /**
@@ -520,7 +518,7 @@ public class Customer {
             Objects.equals(getBalance(), customer.getBalance()) &&
             Objects.equals(getCreated(), customer.getCreated()) &&
             Objects.equals(getObject(), customer.getObject()) &&
-            Objects.equals(getOrcid(), customer.getOrcid()) &&
+            Objects.equals(getSubject(), customer.getSubject()) &&
             Objects.equals(getAddress(), customer.getAddress()) &&
             Objects.equals(getCurrency(), customer.getCurrency()) &&
             Objects.equals(getDescription(), customer.getDescription()) &&
@@ -542,7 +540,7 @@ public class Customer {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getObject(), getOrcid(), getBalance(), getAddress(),
+        return Objects.hash(getId(), getObject(), getSubject(), getBalance(), getAddress(),
             getCreated(), getCurrency(), isDelinquent(), getDescription(), getDiscount(),
             getEmail(), getInvoicePrefix(), getInvoiceSettings(), getMetadata(),
             getGivenName(), getSurName(), getPhone(), getQuotas());

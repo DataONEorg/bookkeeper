@@ -25,7 +25,7 @@ public class CustomerHelper {
 
         BaseTestCase.dbi.useHandle(handle -> {
             handle.execute("INSERT INTO customers " +
-                    "(id, object, orcid, balance, address, created, currency, delinquent, " +
+                    "(id, object, subject, balance, address, created, currency, delinquent, " +
                     "description, discount, email, invoicePrefix, invoiceSettings, " +
                     "metadata, givenName, surName, phone) " +
                     "VALUES (?, ?, ?, ?, ?::json, to_timestamp(?), ?, ?, " +
@@ -63,14 +63,14 @@ public class CustomerHelper {
         throws SQLException, JsonProcessingException {
         BaseTestCase.dbi.useHandle(handle ->
             handle.execute("INSERT INTO customers " +
-                "(id, object, orcid, balance, address, created, currency, delinquent, " +
+                "(id, object, subject, balance, address, created, currency, delinquent, " +
                 "description, discount, email, invoicePrefix, invoiceSettings, " +
                 "metadata, givenName, surName, phone) " +
                 "VALUES (?, ?, ?, ?, ?::json, to_timestamp(?), ?, ?, " +
                 "?, ?::json, ?, ?, ?::json, ?::json, ?, ?, ?)",
                 customer.getId(),
                 customer.getObject(),
-                customer.getOrcid(),
+                customer.getSubject(),
                 customer.getBalance(),
                 Jackson.newObjectMapper().writeValueAsString(customer.getAddress()),
                 customer.getCreated(),
@@ -149,7 +149,7 @@ public class CustomerHelper {
                     "SELECT " +
                     "c.id AS c_id, " +
                     "c.object AS c_object, " +
-                    "c.orcid AS c_orcid, " +
+                    "c.subject AS c_subject, " +
                     "c.balance AS c_balance, " +
                     "c.address AS c_address, " +
                     "date_part('epoch', c.created)::int AS c_created, " +

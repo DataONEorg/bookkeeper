@@ -1,7 +1,7 @@
 {
     "id": 1,
     "object": "customer",
-    "orcid": "http://orcid.org/0000-0002-8121-2341",
+    "subject": "http://orcid.org/0000-0002-8121-2341",
     "balance": 0,
     "address": {
         "line1": "735 State Street",

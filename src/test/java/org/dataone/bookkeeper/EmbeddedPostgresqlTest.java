@@ -99,7 +99,7 @@ public class EmbeddedPostgresqlTest extends BaseTestCase {
             Statement statement = connection.createStatement();
             String sql =
                 "INSERT INTO customers " +
-                    "(object, orcid, balance, address, created, currency, delinquent, " +
+                    "(object, subject, balance, address, created, currency, delinquent, " +
                     "description, discount, email, invoicePrefix, invoiceSettings, " +
                     "metadata, givenName, surName, phone) " +
                 "VALUES " +

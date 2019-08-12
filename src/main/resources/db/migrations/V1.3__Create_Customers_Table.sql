@@ -7,7 +7,7 @@ CREATE SEQUENCE customers_id_seq;
 CREATE TABLE IF NOT EXISTS customers (
     id integer DEFAULT nextval('customers_id_seq') PRIMARY KEY,
     object text NOT NULL,
-    orcid text NOT NULL,
+    subject text NOT NULL,
     balance integer,
     address json,
     created timestamp with time zone,
@@ -24,13 +24,13 @@ CREATE TABLE IF NOT EXISTS customers (
     phone text
 );
 ALTER SEQUENCE customers_id_seq OWNED BY customers.id;
-CREATE INDEX customers_orcid_idx ON customers USING btree(orcid);
+CREATE INDEX customers_subject_idx ON customers USING btree(subject);
 CREATE INDEX customers_email_idx ON customers USING btree(email);
 
 COMMENT ON TABLE customers IS 'Customers that have ordered products and have quotas.';
 COMMENT ON COLUMN customers.id IS 'The unique customer identifier.';
 COMMENT ON COLUMN customers.object IS 'The serialized object type, set to "customer".';
-COMMENT ON COLUMN customers.orcid IS 'The unique customer ORCID identifier.';
+COMMENT ON COLUMN customers.subject IS 'The unique customer Subject identifier.';
 COMMENT ON COLUMN customers.balance IS 'The customer balance, in the smallest unit of the currency (i.e. USD cents).';
 COMMENT ON COLUMN customers.address IS 'The customer address, stored as a JSON address object.';
 COMMENT ON COLUMN customers.created IS 'The customer creation date.';

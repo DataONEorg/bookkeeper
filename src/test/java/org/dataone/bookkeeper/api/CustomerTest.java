@@ -25,7 +25,7 @@ class CustomerTest {
     private final static String PRODUCT_JSON = "fixtures/customer.json";
     private final static  Integer ID = 1;
     private final static String OBJECT = "customer";
-    private final String ORCID = "http://orcid.org/0000-0002-8121-2341";
+    private final String SUBJECT = "http://orcid.org/0000-0002-8121-2341";
     private final Integer BALANCE = 0;
     private final Address ADDRESS = new Address(
         "735 State Street",
@@ -56,7 +56,7 @@ class CustomerTest {
     @DisplayName("Test Customer model serialization")
     public void serializesToJSON() throws Exception {
         // Build the Customer instance
-        final Customer customer = new Customer(ID, OBJECT, ORCID, BALANCE, ADDRESS, CREATED,
+        final Customer customer = new Customer(ID, OBJECT, SUBJECT, BALANCE, ADDRESS, CREATED,
             CURRENCY, DELINQUENT, DESCRIPTION, DISCOUNT, EMAIL, INVOICEPREFIX, INVOICESETTINGS,
             METADATA, GIVENNAME, SURNAME, PHONE, QUOTAS);
 
@@ -74,7 +74,7 @@ class CustomerTest {
     @DisplayName("Test Customer model deserialization")
     public void deserializesFromJSON() throws Exception {
         // Build the Customer instance
-        final Customer customer = new Customer(ID, OBJECT, ORCID, BALANCE, ADDRESS, CREATED,
+        final Customer customer = new Customer(ID, OBJECT, SUBJECT, BALANCE, ADDRESS, CREATED,
             CURRENCY, DELINQUENT, DESCRIPTION, DISCOUNT, EMAIL, INVOICEPREFIX, INVOICESETTINGS,
             METADATA, GIVENNAME, SURNAME, PHONE, QUOTAS);
 

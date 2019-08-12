@@ -22,7 +22,7 @@ public interface CustomerStore {
     /** The query used to find all customers with their quotas */
     String SELECT_CLAUSE =
         "SELECT " +
-            "c.id AS c_id, c.object AS c_object, c.orcid AS c_orcid, c.balance AS c_balance, " +
+            "c.id AS c_id, c.object AS c_object, c.subject AS c_subject, c.balance AS c_balance, " +
             "c.address AS c_address, date_part('epoch', c.created)::int AS c_created, " +
             "c.currency AS c_currency, c.delinquent AS c_delinquent, " +
             "c.description AS c_description, c.discount::json AS c_discount, " +
@@ -44,8 +44,8 @@ public interface CustomerStore {
     /** The query used to find an individual customer */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE c.id = :id";
 
-    /** The query used to find a customer by ORCID identifier */
-    String SELECT_ORCID = SELECT_CLAUSE + "WHERE c.orcid = :orcid";
+    /** The query used to find a customer by subject identifier */
+    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE c.subject = :subject";
 
     /** The query used to find a customer by email */
     String SELECT_EMAIL = SELECT_CLAUSE + "WHERE c.email = :email";
@@ -72,15 +72,15 @@ public interface CustomerStore {
     Customer getCustomer(@Bind("id") Integer id);
 
     /**
-     * Get a customer by ORCID identifier
-     * @param orcid the customer ORCID identifier
-     * @return customer the customer with the given ORCID identifier
+     * Get a customer by subject identifier
+     * @param subject the customer subject identifier
+     * @return customer the customer with the given subject identifier
      */
-    @SqlQuery(SELECT_ORCID)
+    @SqlQuery(SELECT_SUBJECT)
     @RegisterRowMapper(CustomerMapper.class)
     @RegisterBeanMapper(value = Quota.class)
     @UseRowReducer(CustomerQuotasReducer.class)
-    Customer findCustomerByOrcid(@Bind("orcid") String orcid);
+    Customer findCustomerBySubject(@Bind("subject") String subject);
 
     /**
      * Get a customer by email
@@ -98,13 +98,13 @@ public interface CustomerStore {
      * @param customer the customer to insert
      */
     @SqlUpdate("INSERT INTO customers " +
-        "(id, object, orcid, balance, address, created, currency, delinquent, " +
+        "(id, object, subject, balance, address, created, currency, delinquent, " +
         "description, discount, email, invoicePrefix, invoiceSettings, " +
         "metadata, givenName, surName, phone) " +
         "VALUES (" +
         ":getId, " +
         ":getObject, " +
-        ":getOrcid, " +
+        ":getSubject, " +
         ":getBalance, " +
         ":getAddressJSON::json, " +
         "to_timestamp(:getCreated), " +
@@ -127,7 +127,7 @@ public interface CustomerStore {
      */
     @SqlUpdate("UPDATE customers SET " +
         "object = :getObject, " +
-        "orcid = :getOrcid, " +
+        "subject = :getSubject, " +
         "balance = :getBalance, " +
         "address = :getAddressJSON::json, " +
         "created = to_timestamp(:getCreated), " +

@@ -124,19 +124,19 @@ public class CustomerStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test getting a customer by ORCID identifier
+     * Test getting a customer by subject identifier
      * @throws SQLException
      */
     @Test
-    @DisplayName("Test finding a customer by ORCID identifier")
-    public void testFindCustomerByOrcid() throws SQLException, JsonProcessingException {
+    @DisplayName("Test finding a customer by subject identifier")
+    public void testFindCustomerBySubject() throws SQLException, JsonProcessingException {
         // Insert a customer
         final Customer expectedCustomer = CustomerHelper.insertTestCustomer(
             CustomerHelper.createCustomer(StoreHelper.getRandomId()));
         this.customerIds.add(expectedCustomer.getId());
 
         // Get the customer
-        Customer customer = customerStore.findCustomerByOrcid(expectedCustomer.getOrcid());
+        Customer customer = customerStore.findCustomerBySubject(expectedCustomer.getSubject());
         assertTrue(customer.getId().equals(expectedCustomer.getId()));
     }
 
