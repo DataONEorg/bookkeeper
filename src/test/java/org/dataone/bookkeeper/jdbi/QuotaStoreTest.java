@@ -1,6 +1,8 @@
 package org.dataone.bookkeeper.jdbi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.dataone.bookkeeper.BaseTestCase;
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
 import org.dataone.bookkeeper.helpers.StoreHelper;
@@ -87,7 +89,7 @@ public class QuotaStoreTest extends BaseTestCase {
      * Test getting quotas by customer ID
      */
     @Test
-    @DisplayName("Test get quota by customer ID")
+    @DisplayName("Test getting quotas by customer ID")
     public void testGetQuotasByCustomerId() {
 
         try {
@@ -100,6 +102,28 @@ public class QuotaStoreTest extends BaseTestCase {
 
         } catch (SQLException e) {
             fail();
+        }
+    }
+
+    /**
+     * Test getting quotas by subject
+     */
+    @Test
+    @DisplayName("Test getting quotas by subject")
+    public void testGetQuotasBySubject() {
+        try {
+            Customer customer = CustomerHelper.insertTestCustomer(
+                CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customer.getId());
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
+                StoreHelper.getRandomId(), customer.getSubject());
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
+                StoreHelper.getRandomId(), customer.getSubject());
+            assertTrue(quotaStore.findQuotasBySubject(customer.getSubject()).size() == 2);
+        } catch (SQLException e) {
+            fail(e);
+        } catch (JsonProcessingException e) {
+            fail(e);
         }
     }
 

@@ -55,7 +55,8 @@ public class CustomerMapper implements RowMapper<Customer> {
                     new Integer(rs.getInt("hardLimit")),
                     new Integer(rs.getInt("usage")),
                     rs.getString("unit"),
-                    new Integer(rs.getInt("c_id"))
+                    new Integer(rs.getInt("c_id")),
+                    rs.getString("subject")
                 );
                 quotas.add(quota);
             }

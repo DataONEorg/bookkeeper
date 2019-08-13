@@ -83,9 +83,10 @@ public class ProductHelper {
         Integer quota_usage = null;
         String quota_unit = "portal";
         Integer quota_customer_id = null;
+        String quota_subject = null;
 
         Quota quota = new Quota(quota_id, quota_type, quota_name,
-            quota_soft_limit, quota_hard_limit, quota_usage, quota_unit, quota_customer_id);
+            quota_soft_limit, quota_hard_limit, quota_usage, quota_unit, quota_customer_id, quota_subject);
 
         feature1.setName("custom_portal");
         feature1.setLabel("Branded Portals");

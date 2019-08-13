@@ -20,7 +20,7 @@ public interface QuotaStore {
      * List all quotas
      */
     @SqlQuery(  "SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
         "FROM quotas q")
     List<Quota> listQuotas();
 
@@ -29,7 +29,7 @@ public interface QuotaStore {
      * @param id
      */
     @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
         "FROM quotas q " +
         "WHERE q.id = :id")
     Quota getQuota(@Bind("id") Integer id);
@@ -41,20 +41,32 @@ public interface QuotaStore {
      * @param customerId
      */
     @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
         "FROM quotas q " +
         "WHERE q.customerId = :customerId")
     List<Quota> findQuotasByCustomerId(@Bind("customerId") Integer customerId);
 
 
     /**
+     * Find quotas by subject identifier
+     *
+     * @param subject the subject identifier (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subject
+     */
+    @SqlQuery("SELECT " +
+        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
+        "FROM quotas q " +
+        "WHERE q.subject = :subject")
+    List<Quota> findQuotasBySubject(@Bind("subject") String subject);
+
+    /**
      * Insert a quota with a given Quota instance
      * @param quota
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, name, softLimit, hardLimit, usage, unit, customerId) " +
+        "(object, name, softLimit, hardLimit, usage, unit, customerId, subject) " +
         "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :customerId)")
+        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :customerId, :subject)")
     void insert(@BindBean Quota quota);
 
     /**
@@ -68,7 +80,8 @@ public interface QuotaStore {
         "hardLimit = :hardLimit, " +
        "unit = :unit, " +
         "usage = :usage, " +
-        "customerId = :customerId " +
+       "customerId = :customerId, " +
+        "subject = :subject " +
         "WHERE id = :id")
     void update(@BindBean Quota quota);
 

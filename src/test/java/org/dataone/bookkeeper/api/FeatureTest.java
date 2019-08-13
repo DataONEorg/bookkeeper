@@ -32,6 +32,7 @@ class FeatureTest {
         3,
         null,
         "portal",
+        null,
         null
     );
 

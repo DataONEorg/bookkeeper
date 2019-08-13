@@ -12,12 +12,14 @@ CREATE TABLE IF NOT EXISTS quotas (
     hardLimit bigint NOT NULL,
     usage bigint,
     unit text NOT NULL,
-    customerId integer
+    customerId integer,
+    subject text
 );
 ALTER SEQUENCE quotas_id_seq OWNED BY quotas.id;
 
 CREATE INDEX quotas_name_idx ON quotas USING btree(name);
 CREATE INDEX quotas_customerId_idx ON quotas USING btree(customerId);
+CREATE INDEX quotas_subject_idx ON quotas USING btree(subject);
 
 COMMENT ON TABLE quotas IS 'Quotas limiting resources for products per customer. Quotas may be associated with products or customers by their ids.';
 COMMENT ON COLUMN quotas.id IS 'The unique quota identifier';
@@ -28,3 +30,4 @@ COMMENT ON COLUMN quotas.hardLimit IS 'The hard limit of the resource.';
 COMMENT ON COLUMN quotas.usage IS 'The current observed usage of the quota.';
 COMMENT ON COLUMN quotas.unit IS 'The named unit of the quota.';
 COMMENT ON COLUMN quotas.customerId IS 'The customer id to which the quota is applied.';
+COMMENT ON COLUMN quotas.subject IS 'The subject id to which the quota is applied.';
