@@ -48,8 +48,11 @@ public class Quota {
     @NotNull
     private String unit;
 
-    /* the quota customer id */
+    /* The quota customer id */
     private Integer customerId;
+
+    /* The quota subject id */
+    private String subject;
 
     /**
      * Construct an empty Quota
@@ -79,6 +82,7 @@ public class Quota {
             this.usage = quota.usage;
             this.unit = quota.unit;
             this.customerId = quota.customerId;
+            this.subject = quota.subject;
         }
     }
 
@@ -92,9 +96,11 @@ public class Quota {
      * @param unit
      * @param usage
      * @param customerId
+     * @param subject
      */
     public Quota(Integer id, String object, String name, Integer softLimit,
-                 Integer hardLimit, Integer usage, String unit, Integer customerId) {
+                 Integer hardLimit, Integer usage, String unit,
+                 Integer customerId, String subject) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
                 this.id = id;
@@ -107,6 +113,7 @@ public class Quota {
         this.unit = unit;
         this.usage = usage;
         this.customerId = customerId;
+        this.subject = subject;
     }
 
     /**
@@ -255,6 +262,24 @@ public class Quota {
     }
 
     /**
+     * Get the subject
+     * @return subject
+     */
+    @JsonProperty
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * Set the subject
+     * @param subject
+     */
+    @JsonProperty
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    /**
      * Determine object equality based on the equality of all fields
      * @param o the object to be compared
      * @return
@@ -271,7 +296,8 @@ public class Quota {
             Objects.equals(getHardLimit(), quota.getHardLimit()) &&
             Objects.equals(getUsage(), quota.getUsage()) &&
             Objects.equals(getUnit(), quota.getUnit()) &&
-            Objects.equals(getCustomerId(), quota.getCustomerId());
+            Objects.equals(getCustomerId(), quota.getCustomerId()) &&
+            Objects.equals(getSubject(), quota.getSubject());
     }
 
     /**
@@ -282,6 +308,6 @@ public class Quota {
     public int hashCode() {
 
         return Objects.hash(getId(), getObject(), getName(), getSoftLimit(),
-            getHardLimit(), getUsage(), getUnit(), getCustomerId());
+            getHardLimit(), getUsage(), getUnit(), getCustomerId(), getSubject());
     }
 }
