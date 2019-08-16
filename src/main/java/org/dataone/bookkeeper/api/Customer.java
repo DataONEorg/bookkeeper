@@ -95,6 +95,10 @@ public class Customer {
 
     /* The customer quota list, if any */
     private List<Quota> quotas;
+
+    /* The customer subscription list */
+    private List<Subscription> subscriptions;
+
     /**
      * Construct an empty Customer
      */
