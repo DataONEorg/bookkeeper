@@ -21,6 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -37,6 +38,7 @@ import java.util.Objects;
 /**
  * Products represent a given offering to be purchased
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Product {
 
     /* The product id */
