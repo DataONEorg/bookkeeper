@@ -20,6 +20,7 @@
  */
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.validation.constraints.Min;
@@ -28,6 +29,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
+/**
+ * Subscriptions represent a Product purchased by a Customer, charged for periodically.
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Subscription {
 
     /* The subscription unique identifier */
@@ -126,10 +131,66 @@ public class Subscription {
 
     /* The quotas associated with the product, if any */
     private List<Quota> quotas;
+
     /*
      * Construct an empty subscription.
      */
     public Subscription() {
+        super();
+    }
 
+    /**
+     * Construct a subscription
+     * @param object
+     * @param billingCycleAnchor
+     * @param canceledAt
+     * @param collectionMethod
+     * @param created
+     * @param currentPeriodEnd
+     * @param currentPeriodStart
+     * @param customer
+     * @param daysUntilDue
+     * @param discount
+     * @param endedAt
+     * @param latestInvoice
+     * @param metadata
+     * @param product
+     * @param quantity
+     * @param startDate
+     * @param status
+     * @param trialEnd
+     * @param trialStart
+     * @param quotas
+     */
+    public Subscription(
+        @NotNull @NotEmpty @Pattern(regexp = "subscription") String object,
+        @NotNull @NotEmpty Integer billingCycleAnchor, Integer canceledAt,
+        @NotNull @NotEmpty @Pattern(regexp = "charge_automatically|send_invoice") String collectionMethod,
+        @NotNull @NotEmpty Integer created, Integer currentPeriodEnd, Integer currentPeriodStart,
+        @NotNull @NotEmpty Integer customer, Integer daysUntilDue, ObjectNode discount, Integer endedAt,
+        Integer latestInvoice, ObjectNode metadata, @NotNull @NotEmpty Product product,
+        @NotNull @NotEmpty @Min(1) Integer quantity, Integer startDate,
+        @NotNull @NotEmpty @Pattern(regexp = "incomplete|incomplete_expired|trialing|active|past_due|canceled|unpaid") String status,
+        Integer trialEnd, Integer trialStart, List<Quota> quotas) {
+        this.object = object;
+        this.billingCycleAnchor = billingCycleAnchor;
+        this.canceledAt = canceledAt;
+        this.collectionMethod = collectionMethod;
+        this.created = created;
+        this.currentPeriodEnd = currentPeriodEnd;
+        this.currentPeriodStart = currentPeriodStart;
+        this.customer = customer;
+        this.daysUntilDue = daysUntilDue;
+        this.discount = discount;
+        this.endedAt = endedAt;
+        this.latestInvoice = latestInvoice;
+        this.metadata = metadata;
+        this.product = product;
+        this.quantity = quantity;
+        this.startDate = startDate;
+        this.status = status;
+        this.trialEnd = trialEnd;
+        this.trialStart = trialStart;
+        this.quotas = quotas;
     }
 }
