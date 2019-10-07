@@ -291,6 +291,7 @@ public class Product {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             return formatter.format(new Date(getCreated().intValue() * 1000));
     }
+
     /**
      * Get the product statement descriptor
      * @return
