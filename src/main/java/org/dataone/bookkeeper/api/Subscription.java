@@ -22,12 +22,16 @@ package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -251,6 +255,16 @@ public class Subscription {
     }
 
     /**
+     * Get the billing cycle anchor date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getBillingCycleAnchorTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getBillingCycleAnchor().intValue() * 1000));
+    }
+
+    /**
      * Get the subscription canceled timestamp (seconds since the epoch)
      * @return
      */
@@ -266,6 +280,16 @@ public class Subscription {
     @JsonProperty
     public void setCanceledAt(Integer canceledAt) {
         this.canceledAt = canceledAt;
+    }
+
+    /**
+     * Get the canceled at date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getCanceledAtTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getCanceledAt().intValue() * 1000));
     }
 
     /**
@@ -305,6 +329,16 @@ public class Subscription {
     }
 
     /**
+     * Get the creation date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getCreatedTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getCreated().intValue() * 1000));
+    }
+
+    /**
      * Get the subscription period end timestamp (seconds since the epoch)
      * @return
      */
@@ -323,6 +357,16 @@ public class Subscription {
     }
 
     /**
+     * Get the currentperiod end date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getCurrentPeriodEndTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getCurrentPeriodEnd().intValue() * 1000));
+    }
+
+    /**
      * Get the subscription period start timestamp (seconds since the epoch)
      * @return
      */
@@ -338,6 +382,16 @@ public class Subscription {
     @JsonProperty
     public void setCurrentPeriodStart(Integer currentPeriodStart) {
         this.currentPeriodStart = currentPeriodStart;
+    }
+
+    /**
+     * Get the creation date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getCurrentPeriodStartTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getCurrentPeriodStart().intValue() * 1000));
     }
 
     /**
@@ -395,6 +449,18 @@ public class Subscription {
     }
 
     /**
+     * Return the discount hash as a JSON string
+     * @return discount the discount object hash
+     */
+    public String getDiscountJSON() throws JsonProcessingException {
+        if ( discount != null ) {
+            return Jackson.newObjectMapper().writeValueAsString(getDiscount());
+        } else {
+            return "{}";
+        }
+    }
+
+    /**
      * Get the subscription end timestamp (seconds since the epoch)
      * @return
      */
@@ -410,6 +476,16 @@ public class Subscription {
     @JsonProperty
     public void setEndedAt(Integer endedAt) {
         this.endedAt = endedAt;
+    }
+
+    /**
+     * Get the ended at date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getEndedAtTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getEndedAt().intValue() * 1000));
     }
 
     /**
@@ -446,6 +522,20 @@ public class Subscription {
     @JsonProperty
     public void setMetadata(ObjectNode metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * Return the metadata hash as a JSON string
+     * @return metadata the metadata object hash
+     * @throws JsonProcessingException
+     */
+
+    public String getMetadataJSON() throws JsonProcessingException {
+        if ( metadata != null ) {
+            return Jackson.newObjectMapper().writeValueAsString(getMetadata());
+        } else {
+            return "{}";
+        }
     }
 
     /**
@@ -503,6 +593,16 @@ public class Subscription {
     }
 
     /**
+     * Get the start date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getStartDateTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getStartDate().intValue() * 1000));
+    }
+
+    /**
      * Get the subscription status
      * @return
      */
@@ -539,6 +639,16 @@ public class Subscription {
     }
 
     /**
+     * Get the trial end date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getTrialEndTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getTrialEnd().intValue() * 1000));
+    }
+
+    /**
      * Get the subscription trial start timestamp (seconds since the epoch)
      * @return
      */
@@ -554,6 +664,16 @@ public class Subscription {
     @JsonProperty
     public void setTrialStart(Integer trialStart) {
         this.trialStart = trialStart;
+    }
+
+    /**
+     * Get the trial start date as an ISO 8601 timestamp string
+     * @return
+     */
+    public String getTrailStartTimestamp() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(new Date(getTrialStart().intValue() * 1000));
     }
 
     /**
