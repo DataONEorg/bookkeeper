@@ -21,6 +21,7 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.validation.constraints.Min;
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Subscriptions represent a Product purchased by a Customer, charged for periodically.
@@ -132,7 +134,7 @@ public class Subscription {
     /* The quotas associated with the product, if any */
     private List<Quota> quotas;
 
-    /*
+    /**
      * Construct an empty subscription.
      */
     public Subscription() {
@@ -192,5 +194,430 @@ public class Subscription {
         this.trialEnd = trialEnd;
         this.trialStart = trialStart;
         this.quotas = quotas;
+    }
+
+    /**
+     * Get the subscription identifier
+     * @return
+     */
+    @JsonProperty
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Get the subscription identifier
+     * @param id
+     */
+    @JsonProperty
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * Get the subscription object type
+     * @return
+     */
+    @JsonProperty
+    public String getObject() {
+        return object;
+    }
+
+    /**
+     * Set the subscription object type
+     * @param object
+     */
+    @JsonProperty
+    public void setObject(String object) {
+        this.object = object;
+    }
+
+    /**
+     * Get the subscription billing cycle anchor timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getBillingCycleAnchor() {
+        return billingCycleAnchor;
+    }
+
+    /**
+     * Set the subscription billing cycle anchor timestamp (seconds since the epoch)
+     * @param billingCycleAnchor
+     */
+    @JsonProperty
+    public void setBillingCycleAnchor(Integer billingCycleAnchor) {
+        this.billingCycleAnchor = billingCycleAnchor;
+    }
+
+    /**
+     * Get the subscription canceled timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getCanceledAt() {
+        return canceledAt;
+    }
+
+    /**
+     * Set the subscription canceled timestamp (seconds since the epoch)
+     * @param canceledAt
+     */
+    @JsonProperty
+    public void setCanceledAt(Integer canceledAt) {
+        this.canceledAt = canceledAt;
+    }
+
+    /**
+     * Get the subscription collection method
+     * @return
+     */
+    @JsonProperty
+    public String getCollectionMethod() {
+        return collectionMethod;
+    }
+
+    /**
+     * Set the subscription collection method
+     * @param collectionMethod
+     */
+    @JsonProperty
+    public void setCollectionMethod(String collectionMethod) {
+        this.collectionMethod = collectionMethod;
+    }
+
+    /**
+     * Get the subscription creation timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getCreated() {
+        return created;
+    }
+
+    /**
+     * Set the subscription creation timestamp (seconds since the epoch)
+     * @param created
+     */
+    @JsonProperty
+    public void setCreated(Integer created) {
+        this.created = created;
+    }
+
+    /**
+     * Get the subscription period end timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getCurrentPeriodEnd() {
+        return currentPeriodEnd;
+    }
+
+    /**
+     * Set the subscription period end timestamp (seconds since the epoch)
+     * @param currentPeriodEnd
+     */
+    @JsonProperty
+    public void setCurrentPeriodEnd(Integer currentPeriodEnd) {
+        this.currentPeriodEnd = currentPeriodEnd;
+    }
+
+    /**
+     * Get the subscription period start timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getCurrentPeriodStart() {
+        return currentPeriodStart;
+    }
+
+    /**
+     * Set the subscription period start timestamp (seconds since the epoch)
+     * @param currentPeriodStart
+     */
+    @JsonProperty
+    public void setCurrentPeriodStart(Integer currentPeriodStart) {
+        this.currentPeriodStart = currentPeriodStart;
+    }
+
+    /**
+     * Get the subscription customer identifier
+     * @return
+     */
+    @JsonProperty
+    public Integer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * Set the subscription customer identifier
+     * @param customer
+     */
+    @JsonProperty
+    public void setCustomer(Integer customer) {
+        this.customer = customer;
+    }
+
+    /**
+     * Get the subscription days until due
+     * @return
+     */
+    @JsonProperty
+    public Integer getDaysUntilDue() {
+        return daysUntilDue;
+    }
+
+    /**
+     * Set the subscription days until due
+     * @param daysUntilDue
+     */
+    @JsonProperty
+    public void setDaysUntilDue(Integer daysUntilDue) {
+        this.daysUntilDue = daysUntilDue;
+    }
+
+    /**
+     * Get the subscription discount
+     * @return
+     */
+    @JsonProperty
+    public ObjectNode getDiscount() {
+        return discount;
+    }
+
+    /**
+     * Set the subscription discount
+     * @param discount
+     */
+    @JsonProperty
+    public void setDiscount(ObjectNode discount) {
+        this.discount = discount;
+    }
+
+    /**
+     * Get the subscription end timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getEndedAt() {
+        return endedAt;
+    }
+
+    /**
+     * Set the subscription end timestamp (seconds since the epoch)
+     * @param endedAt
+     */
+    @JsonProperty
+    public void setEndedAt(Integer endedAt) {
+        this.endedAt = endedAt;
+    }
+
+    /**
+     * Get the subscription latest invoice identifier
+     * @return
+     */
+    @JsonProperty
+    public Integer getLatestInvoice() {
+        return latestInvoice;
+    }
+
+    /**
+     * Set the subscription latest invoice identifier
+     * @param latestInvoice
+     */
+    @JsonProperty
+    public void setLatestInvoice(Integer latestInvoice) {
+        this.latestInvoice = latestInvoice;
+    }
+
+    /**
+     * Get the subscription metadata
+     * @return
+     */
+    @JsonProperty
+    public ObjectNode getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * Set the subscription metadata
+     * @param metadata
+     */
+    @JsonProperty
+    public void setMetadata(ObjectNode metadata) {
+        this.metadata = metadata;
+    }
+
+    /**
+     * Get the subscription product
+     * @return
+     */
+    @JsonProperty
+    public Product getProduct() {
+        return product;
+    }
+
+    /**
+     * Set the subscription product
+     * @param product
+     */
+    @JsonProperty
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    /**
+     * Get the subscription quantity of the product
+     * @return
+     */
+    @JsonProperty
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    /**
+     * Set the subscription quantity of the product
+     * @param quantity
+     */
+    @JsonProperty
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    /**
+     * Get the subscription start timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Set the subscription start timestamp (seconds since the epoch)
+     * @param startDate
+     */
+    @JsonProperty
+    public void setStartDate(Integer startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Get the subscription status
+     * @return
+     */
+    @JsonProperty
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * Set the subscription status
+     * @param status
+     */
+    @JsonProperty
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * Get the subscription trial end timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getTrialEnd() {
+        return trialEnd;
+    }
+
+    /**
+     * Set the subscription trial end timestamp (seconds since the epoch)
+     * @param trialEnd
+     */
+    @JsonProperty
+    public void setTrialEnd(Integer trialEnd) {
+        this.trialEnd = trialEnd;
+    }
+
+    /**
+     * Get the subscription trial start timestamp (seconds since the epoch)
+     * @return
+     */
+    @JsonProperty
+    public Integer getTrialStart() {
+        return trialStart;
+    }
+
+    /**
+     * Set the subscription trial start timestamp (seconds since the epoch)
+     * @param trialStart
+     */
+    @JsonProperty
+    public void setTrialStart(Integer trialStart) {
+        this.trialStart = trialStart;
+    }
+
+    /**
+     * Get the subscription quotas
+     * @return
+     */
+    @JsonProperty
+    public List<Quota> getQuotas() {
+        return quotas;
+    }
+
+    /**
+     * Set the subscription quotas
+     * @param quotas
+     */
+    @JsonProperty
+    public void setQuotas(List<Quota> quotas) {
+        this.quotas = quotas;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o the object to compare
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subscription that = (Subscription) o;
+        return Objects.equals(getId(), that.getId()) &&
+            Objects.equals(getObject(), that.getObject()) &&
+            Objects.equals(getBillingCycleAnchor(), that.getBillingCycleAnchor()) &&
+            Objects.equals(getCanceledAt(), that.getCanceledAt()) &&
+            Objects.equals(getCollectionMethod(), that.getCollectionMethod()) &&
+            Objects.equals(getCreated(), that.getCreated()) &&
+            Objects.equals(getCurrentPeriodEnd(), that.getCurrentPeriodEnd()) &&
+            Objects.equals(getCurrentPeriodStart(), that.getCurrentPeriodStart()) &&
+            Objects.equals(getCustomer(), that.getCustomer()) &&
+            Objects.equals(getDaysUntilDue(), that.getDaysUntilDue()) &&
+            Objects.equals(getDiscount(), that.getDiscount()) &&
+            Objects.equals(getEndedAt(), that.getEndedAt()) &&
+            Objects.equals(getLatestInvoice(), that.getLatestInvoice()) &&
+            Objects.equals(getMetadata(), that.getMetadata()) &&
+            Objects.equals(getProduct(), that.getProduct()) &&
+            Objects.equals(getQuantity(), that.getQuantity()) &&
+            Objects.equals(getStartDate(), that.getStartDate()) &&
+            Objects.equals(getStatus(), that.getStatus()) &&
+            Objects.equals(getTrialEnd(), that.getTrialEnd()) &&
+            Objects.equals(getTrialStart(), that.getTrialStart()) &&
+            Objects.equals(getQuotas(), that.getQuotas());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getObject(), getBillingCycleAnchor(), getCanceledAt(),
+            getCollectionMethod(), getCreated(), getCurrentPeriodEnd(), getCurrentPeriodStart(),
+            getCustomer(), getDaysUntilDue(), getDiscount(), getEndedAt(), getLatestInvoice(),
+            getMetadata(), getProduct(), getQuantity(), getStartDate(), getStatus(),
+            getTrialEnd(), getTrialStart(), getQuotas());
     }
 }
