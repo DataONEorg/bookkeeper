@@ -37,35 +37,46 @@ import java.util.List;
 @RegisterBeanMapper(Quota.class)
 public interface QuotaStore {
 
+    /** The query used to find all quotas */
+    String SELECT_CLAUSE =
+        "SELECT " +
+            "q.id, q.object, q.name, q.softLimit, q.hardLimit, " +
+            "q.usage, q.unit, q.subscriptionId, q.subject " +
+            "FROM quotas q ";
+
+    /** The full ordered query */
+    String SELECT_ALL = SELECT_CLAUSE;
+
+    /** The query used to find an individual quota */
+    String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
+
+    /** The query used to find a quota by subject identifier */
+    String SELECT_SUBSCRIPTION = SELECT_CLAUSE + "WHERE q.subscriptionId = :subscriptionId ";
+
+    /** The query used to find a quota by subject identifier */
+    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE q.subject = :subject ";
+
     /**
      * List all quotas
      */
-    @SqlQuery(  "SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
-        "FROM quotas q")
+    @SqlQuery(SELECT_ALL)
     List<Quota> listQuotas();
 
     /**
      * Find quotas by quota identifier
      * @param id
      */
-    @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
-        "FROM quotas q " +
-        "WHERE q.id = :id")
+    @SqlQuery(SELECT_ONE)
     Quota getQuota(@Bind("id") Integer id);
 
     /**
-     * Find quotas by customer identifier.
+     * Find quotas by subscription identifier.
      *
-     * Pass a null customerId to list all product-associated quotas (i.e. not bound to a customer).
-     * @param customerId
+     * Pass a null subscriptionId to list all product-associated quotas (i.e. not bound to a subscription).
+     * @param subscriptionId
      */
-    @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
-        "FROM quotas q " +
-        "WHERE q.customerId = :customerId")
-    List<Quota> findQuotasByCustomerId(@Bind("customerId") Integer customerId);
+    @SqlQuery(SELECT_SUBSCRIPTION)
+    List<Quota> findQuotasBySubscriptionId(@Bind("subscriptionId") Integer subscriptionId);
 
 
     /**
@@ -74,10 +85,7 @@ public interface QuotaStore {
      * @param subject the subject identifier (such as an ORCID identifier)
      * @return quotas the list of quotas for the subject
      */
-    @SqlQuery("SELECT " +
-        "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.usage, q.unit, q.customerId, q.subject " +
-        "FROM quotas q " +
-        "WHERE q.subject = :subject")
+    @SqlQuery(SELECT_SUBJECT)
     List<Quota> findQuotasBySubject(@Bind("subject") String subject);
 
     /**
@@ -85,9 +93,9 @@ public interface QuotaStore {
      * @param quota
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, name, softLimit, hardLimit, usage, unit, customerId, subject) " +
+        "(object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
         "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :customerId, :subject)")
+        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject)")
     void insert(@BindBean Quota quota);
 
     /**
@@ -95,15 +103,15 @@ public interface QuotaStore {
      * @param quota
      */
    @SqlUpdate("UPDATE quotas " +
-        "SET object = :object, " +
-        "name = :name, " +
-        "softLimit = :softLimit, " +
-        "hardLimit = :hardLimit, " +
+       "SET object = :object, " +
+       "name = :name, " +
+       "softLimit = :softLimit, " +
+       "hardLimit = :hardLimit, " +
        "unit = :unit, " +
-        "usage = :usage, " +
-       "customerId = :customerId, " +
-        "subject = :subject " +
-        "WHERE id = :id")
+       "usage = :usage, " +
+       "subscriptionId = :subscriptionId, " +
+       "subject = :subject " +
+       "WHERE id = :id")
     void update(@BindBean Quota quota);
 
     /**
