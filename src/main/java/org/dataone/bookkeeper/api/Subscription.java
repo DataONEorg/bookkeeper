@@ -44,7 +44,7 @@ public class Subscription {
     /* The subscription unique identifier */
     @NotNull
     @NotEmpty
-    private String id;
+    private Integer id;
 
     /* The subscription object type */
     @NotNull
@@ -56,10 +56,10 @@ public class Subscription {
      * Determines the date of the first full invoice.
      * For products with month or year intervals,
      * the day of the month for subsequent invoices
-     */
     @NotNull
     @NotEmpty
     private Integer billingCycleAnchor;
+    */
 
     /* The subscription cancellation timestamp (seconds since the epoch) */
     private Integer canceledAt;
@@ -75,28 +75,34 @@ public class Subscription {
     @NotEmpty
     private Integer created;
 
-    /* The subscription current period end timestamp (seconds since the epoch) */
+    /* The subscription current period end timestamp (seconds since the epoch)
     private Integer currentPeriodEnd;
+    */
 
-    /* The subscription current period start timestamp (seconds since the epoch) */
+    /* The subscription current period start timestamp (seconds since the epoch)
     private Integer currentPeriodStart;
+    */
 
     /* The subscription customer identifier */
     @NotNull
     @NotEmpty
-    private Integer customer;
+    private Integer customerId;
 
-    /* The subscription days until due */
+    /* The subscription days until due
     private Integer daysUntilDue;
+    */
 
-    /* The subscription discount */
+    /* The subscription discount
     private ObjectNode discount;
+    */
 
-    /* The subscription end timestamp (seconds since the epoch) */
+    /* The subscription end timestamp (seconds since the epoch)
     private Integer endedAt;
+    */
 
-    /* The subscription latest invoice identifier */
+    /* The subscription latest invoice identifier
     private Integer latestInvoice;
+    */
 
     /* The subscription metadata object */
     private ObjectNode metadata;
@@ -148,17 +154,10 @@ public class Subscription {
     /**
      * Construct a subscription
      * @param object
-     * @param billingCycleAnchor
      * @param canceledAt
      * @param collectionMethod
      * @param created
-     * @param currentPeriodEnd
-     * @param currentPeriodStart
-     * @param customer
-     * @param daysUntilDue
-     * @param discount
-     * @param endedAt
-     * @param latestInvoice
+     * @param customerId
      * @param metadata
      * @param product
      * @param quantity
@@ -169,27 +168,26 @@ public class Subscription {
      * @param quotas
      */
     public Subscription(
+        Integer id,
         @NotNull @NotEmpty @Pattern(regexp = "subscription") String object,
-        @NotNull @NotEmpty Integer billingCycleAnchor, Integer canceledAt,
+        Integer canceledAt,
         @NotNull @NotEmpty @Pattern(regexp = "charge_automatically|send_invoice") String collectionMethod,
-        @NotNull @NotEmpty Integer created, Integer currentPeriodEnd, Integer currentPeriodStart,
-        @NotNull @NotEmpty Integer customer, Integer daysUntilDue, ObjectNode discount, Integer endedAt,
-        Integer latestInvoice, ObjectNode metadata, @NotNull @NotEmpty Product product,
-        @NotNull @NotEmpty @Min(1) Integer quantity, Integer startDate,
+        @NotNull @NotEmpty Integer created,
+        @NotNull @NotEmpty Integer customerId,
+        ObjectNode metadata,
+        @NotNull @NotEmpty Product product,
+        @NotNull @NotEmpty @Min(1) Integer quantity,
+        Integer startDate,
         @NotNull @NotEmpty @Pattern(regexp = "incomplete|incomplete_expired|trialing|active|past_due|canceled|unpaid") String status,
-        Integer trialEnd, Integer trialStart, List<Quota> quotas) {
+        Integer trialEnd,
+        Integer trialStart,
+        List<Quota> quotas) {
+        this.id = id;
         this.object = object;
-        this.billingCycleAnchor = billingCycleAnchor;
         this.canceledAt = canceledAt;
         this.collectionMethod = collectionMethod;
         this.created = created;
-        this.currentPeriodEnd = currentPeriodEnd;
-        this.currentPeriodStart = currentPeriodStart;
-        this.customer = customer;
-        this.daysUntilDue = daysUntilDue;
-        this.discount = discount;
-        this.endedAt = endedAt;
-        this.latestInvoice = latestInvoice;
+        this.customerId = customerId;
         this.metadata = metadata;
         this.product = product;
         this.quantity = quantity;
@@ -205,7 +203,7 @@ public class Subscription {
      * @return
      */
     @JsonProperty
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -214,7 +212,7 @@ public class Subscription {
      * @param id
      */
     @JsonProperty
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -234,34 +232,6 @@ public class Subscription {
     @JsonProperty
     public void setObject(String object) {
         this.object = object;
-    }
-
-    /**
-     * Get the subscription billing cycle anchor timestamp (seconds since the epoch)
-     * @return
-     */
-    @JsonProperty
-    public Integer getBillingCycleAnchor() {
-        return billingCycleAnchor;
-    }
-
-    /**
-     * Set the subscription billing cycle anchor timestamp (seconds since the epoch)
-     * @param billingCycleAnchor
-     */
-    @JsonProperty
-    public void setBillingCycleAnchor(Integer billingCycleAnchor) {
-        this.billingCycleAnchor = billingCycleAnchor;
-    }
-
-    /**
-     * Get the billing cycle anchor date as an ISO 8601 timestamp string
-     * @return
-     */
-    public String getBillingCycleAnchorTimestamp() {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getBillingCycleAnchor().intValue() * 1000));
     }
 
     /**
@@ -339,171 +309,21 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription period end timestamp (seconds since the epoch)
-     * @return
-     */
-    @JsonProperty
-    public Integer getCurrentPeriodEnd() {
-        return currentPeriodEnd;
-    }
-
-    /**
-     * Set the subscription period end timestamp (seconds since the epoch)
-     * @param currentPeriodEnd
-     */
-    @JsonProperty
-    public void setCurrentPeriodEnd(Integer currentPeriodEnd) {
-        this.currentPeriodEnd = currentPeriodEnd;
-    }
-
-    /**
-     * Get the currentperiod end date as an ISO 8601 timestamp string
-     * @return
-     */
-    public String getCurrentPeriodEndTimestamp() {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getCurrentPeriodEnd().intValue() * 1000));
-    }
-
-    /**
-     * Get the subscription period start timestamp (seconds since the epoch)
-     * @return
-     */
-    @JsonProperty
-    public Integer getCurrentPeriodStart() {
-        return currentPeriodStart;
-    }
-
-    /**
-     * Set the subscription period start timestamp (seconds since the epoch)
-     * @param currentPeriodStart
-     */
-    @JsonProperty
-    public void setCurrentPeriodStart(Integer currentPeriodStart) {
-        this.currentPeriodStart = currentPeriodStart;
-    }
-
-    /**
-     * Get the creation date as an ISO 8601 timestamp string
-     * @return
-     */
-    public String getCurrentPeriodStartTimestamp() {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getCurrentPeriodStart().intValue() * 1000));
-    }
-
-    /**
      * Get the subscription customer identifier
      * @return
      */
     @JsonProperty
-    public Integer getCustomer() {
-        return customer;
+    public Integer getCustomerId() {
+        return customerId;
     }
 
     /**
      * Set the subscription customer identifier
-     * @param customer
+     * @param customerId
      */
     @JsonProperty
-    public void setCustomer(Integer customer) {
-        this.customer = customer;
-    }
-
-    /**
-     * Get the subscription days until due
-     * @return
-     */
-    @JsonProperty
-    public Integer getDaysUntilDue() {
-        return daysUntilDue;
-    }
-
-    /**
-     * Set the subscription days until due
-     * @param daysUntilDue
-     */
-    @JsonProperty
-    public void setDaysUntilDue(Integer daysUntilDue) {
-        this.daysUntilDue = daysUntilDue;
-    }
-
-    /**
-     * Get the subscription discount
-     * @return
-     */
-    @JsonProperty
-    public ObjectNode getDiscount() {
-        return discount;
-    }
-
-    /**
-     * Set the subscription discount
-     * @param discount
-     */
-    @JsonProperty
-    public void setDiscount(ObjectNode discount) {
-        this.discount = discount;
-    }
-
-    /**
-     * Return the discount hash as a JSON string
-     * @return discount the discount object hash
-     */
-    public String getDiscountJSON() throws JsonProcessingException {
-        if ( discount != null ) {
-            return Jackson.newObjectMapper().writeValueAsString(getDiscount());
-        } else {
-            return "{}";
-        }
-    }
-
-    /**
-     * Get the subscription end timestamp (seconds since the epoch)
-     * @return
-     */
-    @JsonProperty
-    public Integer getEndedAt() {
-        return endedAt;
-    }
-
-    /**
-     * Set the subscription end timestamp (seconds since the epoch)
-     * @param endedAt
-     */
-    @JsonProperty
-    public void setEndedAt(Integer endedAt) {
-        this.endedAt = endedAt;
-    }
-
-    /**
-     * Get the ended at date as an ISO 8601 timestamp string
-     * @return
-     */
-    public String getEndedAtTimestamp() {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getEndedAt().intValue() * 1000));
-    }
-
-    /**
-     * Get the subscription latest invoice identifier
-     * @return
-     */
-    @JsonProperty
-    public Integer getLatestInvoice() {
-        return latestInvoice;
-    }
-
-    /**
-     * Set the subscription latest invoice identifier
-     * @param latestInvoice
-     */
-    @JsonProperty
-    public void setLatestInvoice(Integer latestInvoice) {
-        this.latestInvoice = latestInvoice;
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     /**
@@ -706,17 +526,10 @@ public class Subscription {
         Subscription that = (Subscription) o;
         return Objects.equals(getId(), that.getId()) &&
             Objects.equals(getObject(), that.getObject()) &&
-            Objects.equals(getBillingCycleAnchor(), that.getBillingCycleAnchor()) &&
             Objects.equals(getCanceledAt(), that.getCanceledAt()) &&
             Objects.equals(getCollectionMethod(), that.getCollectionMethod()) &&
             Objects.equals(getCreated(), that.getCreated()) &&
-            Objects.equals(getCurrentPeriodEnd(), that.getCurrentPeriodEnd()) &&
-            Objects.equals(getCurrentPeriodStart(), that.getCurrentPeriodStart()) &&
-            Objects.equals(getCustomer(), that.getCustomer()) &&
-            Objects.equals(getDaysUntilDue(), that.getDaysUntilDue()) &&
-            Objects.equals(getDiscount(), that.getDiscount()) &&
-            Objects.equals(getEndedAt(), that.getEndedAt()) &&
-            Objects.equals(getLatestInvoice(), that.getLatestInvoice()) &&
+            Objects.equals(getCustomerId(), that.getCustomerId()) &&
             Objects.equals(getMetadata(), that.getMetadata()) &&
             Objects.equals(getProduct(), that.getProduct()) &&
             Objects.equals(getQuantity(), that.getQuantity()) &&
@@ -734,10 +547,8 @@ public class Subscription {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getObject(), getBillingCycleAnchor(), getCanceledAt(),
-            getCollectionMethod(), getCreated(), getCurrentPeriodEnd(), getCurrentPeriodStart(),
-            getCustomer(), getDaysUntilDue(), getDiscount(), getEndedAt(), getLatestInvoice(),
-            getMetadata(), getProduct(), getQuantity(), getStartDate(), getStatus(),
-            getTrialEnd(), getTrialStart(), getQuotas());
+        return Objects.hash(getId(), getObject(), getCanceledAt(), getCollectionMethod(),
+            getCreated(), getCustomerId(), getMetadata(), getProduct(), getQuantity(),
+            getStartDate(), getStatus(), getTrialEnd(), getTrialStart(), getQuotas());
     }
 }
