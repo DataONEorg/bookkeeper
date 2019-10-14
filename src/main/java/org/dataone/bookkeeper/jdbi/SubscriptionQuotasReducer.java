@@ -3,7 +3,7 @@
  * jointly copyrighted by participating institutions in DataONE. For
  * more information on DataONE, see our web site at http://dataone.org.
  *
- *   Copyright 2019. All rights reserved.
+ *   Copyright 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,41 +21,44 @@
 
 package org.dataone.bookkeeper.jdbi;
 
-import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
+import org.dataone.bookkeeper.api.Subscription;
+import org.dataone.bookkeeper.jdbi.mappers.SubscriptionMapper;
 import org.jdbi.v3.core.result.LinkedHashMapRowReducer;
 import org.jdbi.v3.core.result.RowView;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 
 import java.util.LinkedList;
 import java.util.Map;
 
 /**
  * Row reducer that accumulates multiple quotas associated
- * with a customer into a list based on a SQL join between
- * the customers and quotas tables.
+ * with a subscription into a list based on a SQL join between
+ * the subscriptions and quotas tables.
  */
 @RegisterBeanMapper(value = Quota.class)
-public class CustomerQuotasReducer implements LinkedHashMapRowReducer<Integer, Customer> {
+@RegisterRowMapper(value = SubscriptionMapper.class)
+public class SubscriptionQuotasReducer implements LinkedHashMapRowReducer<Integer, Subscription> {
 
     /**
-     * Accumulate quotas into a list in the customer instance
-     * @param map The map of customer id to customer instances
+     * Accumulate quotas into a list in the subscription instance
+     * @param map The map of subscription id to subscription instances
      * @param rowView The view of the result set row from the joined tables
      */
     @Override
-    public void accumulate(Map<Integer, Customer> map, RowView rowView) {
-        // Build a customer from the resultset if one isn't in the map given the id
-        Customer customer =
-            map.computeIfAbsent(rowView.getColumn("c_id", Integer.class),
-            id -> rowView.getRow(Customer.class));
+    public void accumulate(Map<Integer, Subscription> map, RowView rowView) {
+        // Build a subscription from the resultset if one isn't in the map given the id
+        Subscription subscription =
+            map.computeIfAbsent(rowView.getColumn("s_id", Integer.class),
+            id -> rowView.getRow(Subscription.class));
 
-        // Otherwise, for the same customer id, add quotas to the quota list
-        if ( rowView.getColumn("id", Integer.class) != null ) {
-            if ( customer.getQuotas() == null ) {
-                customer.setQuotas(new LinkedList<Quota>());
+        // Otherwise, for the same subscription id, add quotas to the quota list
+        if ( rowView.getColumn("s_id", Integer.class) != null ) {
+            if ( subscription.getQuotas() == null ) {
+                subscription.setQuotas(new LinkedList<Quota>());
             }
-            customer.getQuotas().add(rowView.getRow(Quota.class));
+            subscription.getQuotas().add(rowView.getRow(Quota.class));
         }
     }
 }
