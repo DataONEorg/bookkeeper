@@ -69,8 +69,8 @@ public class Quota {
     @NotNull
     private String unit;
 
-    /* The quota customer id */
-    private Integer customerId;
+    /* The quota subscription id */
+    private Integer subscriptionId;
 
     /* The quota subject id */
     private String subject;
@@ -102,7 +102,7 @@ public class Quota {
             this.hardLimit = quota.hardLimit;
             this.usage = quota.usage;
             this.unit = quota.unit;
-            this.customerId = quota.customerId;
+            this.subscriptionId = quota.subscriptionId;
             this.subject = quota.subject;
         }
     }
@@ -116,12 +116,12 @@ public class Quota {
      * @param hardLimit
      * @param unit
      * @param usage
-     * @param customerId
+     * @param subscriptionId
      * @param subject
      */
     public Quota(Integer id, String object, String name, Integer softLimit,
                  Integer hardLimit, Integer usage, String unit,
-                 Integer customerId, String subject) {
+                 Integer subscriptionId, String subject) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
                 this.id = id;
@@ -133,7 +133,7 @@ public class Quota {
         this.hardLimit = hardLimit;
         this.unit = unit;
         this.usage = usage;
-        this.customerId = customerId;
+        this.subscriptionId = subscriptionId;
         this.subject = subject;
     }
 
@@ -265,21 +265,21 @@ public class Quota {
     }
 
     /**
-     * Get the customer id
-     * @return customerId
+     * Get the subscription id
+     * @return subscriptionId
      */
     @JsonProperty
-    public Integer getCustomerId() {
-        return customerId;
+    public Integer getSubscriptionId() {
+        return subscriptionId;
     }
 
     /**
-     * Set the customer id
-     * @param customerId
+     * Set the subscription id
+     * @param subscriptionId
      */
     @JsonProperty
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setSubscriptionId(Integer subscriptionId) {
+        this.subscriptionId = subscriptionId;
     }
 
     /**
@@ -317,7 +317,7 @@ public class Quota {
             Objects.equals(getHardLimit(), quota.getHardLimit()) &&
             Objects.equals(getUsage(), quota.getUsage()) &&
             Objects.equals(getUnit(), quota.getUnit()) &&
-            Objects.equals(getCustomerId(), quota.getCustomerId()) &&
+            Objects.equals(getSubscriptionId(), quota.getSubscriptionId()) &&
             Objects.equals(getSubject(), quota.getSubject());
     }
 
@@ -329,6 +329,6 @@ public class Quota {
     public int hashCode() {
 
         return Objects.hash(getId(), getObject(), getName(), getSoftLimit(),
-            getHardLimit(), getUsage(), getUnit(), getCustomerId(), getSubject());
+            getHardLimit(), getUsage(), getUnit(), getSubscriptionId(), getSubject());
     }
 }
