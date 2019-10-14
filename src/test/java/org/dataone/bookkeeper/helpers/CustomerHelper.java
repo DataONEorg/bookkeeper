@@ -141,8 +141,7 @@ public class CustomerHelper {
             Jackson.newObjectMapper().createObjectNode(),
             "Christopher",
             "Jones",
-            "805-893-2500",
-            new LinkedList<Quota>()
+            "805-893-2500"
         );
         return customer;
     }
