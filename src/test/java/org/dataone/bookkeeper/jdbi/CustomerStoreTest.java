@@ -95,40 +95,6 @@ public class CustomerStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test listing a customer with storage and portal quotas
-     */
-    @Test
-    @DisplayName("Test listing customers with associated storage and portal quotas")
-    public void testListCustomersWithStorageAndPortalQuotas() {
-
-        try {
-            // Insert a customer
-            final Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
-            this.customerIds.add(customerId);
-
-            // Insert a storage and portal quotas for the customer
-            final Map<Integer, Quota> quotas =
-                QuotaHelper.insertTestStorageAndPortalQuotasWithCustomer(
-                    StoreHelper.getRandomId(), StoreHelper.getRandomId(), customerId);
-                customerStore.listCustomers().forEach(customer -> {
-                    customer.getQuotas()
-                        .forEach(quota -> {
-                            Quota expectedQuota = quotas.get(quota.getId());
-                            assertTrue(quota.getId().equals(expectedQuota.getId()));
-                            assertTrue(quota.getObject().equals(expectedQuota.getObject()));
-                            assertTrue(quota.getName().equals(expectedQuota.getName()));
-                            assertTrue(quota.getSoftLimit().equals(expectedQuota.getSoftLimit()));
-                            assertTrue(quota.getHardLimit().equals(expectedQuota.getHardLimit()));
-                            assertTrue(quota.getUnit().equals(expectedQuota.getUnit()));
-                            assertTrue(quota.getCustomerId().equals(expectedQuota.getCustomerId()));
-                        });
-                });
-        } catch (SQLException e) {
-            fail(e);
-        }
-    }
-
-    /**
      * Test getting a customer by id
      * @throws SQLException
      */
