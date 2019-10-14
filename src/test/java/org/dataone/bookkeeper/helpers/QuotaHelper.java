@@ -36,69 +36,87 @@ public class QuotaHelper {
 
 
     /**
-     * Insert a test quota with a given id and customer id
+     * Insert a test quota with a given id and subscription id
      * @param quotaId
-     * @param customerId
+     * @param subscriptionId
      * @return
      */
-    public static Integer insertTestQuotaWithCustomer(Integer quotaId, Integer customerId)  throws SQLException {
+    public static Integer insertTestQuotaWithSubscription(Integer quotaId, Integer subscriptionId)  throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
-            handle.execute("INSERT INTO quotas " +
-                    "(id, object, name, softLimit, hardLimit, usage, unit, customerId, subject) " +
-                    "VALUES " +
+            handle.execute(
+                "INSERT INTO quotas " +
+                    "(id, " +
+                    "object, " +
+                    "name, " +
+                    "softLimit, " +
+                    "hardLimit, " +
+                    "usage, " +
+                    "unit, " +
+                    "subscriptionId, " +
+                    "subject) " +
+                "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
                 "quota",
-                "test_customer_quota",
+                "test_subscription_quota",
                 12345,
                 123450,
                 null,
                 "megabyte",
-                customerId,
+                subscriptionId,
                 null)
         );
         return quotaId;
     }
 
-    public static Integer insertTestQuotaWithSubject(Integer quotaId, String subject) throws SQLException {
+    /**
+     * Insert a test quota with a given id, subscription id, and subject
+     * @param quotaId
+     * @param subscriptionId
+     * @param subject
+     * @return
+     * @throws SQLException
+     */
+    public static Integer insertTestQuotaWithSubject(
+        Integer quotaId, Integer subscriptionId, String subject) throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
             handle.execute("INSERT INTO quotas " +
-                "(id, object, name, softLimit, hardLimit, usage, unit, customerId, subject) " +
+                "(id, object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
                 "VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
                 "quota",
-                "test_customer_quota",
+                "test_subscription_quota",
                 12345,
                 123450,
                 null,
                 "megabyte",
-                null,
+                subscriptionId,
                 subject)
         );
         return quotaId;
     }
 
     /**
-     * Insert test storage and portal quotas into the quotas table  for the given customer id
+     * Insert test storage and portal quotas into the quotas table  for the given subscription id
      * @param storageQuotaId
      * @param portalQuotaId
-     * @param customerId
+     * @param subscriptionId
      * @return
      * @throws SQLException
      */
-    public static Map<Integer, Quota> insertTestStorageAndPortalQuotasWithCustomer(
-        Integer storageQuotaId, Integer portalQuotaId, Integer customerId)
+    public static Map<Integer, Quota> insertTestStorageAndPortalQuotasWithSubscription(
+        Integer storageQuotaId, Integer portalQuotaId, Integer subscriptionId)
         throws SQLException {
         // Create storage and portal quotas
         Map<Integer, Quota> quotas = new HashMap<Integer, Quota>();
-        quotas.put(storageQuotaId, QuotaHelper.createTestStorageQuota(storageQuotaId, customerId));
-        quotas.put(portalQuotaId, QuotaHelper.createTestPortalQuota(portalQuotaId, customerId));
+        quotas.put(storageQuotaId, QuotaHelper.createTestStorageQuota(storageQuotaId, subscriptionId));
+        quotas.put(portalQuotaId, QuotaHelper.createTestPortalQuota(portalQuotaId, subscriptionId));
 
         String insertStatement = "INSERT INTO quotas " +
-            "(id, object, name, softLimit, hardLimit, usage, unit, customerId, subject) " +
+            "(id, object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        // Insert them into the database for the given customer id
+        // Insert them into the database for the given subscription id
         BaseTestCase.dbi.useHandle(handle -> {
             handle.execute(insertStatement,
                 storageQuotaId,
@@ -108,7 +126,7 @@ public class QuotaHelper {
                 quotas.get(storageQuotaId).getHardLimit(),
                 quotas.get(storageQuotaId).getUsage(),
                 quotas.get(storageQuotaId).getUnit(),
-                quotas.get(storageQuotaId).getCustomerId(),
+                quotas.get(storageQuotaId).getSubscriptionId(),
                 quotas.get(storageQuotaId).getSubject()
             );
             handle.execute(insertStatement,
@@ -119,7 +137,7 @@ public class QuotaHelper {
                 quotas.get(portalQuotaId).getHardLimit(),
                 quotas.get(portalQuotaId).getUsage(),
                 quotas.get(portalQuotaId).getUnit(),
-                quotas.get(portalQuotaId).getCustomerId(),
+                quotas.get(portalQuotaId).getSubscriptionId(),
                 quotas.get(portalQuotaId).getSubject()
             );
         });
@@ -138,12 +156,12 @@ public class QuotaHelper {
     }
 
     /**
-     * Create a test Quota instance given the quotaId and customerId
+     * Create a test Quota instance given the quotaId and subscriptionId
      * @param quotaId
-     * @param customerId
+     * @param subscriptionId
      * @return
      */
-    public static Quota createTestStorageQuota(@NotNull Integer quotaId, Integer customerId) {
+    public static Quota createTestStorageQuota(@NotNull Integer quotaId, Integer subscriptionId) {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
@@ -152,12 +170,12 @@ public class QuotaHelper {
         quota.setHardLimit(5000000);
         quota.setUsage(null);
         quota.setUnit("megabyte");
-        quota.setCustomerId(customerId);
+        quota.setSubscriptionId(subscriptionId);
         quota.setSubject(null);
         return quota;
     }
 
-    public static Quota createTestPortalQuota(@NotNull Integer quotaId, Integer customerId) {
+    public static Quota createTestPortalQuota(@NotNull Integer quotaId, Integer subscriptionId) {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
@@ -166,7 +184,7 @@ public class QuotaHelper {
         quota.setHardLimit(3);
         quota.setUsage(null);
         quota.setUnit("portal");
-        quota.setCustomerId(customerId);
+        quota.setSubscriptionId(subscriptionId);
         quota.setSubject(null);
         return quota;
     }
@@ -224,7 +242,7 @@ public class QuotaHelper {
     public static Quota getQuotaById(Integer quotaId) {
         Quota quota = BaseTestCase.dbi.withHandle(handle ->
             handle.createQuery("SELECT id, object, name, softLimit, hardLimit, usage, unit, " +
-                "customerId, subject " +
+                "subscriptionId, subject " +
                 "FROM quotas WHERE id = :id")
                 .bind("id", quotaId)
                 .mapToBean(Quota.class)
