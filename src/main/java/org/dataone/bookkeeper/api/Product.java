@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -55,17 +56,28 @@ public class Product {
     @NotNull
     private boolean active;
 
-    /* The product name */
+    /* The product cost (in pence of the currency) */
     @NotEmpty
     @NotNull
-    @Length(max = 250)
-    private String name;
+    @Min(0)
+    private Integer amount;
 
-    /* The product caption*/
+    /* The product caption */
     @NotEmpty
     @NotNull
     @Length(max = 500)
     private String caption;
+
+    /* The product currency code */
+    @NotEmpty
+    @NotNull
+    @Length(max = 3)
+    private String currency;
+
+    /* The product creation timestamp (from the unix epoch in seconds)*/
+    @NotEmpty
+    @NotNull
+    private Integer created;
 
     /* The product description */
     @NotEmpty
@@ -73,10 +85,17 @@ public class Product {
     @Length(max = 1000)
     private String description;
 
-    /* The product creation timestamp (from the unix epoch in seconds)*/
+    /* The product payment interval */
     @NotEmpty
     @NotNull
-    private Integer created;
+    @Pattern(regexp = "day|week|month|year")
+    private String interval;
+
+    /* The product name */
+    @NotEmpty
+    @NotNull
+    @Length(max = 250)
+    private String name;
 
     /* The product statement descriptor shown on charge receipts */
     @Length(max = 100)
@@ -106,42 +125,31 @@ public class Product {
         super();
     }
 
-    /**
-     * Construct a product
-     * @param id
-     * @param object
-     * @param active
-     * @param name
-     * @param caption
-     * @param description
-     * @param created
-     * @param statementDescriptor
-     * @param type
-     * @param unitLabel
-     * @param url
-     * @param metadata
-     */
-    public Product (Integer id,
-                    String object,
-                    boolean active,
-                    String name,
-                    String caption,
-                    String description,
-                    Integer created,
-                    String statementDescriptor,
-                    String type,
-                    String unitLabel,
-                    String url,
-                    ObjectNode metadata
-    ) {
-        super();
+    public Product(
+        Integer id,
+        @NotEmpty @NotNull @Pattern(regexp = "product") String object,
+        @NotEmpty @NotNull boolean active,
+        @NotEmpty @NotNull @Min(0) Integer amount,
+        @NotEmpty @NotNull @Length(max = 500) String caption,
+        @NotEmpty @NotNull @Length(max = 3) String currency,
+        @NotEmpty @NotNull Integer created,
+        @NotEmpty @NotNull @Length(max = 1000) String description,
+        @NotEmpty @NotNull @Pattern(regexp = "day|week|month|year") String interval,
+        @NotEmpty @NotNull @Length(max = 250) String name,
+        @Length(max = 100) String statementDescriptor,
+        @NotEmpty @NotNull @Pattern(regexp = "good|service") String type,
+        String unitLabel, @Pattern(regexp = "http.*") String url,
+        ObjectNode metadata) {
         this.id = id;
         this.object = object;
         this.active = active;
-        this.name = name;
+        this.amount = amount;
         this.caption = caption;
-        this.description = description;
+        this.currency = currency;
         this.created = created;
+        this.description = description;
+        this.interval = interval;
+        this.name = name;
         this.statementDescriptor = statementDescriptor;
         this.type = type;
         this.unitLabel = unitLabel;
@@ -396,6 +404,54 @@ public class Product {
     }
 
     /**
+     * Get the product cost amount
+     * @return
+     */
+    public Integer getAmount() {
+        return amount;
+    }
+
+    /**
+     * Set the product cost amount
+     * @param amount
+     */
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * Get the product currency code
+     * @return
+     */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * Set the product currency code
+     * @param currency
+     */
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    /**
+     * Get the product payment interval
+     * @return
+     */
+    public String getInterval() {
+        return interval;
+    }
+
+    /**
+     * Set the product payment
+     * @param interval
+     */
+    public void setInterval(String interval) {
+        this.interval = interval;
+    }
+
+    /**
      * Determine object equality based on the equality of all fields
      * @param o the object to be compared
      * @return
@@ -407,17 +463,21 @@ public class Product {
         Product product = (Product) o;
         return isActive() == product.isActive() &&
             Objects.equals(getId(), product.getId()) &&
-            Objects.equals(getCreated(), product.getCreated()) &&
             Objects.equals(getObject(), product.getObject()) &&
-            Objects.equals(getName(), product.getName()) &&
+            Objects.equals(getAmount(), product.getAmount()) &&
             Objects.equals(getCaption(), product.getCaption()) &&
+            Objects.equals(getCurrency(), product.getCurrency()) &&
+            Objects.equals(getCreated(), product.getCreated()) &&
             Objects.equals(getDescription(), product.getDescription()) &&
+            Objects.equals(getInterval(), product.getInterval()) &&
+            Objects.equals(getName(), product.getName()) &&
             Objects.equals(getStatementDescriptor(), product.getStatementDescriptor()) &&
             Objects.equals(getType(), product.getType()) &&
             Objects.equals(getUnitLabel(), product.getUnitLabel()) &&
             Objects.equals(getUrl(), product.getUrl()) &&
             Objects.equals(getMetadata(), product.getMetadata());
     }
+
 
     /**
      * Calculate a hash based on all fields
@@ -426,8 +486,8 @@ public class Product {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getObject(), isActive(), getName(),
-            getCaption(), getDescription(), getCreated(), getStatementDescriptor(),
-            getType(), getUnitLabel(), getUrl(), getMetadata());
+        return Objects.hash(getId(), getObject(), isActive(), getAmount(), getCaption(),
+            getCurrency(), getCreated(), getDescription(), getInterval(), getName(),
+            getStatementDescriptor(), getType(), getUnitLabel(), getUrl(), getMetadata());
     }
 }
