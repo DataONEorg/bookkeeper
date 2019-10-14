@@ -62,12 +62,15 @@ public class ProductHelper {
         product.setId(productId);
         product.setObject("product");
         product.setActive(true);
-        product.setName("Organization");
+        product.setAmount(180000);
         product.setCaption("Small institutions or groups");
+        product.setCreated(1559768309);
+        product.setCurrency("USD");
         product.setDescription("Create multiple portals for your work and projects. " +
             "Help others understand and access your data.");
+        product.setInterval("year");
         // product.setCreated(new Integer((int) Instant.now().getEpochSecond()));
-        product.setCreated(1559768309);
+        product.setName("Organization");
         product.setStatementDescriptor("DataONE Membership Plan - Organization");
         product.setType("service");
         product.setUnitLabel("membership");
@@ -176,23 +179,29 @@ public class ProductHelper {
                     "(id, " +
                     "object, " +
                     "active, " +
-                    "name, " +
+                    "amount, " +
                     "caption, " +
-                    "description, " +
                     "created, " +
+                    "currency, " +
+                    "description, " +
+                    "interval, " +
+                    "name, " +
                     "statementDescriptor, " +
                     "type, " +
                     "unitLabel, " +
                     "url, " +
                     "metadata) VALUES " +
-                    "(?, ?, ?, ?, ?, ?, to_timestamp(?), ?, ?, ?, ?, ?::json)",
+                    "(?, ?, ?, ?, ?, to_timestamp(?), ?, ?, ?, ?, ?, ?, ?, ?, ?::json)",
                     product.getId(),
                     product.getObject(),
                     product.isActive(),
-                    product.getName(),
+                    product.getAmount(),
                     product.getCaption(),
-                    product.getDescription(),
                     product.getCreated(),
+                    product.getCurrency(),
+                    product.getDescription(),
+                    product.getInterval(),
+                    product.getName(),
                     product.getStatementDescriptor(),
                     product.getType(),
                     product.getUnitLabel(),
@@ -206,6 +215,50 @@ public class ProductHelper {
         return productId;
     }
 
+    public static Product insertTestProduct(Product product) {
+
+        try {
+            BaseTestCase.dbi.useHandle(handle ->
+                handle.execute("INSERT INTO products " +
+                        "(id, " +
+                        "object, " +
+                        "active, " +
+                        "amount, " +
+                        "caption, " +
+                        "created, " +
+                        "currency, " +
+                        "description, " +
+                        "interval, " +
+                        "name, " +
+                        "statementDescriptor, " +
+                        "type, " +
+                        "unitLabel, " +
+                        "url, " +
+                        "metadata) VALUES " +
+                        "(?, ?, ?, ?, ?, to_timestamp(?), ?, ?, ?, ?, ?, ?, ?, ?, ?::json)",
+                    product.getId(),
+                    product.getObject(),
+                    product.isActive(),
+                    product.getAmount(),
+                    product.getCaption(),
+                    product.getCreated(),
+                    product.getCurrency(),
+                    product.getDescription(),
+                    product.getInterval(),
+                    product.getName(),
+                    product.getStatementDescriptor(),
+                    product.getType(),
+                    product.getUnitLabel(),
+                    product.getUrl(),
+                    product.getMetadata().toString()
+                )
+            );
+
+        } catch (Exception e) {
+            fail(e);
+        }
+        return product;
+    }
     /**
      * Return a product given its id
      * @param productId
@@ -213,9 +266,22 @@ public class ProductHelper {
      */
     public static Product getProductById(Integer productId) {
         Product product = BaseTestCase.dbi.withHandle(handle ->
-            handle.createQuery("SELECT id, object, active, name, caption, description, " +
-                "date_part('epoch', created)::int as created, statementDescriptor, type, " +
-                "unitLabel, url, metadata " +
+            handle.createQuery("SELECT " +
+                "id, " +
+                "object, " +
+                "active, " +
+                "amount, " +
+                "caption, " +
+                "date_part('epoch', created)::int as created, " +
+                "currency, " +
+                "description, " +
+                "interval, " +
+                "name, " +
+                "statementDescriptor, " +
+                "type, " +
+                "unitLabel, " +
+                "url, " +
+                "metadata " +
                 "FROM products WHERE id = :id")
                 .bind("id", productId)
                 .map(new ProductMapper())
