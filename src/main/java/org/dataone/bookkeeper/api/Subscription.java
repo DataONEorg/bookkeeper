@@ -377,6 +377,18 @@ public class Subscription {
     }
 
     /**
+     * Get the product id
+     * @return
+     */
+    public Integer getProductId() {
+        Integer productId = null;
+        if ( this.product != null ) {
+            productId = this.product.getId();
+        }
+        return productId;
+    }
+
+    /**
      * Get the subscription quantity of the product
      * @return
      */
