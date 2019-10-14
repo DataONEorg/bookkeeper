@@ -240,32 +240,32 @@ public class SubscriptionHelper {
                     "s.customerId AS s_customerId, " +
                     "s.metadata::json AS s_metadata, " +
                     "s.productId AS s_productId, " +
-                    "p.id AS p_id " +
-                    "p.object AS p_object " +
-                    "p.active AS p_active " +
-                    "p.name AS p_name " +
-                    "p.caption AS p_caption " +
-                    "p.description AS p_description " +
-                    "p.created AS p_created " +
-                    "p.statementDescriptor AS p_statementDescriptor " +
-                    "p.type AS p_type " +
-                    "p.unitLabel AS p_unitLabel " +
-                    "p.url AS p_url " +
-                    "p.metadata AS p_metadata " +
+                    "p.id AS p_id, " +
+                    "p.object AS p_object, " +
+                    "p.active AS p_active, " +
+                    "p.name AS p_name, " +
+                    "p.caption AS p_caption, " +
+                    "p.description AS p_description, " +
+                    "p.created AS p_created, " +
+                    "p.statementDescriptor AS p_statementDescriptor, " +
+                    "p.type AS p_type, " +
+                    "p.unitLabel AS p_unitLabel, " +
+                    "p.url AS p_url, " +
+                    "p.metadata AS p_metadata, " +
                     "s.quantity AS s_quantity, " +
                     "date_part('epoch', s.startDate)::int AS s_startDate, " +
                     "s.status AS s_status, " +
                     "date_part('epoch', s.trialEnd)::int AS s_trialEnd, " +
-                    "date_part('epoch', s.trialStart)::int  AS s_trialStart " +
-                    "q.is AS q_id " +
-                    "q.object AS q_object " +
-                    "q.name AS q_name " +
-                    "q.softLimit AS q_softLimit " +
-                    "q.hardLimit AS q_hardLimit " +
-                    "q.usage AS q_usage " +
-                    "q.unit AS q_unit " +
-                    "q.subscriptionId AS q_subscriptionId " +
-                    "q.subject AS q_subject" +
+                    "date_part('epoch', s.trialStart)::int  AS s_trialStart, " +
+                    "q.id AS q_id, " +
+                    "q.object AS q_object, " +
+                    "q.name AS q_name, " +
+                    "q.softLimit AS q_softLimit, " +
+                    "q.hardLimit AS q_hardLimit, " +
+                    "q.usage AS q_usage, " +
+                    "q.unit AS q_unit, " +
+                    "q.subscriptionId AS q_subscriptionId, " +
+                    "q.subject AS q_subject " +
                 "FROM subscriptions s " +
                 "LEFT JOIN quotas q ON s.id = q.subscriptionId " +
                 "LEFT JOIN products p ON s.productId = p.id " +
