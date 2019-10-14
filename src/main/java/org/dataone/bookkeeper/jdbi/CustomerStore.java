@@ -22,15 +22,12 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.api.Customer;
-import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.jdbi.mappers.CustomerMapper;
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
-import org.jdbi.v3.sqlobject.statement.UseRowReducer;
 
 import java.util.List;
 
@@ -40,24 +37,30 @@ import java.util.List;
  */
 public interface CustomerStore {
 
-    /** The query used to find all customers with their quotas */
+    /** The query used to find all customers */
     String SELECT_CLAUSE =
         "SELECT " +
-            "c.id AS c_id, c.object AS c_object, c.subject AS c_subject, c.balance AS c_balance, " +
-            "c.address AS c_address, date_part('epoch', c.created)::int AS c_created, " +
-            "c.currency AS c_currency, c.delinquent AS c_delinquent, " +
-            "c.description AS c_description, c.discount::json AS c_discount, " +
-            "c.email AS c_email, c.invoicePrefix AS c_invoicePrefix, " +
+            "c.id AS c_id, " +
+            "c.object AS c_object, " +
+            "c.subject AS c_subject, " +
+            "c.balance AS c_balance, " +
+            "c.address AS c_address, " +
+            "date_part('epoch', c.created)::int AS c_created, " +
+            "c.currency AS c_currency, " +
+            "c.delinquent AS c_delinquent, " +
+            "c.description AS c_description, " +
+            "c.discount::json AS c_discount, " +
+            "c.email AS c_email, " +
+            "c.invoicePrefix AS c_invoicePrefix, " +
             "c.invoiceSettings::json AS c_invoiceSettings, " +
-            "c.metadata::json AS c_metadata, c.givenName AS c_givenName, " +
-            "c.surName AS c_surName, c.phone AS c_phone, " +
-            "q.id, q.object, q.name, q.softLimit, q.hardLimit, q.unit, q.customerId " +
-        "FROM customers c " +
-        "LEFT JOIN quotas q " +
-        "ON c.id = q.customerId ";
+            "c.metadata::json AS c_metadata, " +
+            "c.givenName AS c_givenName, " +
+            "c.surName AS c_surName, " +
+            "c.phone AS c_phone " +
+        "FROM customers c ";
 
     /** Clause to order listed results */
-    String ORDER_CLAUSE = "ORDER BY c.surName, c.givenName, q.name ";
+    String ORDER_CLAUSE = "ORDER BY c.surName, c.givenName ";
 
     /** The full ordered query */
     String SELECT_ALL = SELECT_CLAUSE + ORDER_CLAUSE;
@@ -72,13 +75,11 @@ public interface CustomerStore {
     String SELECT_EMAIL = SELECT_CLAUSE + "WHERE c.email = :email";
 
     /**
-     * List all customers with their quotas
+     * List all customers
      * @return customers The list of customers
      */
     @SqlQuery(SELECT_ALL)
     @RegisterRowMapper(CustomerMapper.class)
-    @RegisterBeanMapper(value = Quota.class)
-    @UseRowReducer(CustomerQuotasReducer.class)
     List<Customer> listCustomers();
 
     /**
@@ -88,8 +89,6 @@ public interface CustomerStore {
      */
     @SqlQuery(SELECT_ONE)
     @RegisterRowMapper(CustomerMapper.class)
-    @RegisterBeanMapper(value = Quota.class)
-    @UseRowReducer(CustomerQuotasReducer.class)
     Customer getCustomer(@Bind("id") Integer id);
 
     /**
@@ -99,8 +98,6 @@ public interface CustomerStore {
      */
     @SqlQuery(SELECT_SUBJECT)
     @RegisterRowMapper(CustomerMapper.class)
-    @RegisterBeanMapper(value = Quota.class)
-    @UseRowReducer(CustomerQuotasReducer.class)
     Customer findCustomerBySubject(@Bind("subject") String subject);
 
     /**
@@ -110,36 +107,50 @@ public interface CustomerStore {
      */
     @SqlQuery(SELECT_EMAIL)
     @RegisterRowMapper(CustomerMapper.class)
-    @RegisterBeanMapper(value = Quota.class)
-    @UseRowReducer(CustomerQuotasReducer.class)
     Customer findCustomerByEmail(@Bind("email") String email);
 
     /**
      * Insert a customer
      * @param customer the customer to insert
      */
-    @SqlUpdate("INSERT INTO customers " +
-        "(id, object, subject, balance, address, created, currency, delinquent, " +
-        "description, discount, email, invoicePrefix, invoiceSettings, " +
-        "metadata, givenName, surName, phone) " +
-        "VALUES (" +
-        ":getId, " +
-        ":getObject, " +
-        ":getSubject, " +
-        ":getBalance, " +
-        ":getAddressJSON::json, " +
-        "to_timestamp(:getCreated), " +
-        ":getCurrency, " +
-        ":isDelinquent, " +
-        ":getDescription, " +
-        ":getDiscountJSON::json, " +
-        ":getEmail, " +
-        ":getInvoicePrefix, " +
-        ":getInvoiceSettingsJSON::json, " +
-        ":getMetadataJSON::json, " +
-        ":getGivenName, " +
-        ":getSurName, " +
-        ":getPhone)")
+    @SqlUpdate(
+        "INSERT INTO customers (" +
+            "id, " +
+            "object, " +
+            "subject, " +
+            "balance, " +
+            "address, " +
+            "created, " +
+            "currency, " +
+            "delinquent, " +
+            "description, " +
+            "discount, " +
+            "email, " +
+            "invoicePrefix, " +
+            "invoiceSettings, " +
+            "metadata, " +
+            "givenName, " +
+            "surName, " +
+            "phone" +
+        ") VALUES (" +
+            ":getId, " +
+            ":getObject, " +
+            ":getSubject, " +
+            ":getBalance, " +
+            ":getAddressJSON::json, " +
+            "to_timestamp(:getCreated), " +
+            ":getCurrency, " +
+            ":isDelinquent, " +
+            ":getDescription, " +
+            ":getDiscountJSON::json, " +
+            ":getEmail, " +
+            ":getInvoicePrefix, " +
+            ":getInvoiceSettingsJSON::json, " +
+            ":getMetadataJSON::json, " +
+            ":getGivenName, " +
+            ":getSurName, " +
+            ":getPhone" +
+        ")")
     void insert(@BindMethods Customer customer);
 
     /**
