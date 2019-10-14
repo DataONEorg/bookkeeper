@@ -38,12 +38,39 @@ import java.util.List;
  */
 public interface ProductStore {
 
+    String SELECT_CLAUSE = "SELECT " +
+        "id, " +
+        "object, " +
+        "active, " +
+        "amount, " +
+        "caption, " +
+        "date_part('epoch', created)::int AS created, " +
+        "currency, " +
+        "description, " +
+        "interval, " +
+        "name, " +
+        "statementDescriptor, " +
+        "type, " +
+        "unitLabel, " +
+        "url, " +
+        "metadata::json AS metadata FROM products ";
+
+    String ORDER_CLAUSE = "ORDER BY name, created DESC ";
+
+    String SELECT_ALL = SELECT_CLAUSE + ORDER_CLAUSE;
+
+    String SELECT_BY_ID = "WHERE id = :id " + ORDER_CLAUSE;
+
+    String SELECT_BY_NAME = SELECT_CLAUSE + "WHERE name = :name " + ORDER_CLAUSE;
+
+    String SELECT_BY_ACTIVE = SELECT_CLAUSE + "WHERE active = :active " + ORDER_CLAUSE;
+
+    String SELECT_BY_DESCRIPTION = SELECT_CLAUSE + "WHERE description LIKE :description " + ORDER_CLAUSE;
+
     /**
      * List all products
      */
-    @SqlQuery("SELECT id, object, active, name, caption, description, " +
-        "date_part('epoch', created)::int as created, statementDescriptor, type, " +
-        "unitLabel, url, metadata::json as metadata FROM products ")
+    @SqlQuery(SELECT_ALL)
     @RegisterRowMapper(ProductMapper.class)
     @UseRowMapper(ProductMapper.class)
     List<Product> listProducts();
@@ -52,9 +79,7 @@ public interface ProductStore {
      * Find products by identifier
      * @param id
      */
-    @SqlQuery("SELECT id, object, active, name, caption, description, " +
-        "date_part('epoch', created)::int as created, statementDescriptor, type, " +
-        "unitLabel, url, metadata::json as metadata FROM products WHERE id = :id")
+    @SqlQuery(SELECT_BY_ID)
     @RegisterRowMapper(ProductMapper.class)
     @UseRowMapper(ProductMapper.class)
     Product getProduct(@Bind("id") Integer id);
@@ -63,9 +88,7 @@ public interface ProductStore {
      * Find products by name
      * @param name
      */
-    @SqlQuery("SELECT id, object, active, name, caption, description, " +
-        "date_part('epoch', created)::int as created, statementDescriptor, type, " +
-        "unitLabel, url, metadata::json as metadata FROM products WHERE name = :name")
+    @SqlQuery(SELECT_BY_NAME)
     @RegisterRowMapper(ProductMapper.class)
     @UseRowMapper(ProductMapper.class)
     List<Product> findProductsByName(@Bind("name") String name);
@@ -74,9 +97,7 @@ public interface ProductStore {
      * Find products by active status
      * @param active
      */
-    @SqlQuery("SELECT id, object, active, name, caption, description, " +
-        "date_part('epoch', created)::int as created, statementDescriptor, type, " +
-        "unitLabel, url, metadata::json as metadata FROM products WHERE active = :active")
+    @SqlQuery(SELECT_BY_ACTIVE)
     @RegisterRowMapper(ProductMapper.class)
     @UseRowMapper(ProductMapper.class)
     List<Product> findProductsByActiveStatus(@Bind("active") boolean active);
@@ -85,10 +106,7 @@ public interface ProductStore {
      * Find products by description
      * @param description
      */
-    @SqlQuery("SELECT id, object, active, name, caption, description, " +
-        "date_part('epoch', created)::int as created, statementDescriptor, type, " +
-        "unitLabel, url, metadata::json as metadata FROM products " +
-        "WHERE description LIKE :description")
+    @SqlQuery(SELECT_BY_DESCRIPTION)
     @RegisterRowMapper(ProductMapper.class)
     @UseRowMapper(ProductMapper.class)
     List<Product> findProductsByDescription(@Bind("description") String description);
@@ -101,10 +119,13 @@ public interface ProductStore {
         "id, " +
         "object , " +
         "active, " +
-        "name, " +
+        "amount," +
         "caption, " +
-        "description, " +
         "created, " +
+        "currency, " +
+        "description, " +
+        "interval, " +
+        "name, " +
         "statementDescriptor, " +
         "type, " +
         "unitLabel, " +
@@ -112,12 +133,15 @@ public interface ProductStore {
         "metadata " +
         ") VALUES (" +
         ":getId, " +
-        ":getObject , " +
+        ":getObject, " +
         ":isActive, " +
-        ":getName, " +
+        ":getAmount, " +
         ":getCaption, " +
-        ":getDescription, " +
         "to_timestamp(:getCreated), " +
+        ":getCurrency, " +
+        ":getDescription, " +
+        ":getInterval, " +
+        ":getName, " +
         ":getStatementDescriptor, " +
         ":getType, " +
         ":getUnitLabel, " +
@@ -132,10 +156,13 @@ public interface ProductStore {
     @SqlUpdate("UPDATE products SET " +
         "object = :getObject, " +
         "active = :isActive, " +
-        "name = :getName, " +
+        "amount = :getAmount, " +
         "caption = :getCaption, " +
-        "description = :getDescription, " +
         "created = to_timestamp(:getCreated), " +
+        "currency = :getCurrency, " +
+        "description = :getDescription, " +
+        "interval = :getInterval, " +
+        "name = :getName, " +
         "statementDescriptor = :getStatementDescriptor, " +
         "type = :getType, " +
         "unitLabel = :getUnitLabel, " +
