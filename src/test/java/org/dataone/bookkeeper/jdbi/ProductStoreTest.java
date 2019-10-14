@@ -174,28 +174,33 @@ public class ProductStoreTest extends BaseTestCase {
     @DisplayName("Test updating a product")
     public void testUpdate() {
         // Insert a new product
-        Integer productId = ProductHelper.insertTestProduct(StoreHelper.getRandomId());
+        Product product = ProductHelper.insertTestProduct(
+            ProductHelper.createTestProduct(StoreHelper.getRandomId()));
+        Integer productId = product.getId();
+        this.productIds.add(productId); // Clean up
 
         // Set some product fields to be changed
-        this.productIds.add(productId); // Clean up
         String objectString = "product";
         String productName = "test_product_name_" + StoreHelper.getRandomId();
         String productCaption = "My updated product caption";
         String productDescription = "My updated product description";
         String productStatementDescriptor = "My updated statement descriptor";
         String productType = "service";
-        String productUnitLabel = "membership";
+        String productUnitLabel = "subscription";
         String productURL = "https://dataone.org/products/membership/organization";
 
         // Build the new product
         Product expectedProduct = new Product();
         expectedProduct.setId(productId);
-        expectedProduct.setObject(objectString);
-        expectedProduct.setActive(true);
-        expectedProduct.setName(productName);
+        expectedProduct.setObject(product.getObject());
+        expectedProduct.setActive(product.isActive());
+        expectedProduct.setAmount(product.getAmount());
         expectedProduct.setCaption(productCaption);
-        expectedProduct.setDescription(productDescription);
         expectedProduct.setCreated(new Integer((int) Instant.now().getEpochSecond()));
+        expectedProduct.setCurrency(product.getCurrency());
+        expectedProduct.setDescription(productDescription);
+        expectedProduct.setInterval(product.getInterval());
+        expectedProduct.setName(productName);
         expectedProduct.setStatementDescriptor(productStatementDescriptor);
         expectedProduct.setType(productType);
         expectedProduct.setUnitLabel(productUnitLabel);
