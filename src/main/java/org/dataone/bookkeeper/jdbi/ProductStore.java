@@ -38,28 +38,30 @@ import java.util.List;
  */
 public interface ProductStore {
 
-    String SELECT_CLAUSE = "SELECT " +
-        "id, " +
-        "object, " +
-        "active, " +
-        "amount, " +
-        "caption, " +
-        "date_part('epoch', created)::int AS created, " +
-        "currency, " +
-        "description, " +
-        "interval, " +
-        "name, " +
-        "statementDescriptor, " +
-        "type, " +
-        "unitLabel, " +
-        "url, " +
-        "metadata::json AS metadata FROM products ";
+    String SELECT_CLAUSE =
+        "SELECT " +
+            "id, " +
+            "object, " +
+            "active, " +
+            "amount, " +
+            "caption, " +
+            "date_part('epoch', created)::int AS created, " +
+            "currency, " +
+            "description, " +
+            "interval, " +
+            "name, " +
+            "statementDescriptor, " +
+            "type, " +
+            "unitLabel, " +
+            "url, " +
+            "metadata::json AS metadata " +
+        "FROM products ";
 
     String ORDER_CLAUSE = "ORDER BY name, created DESC ";
 
     String SELECT_ALL = SELECT_CLAUSE + ORDER_CLAUSE;
 
-    String SELECT_BY_ID = "WHERE id = :id " + ORDER_CLAUSE;
+    String SELECT_BY_ID = SELECT_CLAUSE + "WHERE id = :id " + ORDER_CLAUSE;
 
     String SELECT_BY_NAME = SELECT_CLAUSE + "WHERE name = :name " + ORDER_CLAUSE;
 
