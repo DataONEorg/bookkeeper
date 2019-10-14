@@ -61,29 +61,7 @@ public class CustomerMapper implements RowMapper<Customer> {
     @Override
     public Customer map(ResultSet rs, StatementContext ctx) throws SQLException {
         Customer customer = null;
-        Quota quota = null;
-        List<Quota> quotas = new LinkedList<Quota>();
         ObjectMapper mapper = Jackson.newObjectMapper();
-
-        try {
-            // If we have quota fields in the resultset, build and add a quota
-            if (new Integer(rs.getInt("id")) != null) {
-                quota = new Quota(
-                    new Integer(rs.getInt("id")),
-                    rs.getString("object"),
-                    rs.getString("name"),
-                    new Integer(rs.getInt("softLimit")),
-                    new Integer(rs.getInt("hardLimit")),
-                    new Integer(rs.getInt("usage")),
-                    rs.getString("unit"),
-                    new Integer(rs.getInt("c_id")),
-                    rs.getString("subject")
-                );
-                quotas.add(quota);
-            }
-        } catch (PSQLException psqle) {
-            // there are no quotas in the result, continue
-        }
 
         try {
             // Create a customer instance from the resultset
@@ -104,8 +82,7 @@ public class CustomerMapper implements RowMapper<Customer> {
                 (ObjectNode) mapper.readTree(rs.getString("c_metadata")),
                 rs.getString("c_givenName"),
                 rs.getString("c_surName"),
-                rs.getString("c_phone"),
-                quotas
+                rs.getString("c_phone")
             );
         } catch (IOException e) {
             throw new SQLException(e);
