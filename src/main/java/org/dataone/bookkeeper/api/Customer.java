@@ -114,12 +114,6 @@ public class Customer {
     @NotEmpty
     private String phone;
 
-    /* The customer quota list, if any */
-    private List<Quota> quotas;
-
-    /* The customer subscription list */
-    private List<Subscription> subscriptions;
-
     /**
      * Construct an empty Customer
      */
@@ -146,7 +140,6 @@ public class Customer {
      * @param givenName
      * @param surName
      * @param phone
-     * @param quotas
      */
     public Customer(Integer id,
                     @NotEmpty @NotNull @Pattern(regexp = "customer") String object,
@@ -164,8 +157,7 @@ public class Customer {
                     @NotEmpty ObjectNode metadata,
                     @NotEmpty @NotNull String givenName,
                     @NotEmpty @NotNull String surName,
-                    @NotEmpty String phone,
-                    List<Quota> quotas) {
+                    @NotEmpty String phone) {
         super();
         this.id = id;
         this.object = object;
@@ -184,7 +176,6 @@ public class Customer {
         this.givenName = givenName;
         this.surName = surName;
         this.phone = phone;
-        this.quotas = quotas;
     }
 
     /**
@@ -460,22 +451,6 @@ public class Customer {
     }
 
     /**
-     * Get the customer quotas
-     * @return
-     */
-    public List<Quota> getQuotas() {
-        return quotas;
-    }
-
-    /**
-     * Set the customer quotas
-     * @param quotas
-     */
-    public void setQuotas(List<Quota> quotas) {
-        this.quotas = quotas;
-    }
-
-    /**
      * Return the discount hash as a JSON string
      * @return discount the discount JSON string
      * @throws JsonProcessingException
@@ -554,8 +529,7 @@ public class Customer {
             Objects.equals(getMetadata(), customer.getMetadata()) &&
             Objects.equals(getGivenName(), customer.getGivenName()) &&
             Objects.equals(getSurName(), customer.getSurName()) &&
-            Objects.equals(getPhone(), customer.getPhone()) &&
-            Objects.equals(getQuotas(), customer.getQuotas());
+            Objects.equals(getPhone(), customer.getPhone());
     }
 
     /**
@@ -568,6 +542,6 @@ public class Customer {
         return Objects.hash(getId(), getObject(), getSubject(), getBalance(), getAddress(),
             getCreated(), getCurrency(), isDelinquent(), getDescription(), getDiscount(),
             getEmail(), getInvoicePrefix(), getInvoiceSettings(), getMetadata(),
-            getGivenName(), getSurName(), getPhone(), getQuotas());
+            getGivenName(), getSurName(), getPhone());
     }
 }
