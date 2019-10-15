@@ -56,15 +56,18 @@ public interface SubscriptionStore {
             "p.id AS p_id, " +
             "p.object AS p_object, " +
             "p.active AS p_active, " +
-            "p.name AS p_name, " +
+            "p.amount AS p_amount, " +
             "p.caption AS p_caption, " +
+            "date_part('epoch', p.created)::int AS p_created, " +
+            "p.currency AS p_currency, " +
             "p.description AS p_description, " +
-            "p.created AS p_created, " +
+            "p.interval AS p_interval, " +
+            "p.name AS p_name, " +
             "p.statementDescriptor AS p_statementDescriptor, " +
             "p.type AS p_type, " +
             "p.unitLabel AS p_unitLabel, " +
             "p.url AS p_url, " +
-            "p.metadata AS p_metadata, " +
+            "p.metadata::json AS p_metadata, " +
             "s.quantity AS s_quantity, " +
             "date_part('epoch', s.startDate)::int AS s_startDate, " +
             "s.status AS s_status, " +
