@@ -84,7 +84,7 @@ public class SubscriptionHelper {
                 "send_invoice",
                 1570486366,
                 customerId,
-                null,
+                "{}",
                 2,
                 1,
                 1570486366,
