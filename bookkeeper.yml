@@ -1,3 +1,8 @@
+# Bookkeeper server configuration
+server:
+  rootPath:/bookkeper/v1
+
+# PostgreSQL database configuration
 database:
   # Driver details
   driverClass: org.postgresql.Driver
