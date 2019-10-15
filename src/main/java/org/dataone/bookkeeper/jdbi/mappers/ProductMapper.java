@@ -71,7 +71,9 @@ public class ProductMapper implements RowMapper<Product> {
                 rs.getString("type"),
                 rs.getString("unitLabel"),
                 rs.getString("url"),
-                (ObjectNode) Jackson.newObjectMapper().readTree(rs.getString("metadata"))
+                rs.getString("metadata") != null ?
+                    (ObjectNode) Jackson.newObjectMapper().readTree(
+                        rs.getString("metadata")) : null
             );
         } catch (IOException e) {
             throw new SQLException(e);

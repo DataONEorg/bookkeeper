@@ -75,11 +75,14 @@ public class CustomerMapper implements RowMapper<Customer> {
                 rs.getString("c_currency"),
                 rs.getBoolean("c_delinquent"),
                 rs.getString("c_description"),
-                (ObjectNode) mapper.readTree(rs.getString("c_discount")),
+                rs.getString("c_discount") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("c_discount")) : null,
                 rs.getString("c_email"),
                 rs.getString("c_invoicePrefix"),
-                (ObjectNode) mapper.readTree(rs.getString("c_invoiceSettings")),
-                (ObjectNode) mapper.readTree(rs.getString("c_metadata")),
+                rs.getString("c_invoiceSettings") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("c_invoiceSettings")) : null,
+                rs.getString("c_metadata") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("c_metadata")) : null,
                 rs.getString("c_givenName"),
                 rs.getString("c_surName"),
                 rs.getString("c_phone")

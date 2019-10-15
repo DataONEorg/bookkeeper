@@ -81,15 +81,18 @@ public class OrderMapper implements RowMapper<Order> {
                 rs.getString("object"),
                 new Integer(rs.getInt("amount")),
                 new Integer(rs.getInt("amountReturned")),
-                (ObjectNode) mapper.readTree(rs.getString("charge")),
+                rs.getString("charge") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("charge")) : null,
                 new Integer(rs.getInt("created")),
                 rs.getString("currency"),
                 new Integer(rs.getInt("customer")),
                 rs.getString("email"),
                 items,
-                (ObjectNode) mapper.readTree(rs.getString("metadata")),
+                rs.getString("metadata") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("metadata")) : null,
                 rs.getString("status"),
-                (ObjectNode) mapper.readTree(rs.getString("statusTransitions")),
+                rs.getString("statusTransitions") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("statusTransitions")) : null,
                 new Integer(rs.getInt("updated"))
             );
         } catch (IOException e) {
