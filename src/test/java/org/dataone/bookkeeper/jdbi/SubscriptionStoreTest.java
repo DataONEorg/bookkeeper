@@ -146,7 +146,16 @@ public class SubscriptionStoreTest extends BaseTestCase {
             final Map<Integer, Quota> quotas =
                 QuotaHelper.insertTestStorageAndPortalQuotasWithSubscription(
                     StoreHelper.getRandomId(), StoreHelper.getRandomId(), subscription.getId());
-                subscriptionStore.listSubscriptions().forEach(subscription2 -> {
+            List<Subscription> subscriptions = subscriptionStore.listSubscriptions();
+
+            // Ensure we get a subscription returned
+            assertTrue(subscriptions.size() >= 1);
+                subscriptions.forEach(subscription2 -> {
+
+                    // Ensure the quota count matches
+                    assertTrue(subscription2.getQuotas().size() == quotas.size());
+
+                    // Ensure the quota content matches
                     subscription2.getQuotas()
                         .forEach(quota -> {
                             Quota expectedQuota = quotas.get(quota.getId());
