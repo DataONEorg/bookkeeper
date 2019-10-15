@@ -47,13 +47,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BaseTestCase {
 
     // The embedded database reference
-    public static EmbeddedPostgres pg = EmbeddedPostgresqlExtension.pg;
+    public static EmbeddedPostgres pg;
 
     // A connection to the database
-    public static Connection connection = EmbeddedPostgresqlExtension.connection;
+    public static Connection connection;
 
     // The Flyway database migrator used to manage database schema integrity
-    public static Flyway flyway = EmbeddedPostgresqlExtension.flyway;
+    public static Flyway flyway;
 
     // The metrics registry for testing
     public static MetricRegistry metricRegistry = new MetricRegistry();
