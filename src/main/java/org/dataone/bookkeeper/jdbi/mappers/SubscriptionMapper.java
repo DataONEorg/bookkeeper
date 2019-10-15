@@ -63,29 +63,6 @@ public class SubscriptionMapper implements RowMapper<Subscription> {
         Subscription subscription = null;
         Product product = null;
         ObjectMapper mapper = Jackson.newObjectMapper();
-        List<Quota> quotas = new LinkedList<Quota>();
-
-        try {
-            // If we have quota fields in the resultset, build and add a quota
-            if (new Integer(rs.getInt("id")) != null) {
-                Quota quota = new Quota(
-                    new Integer(rs.getInt("q_id")),
-                    rs.getString("q_object"),
-                    rs.getString("q_name"),
-                    new Integer(rs.getInt("q_softLimit")),
-                    new Integer(rs.getInt("q_hardLimit")),
-                    new Integer(rs.getInt("q_usage")),
-                    rs.getString("q_unit"),
-                    new Integer(rs.getInt("s_id")),
-                    rs.getString("q_subject")
-                );
-                if ( !quotas.contains(quota) ) {
-                    quotas.add(quota);
-                }
-            }
-        } catch (PSQLException psqle) {
-            // there are no quotas in the result, continue
-        }
 
         try {
             // If we have product fields in the resultset, build and add a product
@@ -133,7 +110,7 @@ public class SubscriptionMapper implements RowMapper<Subscription> {
                 rs.getString("s_status"),
                 new Integer(rs.getInt("s_trialEnd")),
                 new Integer(rs.getInt("s_trialStart")),
-                quotas
+                null // let the row reducer populate quotas
             );
         } catch (IOException e) {
             throw new SQLException(e);
