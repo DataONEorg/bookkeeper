@@ -21,9 +21,12 @@
 
 package org.dataone.bookkeeper.jdbi;
 
+import org.dataone.bookkeeper.api.Product;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.Subscription;
+import org.dataone.bookkeeper.jdbi.mappers.SubscriptionMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -98,7 +101,9 @@ public interface SubscriptionStore {
      * @return subscriptions The list of subscriptions
      */
     @SqlQuery(SELECT_ALL)
-    @RegisterBeanMapper(value = Quota.class)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Product.class, prefix = "p")
+    @RegisterRowMapper(value = SubscriptionMapper.class)
     @UseRowReducer(SubscriptionQuotasReducer.class)
     List<Subscription> listSubscriptions();
 
@@ -108,7 +113,9 @@ public interface SubscriptionStore {
      * @return subscription The individual subscription
      */
     @SqlQuery(SELECT_ONE)
-    @RegisterBeanMapper(value = Quota.class)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Product.class, prefix = "p")
+    @RegisterRowMapper(value = SubscriptionMapper.class)
     @UseRowReducer(SubscriptionQuotasReducer.class)
     Subscription getSubscription(@Bind("id") Integer id);
 
@@ -118,7 +125,9 @@ public interface SubscriptionStore {
      * @return subscription the subscription with the given subject identifier
      */
     @SqlQuery(SELECT_SUBJECT)
-    @RegisterBeanMapper(value = Quota.class)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Product.class, prefix = "p")
+    @RegisterRowMapper(value = SubscriptionMapper.class)
     @UseRowReducer(SubscriptionQuotasReducer.class)
     Subscription findSubscriptionBySubject(@Bind("subject") String subject);
 
@@ -168,7 +177,7 @@ public interface SubscriptionStore {
             "id = :getId, " +
             "object = :getObject, " +
             "canceledAt = to_timestamp(:getCanceledAt), " +
-            "collectionMethod = :getCollectionMethod,, " +
+            "collectionMethod = :getCollectionMethod, " +
             "created = to_timestamp(:getCreated), " +
             "customerId = :getCustomerId, " +
             "metadata = :getMetadataJSON::json, " +
