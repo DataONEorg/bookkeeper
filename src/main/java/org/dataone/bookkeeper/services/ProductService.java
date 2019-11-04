@@ -77,7 +77,7 @@ public abstract class ProductService {
         // Do we have a valid id?
         if (Objects.isNull(id) || id.intValue() < 0) {
             throw new WebApplicationException(
-                "Please provide a valid name", Status.EXPECTATION_FAILED);
+                "Please provide a valid id", Status.EXPECTATION_FAILED);
         }
 
         try {
@@ -220,4 +220,6 @@ public abstract class ProductService {
         }
         return deleted;
     }
+
+    // TODO: Add health check
 }
