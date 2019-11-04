@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * OrderService provides an abstraction of the OrderService store to hide store
+ * OrderService provides an abstraction of the orders store to hide store
  * implementation details.
  */
 public abstract class OrderService {

@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * CustomerService provides an abstraction of the CustomerService store to hide store
+ * CustomerService provides an abstraction of the customers store to hide store
  * implementation details.
  */
 public abstract class CustomerService {
@@ -113,7 +113,6 @@ public abstract class CustomerService {
         }
         return customer;
     }
-
 
     /**
      * Get the customer by email
