@@ -41,7 +41,7 @@ public abstract class OrderService {
     /**
      * Register a logger
      */
-    public Log log = LogFactory.getLog(OrderService.class);
+    private Log log = LogFactory.getLog(OrderService.class);
 
     /**
      * Create a OrderStore instance
@@ -54,7 +54,7 @@ public abstract class OrderService {
      * List all orders
      * @return orders the order list
      */
-    public List<Order> listOrders() {
+    public List<Order> listOrders() throws WebApplicationException {
         List<Order> orders = null;
         try {
             orders = orderStore().listOrders();
@@ -71,7 +71,7 @@ public abstract class OrderService {
      * @param id the order id
      * @return order  the order
      */
-    public Order getOrder(Integer id) {
+    public Order getOrder(Integer id) throws WebApplicationException {
         Order order = null;
 
         // Do we have a valid id?
@@ -96,7 +96,7 @@ public abstract class OrderService {
      * @param customerId the order id
      * @return order  the order
      */
-    public List<Order> findOrderByCustomerId(Integer customerId) {
+    public List<Order> findOrderByCustomerId(Integer customerId) throws WebApplicationException {
         List<Order> orders;
 
         // Do we have a valid id?
@@ -120,11 +120,11 @@ public abstract class OrderService {
      * @param order  the order
      * @return order  the order
      */
-    public Order insert(Order order){
+    public Order insert(Order order) throws WebApplicationException {
 
         // Do we have a valid order?
         if (Objects.isNull(order)) {
-            log.error("The order insert failed for " + order.getId());
+            log.error("The order to insert was null");
             throw new WebApplicationException("Please provide a valid order.", Status.NOT_MODIFIED);
         }
 
@@ -144,10 +144,10 @@ public abstract class OrderService {
      * @param order  the order
      * @return order  the order
      */
-    public Order update(Order order) {
+    public Order update(Order order) throws WebApplicationException {
         // Do we have a valid order?
         if (Objects.isNull(order)) {
-            log.error("The order update failed for " + order.getId());
+            log.error("The order to update was null");
             throw new WebApplicationException("Please provide a valid order.", Status.NOT_MODIFIED);
         }
 
@@ -167,8 +167,8 @@ public abstract class OrderService {
      * @param id  the order id
      * @return deleted  true if the order was deleted
      */
-    public Boolean delete(Integer id) {
-        Boolean deleted = false;
+    public Boolean delete(Integer id) throws WebApplicationException {
+        boolean deleted = false;
         try {
             orderStore().delete(id);
             deleted = true;

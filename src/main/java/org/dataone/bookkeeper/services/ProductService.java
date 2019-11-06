@@ -29,6 +29,7 @@ import org.jdbi.v3.sqlobject.CreateSqlObject;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,7 +42,7 @@ public abstract class ProductService {
     /**
      * Register a logger
      */
-    public Log log = LogFactory.getLog(ProductService.class);
+    private Log log = LogFactory.getLog(ProductService.class);
 
     /**
      * Create a ProductStore instance
@@ -54,7 +55,7 @@ public abstract class ProductService {
      * List all products
      * @return products the product list
      */
-    public List<Product> listProducts() {
+    public List<Product> listProducts() throws WebApplicationException {
         List<Product> products = null;
         try {
             products = productStore().listProducts();
@@ -71,9 +72,9 @@ public abstract class ProductService {
      * @param id the product id
      * @return product  the product
      */
-    public Product getProduct(Integer id) {
+    public Product getProduct(Integer id) throws WebApplicationException {
         Product product = null;
-
+        String message;
         // Do we have a valid id?
         if (Objects.isNull(id) || id.intValue() < 0) {
             throw new WebApplicationException(
@@ -82,8 +83,12 @@ public abstract class ProductService {
 
         try {
             product = productStore().getProduct(id);
+            if (product == null) {
+                message = "The product was not found for id: " + id.toString();
+                throw new WebApplicationException(message, Status.NOT_FOUND);
+            }
         } catch (Exception e) {
-            log.error("Product search by id failed" + e.getMessage());
+            log.error("Product search by id failed: " + e.getMessage());
             e.printStackTrace();
             throw new WebApplicationException(e.getMessage(), Status.EXPECTATION_FAILED);
         }
@@ -95,7 +100,7 @@ public abstract class ProductService {
      * @param name the product name
      * @return products  the product list
      */
-    public List<Product> findProductsByName(String name) {
+    public List<Product> findProductsByName(String name) throws WebApplicationException {
         List<Product> products;
 
         // Do we have a valid name?
@@ -119,7 +124,7 @@ public abstract class ProductService {
      * @param status the product status
      * @return products  the products list
      */
-    public List<Product> findProductsByActiveStatus(boolean status) {
+    public List<Product> findProductsByActiveStatus(boolean status) throws WebApplicationException {
         List<Product> products;
 
         try {
@@ -137,7 +142,7 @@ public abstract class ProductService {
      * @param description the product description
      * @return products  the product list
      */
-    public List<Product> findProductsByDescription(String description) {
+    public List<Product> findProductsByDescription(String description) throws WebApplicationException {
         List<Product> products;
 
         // Do we have a valid description?
@@ -161,11 +166,11 @@ public abstract class ProductService {
      * @param product the product
      * @return product  the product
      */
-    public Product insert(Product product){
+    public Product insert(Product product) throws WebApplicationException {
 
         // Do we have a valid product?
         if (Objects.isNull(product)) {
-            log.error("The product insert failed for " + product.getId());
+            log.error("The product to insert was null");
             throw new WebApplicationException("Please provide a valid product.", Status.NOT_MODIFIED);
         }
 
@@ -185,10 +190,10 @@ public abstract class ProductService {
      * @param product the product
      * @return product  the product
      */
-    public Product update(Product product) {
+    public Product update(Product product) throws WebApplicationException {
         // Do we have a valid product?
         if (Objects.isNull(product)) {
-            log.error("The product update failed for " + product.getId());
+            log.error("The product to update was null");
             throw new WebApplicationException("Please provide a valid product.", Status.NOT_MODIFIED);
         }
 
@@ -208,15 +213,16 @@ public abstract class ProductService {
      * @param id the product id
      * @return deleted  true if the product was deleted
      */
-    public Boolean delete(Integer id) {
-        Boolean deleted = false;
+    public Boolean delete(Integer id) throws WebApplicationException {
+        boolean deleted = false;
         try {
             productStore().delete(id);
             deleted = true;
         } catch (Exception e) {
-            log.error("The product delete failed for " + id);
+            String message = "The product delete failed for " + id.toString();
+            log.error(message);
             e.printStackTrace();
-            throw new WebApplicationException(e.getMessage(), Status.NOT_MODIFIED);
+            throw new WebApplicationException(message, Status.NOT_MODIFIED);
         }
         return deleted;
     }

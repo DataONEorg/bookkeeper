@@ -41,7 +41,7 @@ public abstract class QuotaService {
     /**
      * Register a logger
      */
-    public Log log = LogFactory.getLog(QuotaService.class);
+    private Log log = LogFactory.getLog(QuotaService.class);
 
     /**
      * Create a QuotaStore instance
@@ -54,7 +54,7 @@ public abstract class QuotaService {
      * List all quotas
      * @return quotas the quota list
      */
-    public List<Quota> listQuotas() {
+    public List<Quota> listQuotas() throws WebApplicationException {
         List<Quota> quotas = null;
         try {
             quotas = quotaStore().listQuotas();
@@ -71,7 +71,7 @@ public abstract class QuotaService {
      * @param id the quota id
      * @return quota  the quota
      */
-    public Quota getQuota(Integer id) {
+    public Quota getQuota(Integer id) throws WebApplicationException {
         Quota quota = null;
 
         // Do we have a valid id?
@@ -96,7 +96,7 @@ public abstract class QuotaService {
      * @param subject the quota id
      * @return quota  the quota
      */
-    public List<Quota> findQuotaBySubject(String subject) {
+    public List<Quota> findQuotaBySubject(String subject) throws WebApplicationException {
         List<Quota> quotas;
 
         // Do we have a valid id?
@@ -120,11 +120,11 @@ public abstract class QuotaService {
      * @param quota  the quota
      * @return quota  the quota
      */
-    public Quota insert(Quota quota){
+    public Quota insert(Quota quota) throws WebApplicationException {
 
         // Do we have a valid quota?
         if (Objects.isNull(quota)) {
-            log.error("The quota insert failed for " + quota.getId());
+            log.error("The quota to insert was null");
             throw new WebApplicationException("Please provide a valid quota.", Status.NOT_MODIFIED);
         }
 
@@ -144,10 +144,10 @@ public abstract class QuotaService {
      * @param quota  the quota
      * @return quota  the quota
      */
-    public Quota update(Quota quota) {
+    public Quota update(Quota quota) throws WebApplicationException {
         // Do we have a valid quota?
         if (Objects.isNull(quota)) {
-            log.error("The quota update failed for " + quota.getId());
+            log.error("The quota to update was null");
             throw new WebApplicationException("Please provide a valid quota.", Status.NOT_MODIFIED);
         }
 
@@ -167,8 +167,8 @@ public abstract class QuotaService {
      * @param id  the quota id
      * @return deleted  true if the quota was deleted
      */
-    public Boolean delete(Integer id) {
-        Boolean deleted = false;
+    public Boolean delete(Integer id) throws WebApplicationException {
+        boolean deleted = false;
         try {
             quotaStore().delete(id);
             deleted = true;

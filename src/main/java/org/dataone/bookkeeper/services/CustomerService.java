@@ -41,7 +41,7 @@ public abstract class CustomerService {
     /**
      * Register a logger
      */
-    public Log log = LogFactory.getLog(CustomerService.class);
+    private Log log = LogFactory.getLog(CustomerService.class);
 
     /**
      * Create a CustomerStore instance
@@ -54,7 +54,7 @@ public abstract class CustomerService {
      * List all customers
      * @return customers the customer list
      */
-    public List<Customer> listCustomers() {
+    public List<Customer> listCustomers() throws WebApplicationException {
         List<Customer> customers = null;
         try {
             customers = customerStore().listCustomers();
@@ -71,7 +71,7 @@ public abstract class CustomerService {
      * @param id  the customer id
      * @return customer  the customer
      */
-    public Customer getCustomer(Integer id) {
+    public Customer getCustomer(Integer id) throws WebApplicationException {
         Customer customer = null;
 
         // Do we have a valid id?
@@ -95,7 +95,7 @@ public abstract class CustomerService {
      * @param subject  the customer subject
      * @return customer  the customer
      */
-    public Customer findCustomerBySubject(String subject) {
+    public Customer findCustomerBySubject(String subject) throws WebApplicationException {
         Customer customer;
 
         // Do we have a valid id?
@@ -119,7 +119,7 @@ public abstract class CustomerService {
      * @param email  the customer email
      * @return customer  the customer
      */
-    public Customer findCustomerByEmail(String email) {
+    public Customer findCustomerByEmail(String email) throws WebApplicationException {
         Customer customer;
 
         // Do we have a valid id?
@@ -143,11 +143,11 @@ public abstract class CustomerService {
      * @param customer  the customer
      * @return customer  the customer
      */
-    public Customer insert(Customer customer){
+    public Customer insert(Customer customer) throws WebApplicationException {
 
         // Do we have a valid customer?
         if (Objects.isNull(customer)) {
-            log.error("The customer insert failed for " + customer.getId());
+            log.error("The customer to insert was null");
             throw new WebApplicationException("Please provide a valid customer.", Status.NOT_MODIFIED);
         }
 
@@ -167,10 +167,10 @@ public abstract class CustomerService {
      * @param customer  the customer
      * @return customer  the customer
      */
-    public Customer update(Customer customer) {
+    public Customer update(Customer customer) throws WebApplicationException {
         // Do we have a valid customer?
         if (Objects.isNull(customer)) {
-            log.error("The customer update failed for " + customer.getId());
+            log.error("The customer to update was null");
             throw new WebApplicationException("Please provide a valid customer.", Status.NOT_MODIFIED);
         }
 
@@ -190,8 +190,8 @@ public abstract class CustomerService {
      * @param id  the customer id
      * @return deleted  true if the customer was deleted
      */
-    public Boolean delete(Integer id) {
-        Boolean deleted = false;
+    public Boolean delete(Integer id) throws WebApplicationException {
+        boolean deleted = false;
         try {
             customerStore().delete(id);
             deleted = true;
