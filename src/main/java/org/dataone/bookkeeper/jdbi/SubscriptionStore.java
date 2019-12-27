@@ -140,7 +140,6 @@ public interface SubscriptionStore {
      */
     @SqlUpdate(
         "INSERT INTO subscriptions (" +
-            "id, " +
             "object, " +
             "canceledAt, " +
             "collectionMethod, " +
@@ -154,7 +153,6 @@ public interface SubscriptionStore {
             "trialEnd, " +
             "trialStart " +
         ") VALUES (" +
-            ":getId, " +
             ":getObject, " +
             "to_timestamp(:getCanceledAt), " +
             ":getCollectionMethod, " +

@@ -118,7 +118,6 @@ public interface ProductStore {
      * @param product the product to insert
      */
     @SqlUpdate("INSERT INTO products (" +
-        "id, " +
         "object , " +
         "active, " +
         "amount," +
@@ -134,7 +133,6 @@ public interface ProductStore {
         "url, " +
         "metadata " +
         ") VALUES (" +
-        ":getId, " +
         ":getObject, " +
         ":isActive, " +
         ":getAmount, " +

@@ -115,7 +115,6 @@ public interface CustomerStore {
      */
     @SqlUpdate(
         "INSERT INTO customers (" +
-            "id, " +
             "object, " +
             "subject, " +
             "balance, " +
@@ -133,7 +132,6 @@ public interface CustomerStore {
             "surName, " +
             "phone" +
         ") VALUES (" +
-            ":getId, " +
             ":getObject, " +
             ":getSubject, " +
             ":getBalance, " +
