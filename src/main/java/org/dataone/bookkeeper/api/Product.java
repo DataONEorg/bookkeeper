@@ -56,7 +56,6 @@ public class Product {
     private boolean active;
 
     /* The product cost (in pence of the currency) */
-    @NotEmpty
     @NotNull
     @Min(0)
     private Integer amount;
@@ -74,7 +73,6 @@ public class Product {
     private String currency;
 
     /* The product creation timestamp (from the unix epoch in seconds)*/
-    @NotEmpty
     @NotNull
     private Integer created;
 
