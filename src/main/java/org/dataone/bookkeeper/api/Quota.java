@@ -52,12 +52,10 @@ public class Quota {
     private String name;
 
     /* The quota soft limit */
-    @NotEmpty
     @NotNull
     private Integer softLimit;
 
     /* The quota hard limit */
-    @NotEmpty
     @NotNull
     private Integer hardLimit;
 
@@ -119,9 +117,15 @@ public class Quota {
      * @param subscriptionId
      * @param subject
      */
-    public Quota(Integer id, String object, String name, Integer softLimit,
-                 Integer hardLimit, Integer usage, String unit,
-                 Integer subscriptionId, String subject) {
+    public Quota(Integer id,
+                 @NotNull @NotEmpty String object,
+                 @NotNull @NotEmpty String name,
+                 @NotNull Integer softLimit,
+                 @NotNull Integer hardLimit,
+                 Integer usage,
+                 @NotNull @NotEmpty String unit,
+                 Integer subscriptionId,
+                 String subject) {
         if ( id != null ) {
             if ( ! id.equals("") ) {
                 this.id = id;

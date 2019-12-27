@@ -41,7 +41,6 @@ public class OrderItem {
 
     /* The order item amount */
     @NotNull
-    @NotEmpty
     private Integer amount;
 
     /* The order item currency */
@@ -59,7 +58,6 @@ public class OrderItem {
 
     /* The order item quantity */
     @NotNull
-    @NotEmpty
     private Integer quantity;
 
     /* The order item type */
@@ -107,11 +105,11 @@ public class OrderItem {
      */
     public OrderItem(
         @NotNull @NotEmpty String object,
-        @NotNull @NotEmpty Integer amount,
+        @NotNull Integer amount,
         @NotNull @NotEmpty String currency,
         @NotNull @NotEmpty String description,
         Integer parent,
-        @NotNull @NotEmpty Integer quantity,
+        @NotNull Integer quantity,
         @NotNull @NotEmpty @Pattern(regexp = "sku|tax|shipping|discount") String type) {
         super();
         this.object = object;

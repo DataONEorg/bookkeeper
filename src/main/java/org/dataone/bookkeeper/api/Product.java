@@ -52,7 +52,6 @@ public class Product {
     private String object;
 
     /* The product visibility status (true or false) */
-    @NotEmpty
     @NotNull
     private boolean active;
 
@@ -128,17 +127,18 @@ public class Product {
     public Product(
         Integer id,
         @NotEmpty @NotNull @Pattern(regexp = "product") String object,
-        @NotEmpty @NotNull boolean active,
-        @NotEmpty @NotNull @Min(0) Integer amount,
+        @NotNull boolean active,
+        @NotNull @Min(0) Integer amount,
         @NotEmpty @NotNull @Length(max = 500) String caption,
         @NotEmpty @NotNull @Length(max = 3) String currency,
-        @NotEmpty @NotNull Integer created,
+        @NotNull Integer created,
         @NotEmpty @NotNull @Length(max = 1000) String description,
         @NotEmpty @NotNull @Pattern(regexp = "day|week|month|year") String interval,
         @NotEmpty @NotNull @Length(max = 250) String name,
         @Length(max = 100) String statementDescriptor,
         @NotEmpty @NotNull @Pattern(regexp = "good|service") String type,
-        String unitLabel, @Pattern(regexp = "http.*") String url,
+        String unitLabel,
+        @Pattern(regexp = "http.*") String url,
         ObjectNode metadata) {
         this.id = id;
         this.object = object;

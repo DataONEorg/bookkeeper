@@ -40,7 +40,6 @@ import java.util.Objects;
 public class Order {
 
     /* The order unique id */
-    @NotEmpty
     @NotNull
     private Integer id;
 
@@ -51,7 +50,6 @@ public class Order {
     private String object;
 
     /* The order amount (in the smallest unit of the currency) */
-    @NotEmpty
     @NotNull
     private Integer amount;
 
@@ -124,14 +122,14 @@ public class Order {
      * @param updated
      */
     public Order(
-        @NotEmpty @NotNull Integer id,
+        @NotNull Integer id,
         @NotEmpty @NotNull @Pattern(regexp = "order") String object,
-        @NotEmpty @NotNull Integer amount,
+        @NotNull Integer amount,
         Integer amountReturned,
         ObjectNode charge,
-        @NotEmpty @NotNull Integer created,
+        @NotNull Integer created,
         @NotEmpty @NotNull String currency,
-        @NotEmpty @NotNull Integer customer,
+        @NotNull Integer customer,
         @NotEmpty @NotNull String email,
         List<OrderItem> items,
         ObjectNode metadata,

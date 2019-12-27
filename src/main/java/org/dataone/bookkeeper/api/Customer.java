@@ -25,10 +25,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -50,17 +50,14 @@ public class Customer {
     private String subject;
 
     /* The customer account balance */
-    @NotEmpty
     @NotNull
     private Integer balance;
 
     /* The customer address */
-    @NotEmpty
     @NotNull
     private Address address;
 
     /* The customer creation date, in seconds from the unix epoch */
-    @NotEmpty
     @NotNull
     private Integer created;
 
@@ -71,7 +68,6 @@ public class Customer {
     private String currency;
 
     /* The customer invoice delinquency status */
-    @NotEmpty
     @NotNull
     private boolean delinquent;
 
@@ -80,12 +76,12 @@ public class Customer {
     private String description;
 
     /* The customer discount settings as a JSON object */
-    @NotEmpty
     private ObjectNode discount;
 
     /* The customer email address */
     @NotEmpty
     @NotNull
+    @Email
     private String email;
 
     /* The customer invoice prefix to generate unique invoice numbers */
@@ -93,11 +89,9 @@ public class Customer {
     private String invoicePrefix;
 
     /* The customer invoice settings */
-    @NotEmpty
     private ObjectNode invoiceSettings;
 
     /* The customer metadata (extended information as needed) */
-    @NotEmpty
     private ObjectNode metadata;
 
     /* The customer given name */
@@ -144,17 +138,17 @@ public class Customer {
     public Customer(Integer id,
                     @NotEmpty @NotNull @Pattern(regexp = "customer") String object,
                     @NotEmpty @NotNull String subject,
-                    @NotEmpty @NotNull Integer balance,
+                    @NotNull Integer balance,
                     @NotEmpty @NotNull Address address,
-                    @NotEmpty @NotNull Integer created,
+                    @NotNull Integer created,
                     @NotEmpty @NotNull @Pattern(regexp = "[A-Z]{3}") String currency,
-                    @NotEmpty @NotNull boolean delinquent,
+                    @NotNull boolean delinquent,
                     @NotEmpty String description,
-                    @NotEmpty ObjectNode discount,
+                    ObjectNode discount,
                     @NotEmpty @NotNull String email,
                     @NotEmpty String invoicePrefix,
-                    @NotEmpty ObjectNode invoiceSettings,
-                    @NotEmpty ObjectNode metadata,
+                    ObjectNode invoiceSettings,
+                    ObjectNode metadata,
                     @NotEmpty @NotNull String givenName,
                     @NotEmpty @NotNull String surName,
                     @NotEmpty String phone) {
