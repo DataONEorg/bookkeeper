@@ -21,6 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
@@ -34,6 +35,7 @@ import java.util.Objects;
 /**
  * Customers represent individuals that order products.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Customer {
     /* The customer unique id */
     private Integer id;

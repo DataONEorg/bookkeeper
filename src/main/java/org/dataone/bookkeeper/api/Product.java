@@ -43,6 +43,7 @@ import java.util.Objects;
 public class Product {
 
     /* The product id */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer id;
 
     /* The product object type */
