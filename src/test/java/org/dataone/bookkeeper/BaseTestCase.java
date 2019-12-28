@@ -25,9 +25,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi3.JdbiFactory;
-import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.flywaydb.core.Flyway;
@@ -46,25 +44,25 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class BaseTestCase {
 
-    // The embedded database reference
-    public static EmbeddedPostgres pg;
+    /* The embedded database reference */
+    private static EmbeddedPostgres pg;
 
-    // A connection to the database
-    public static Connection connection;
+    /* A connection to the database */
+    static Connection connection;
 
-    // The Flyway database migrator used to manage database schema integrity
-    public static Flyway flyway;
+    /* The Flyway database migrator used to manage database schema integrity */
+    private static Flyway flyway;
 
-    // The metrics registry for testing
-    public static MetricRegistry metricRegistry = new MetricRegistry();
+    /* The metrics registry for testing */
+    private static MetricRegistry metricRegistry = new MetricRegistry();
 
-    // The Dropwizard environment used in tests
-    public static Environment environment;
+    /* The Dropwizard environment used in tests */
+    private static Environment environment;
 
-    // The data source factory used to get a postgresql datasource
-    public static DataSourceFactory dataSourceFactory = new DataSourceFactory();
+    /* The data source factory used to get a postgresql datasource */
+    private static DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
-    // The JDBI instance used in testing
+    /* The JDBI instance */
     public static Jdbi dbi;
 
     /**
@@ -96,9 +94,7 @@ public class BaseTestCase {
             flyway.migrate();
 
             // Create a Dropwizard environment for testing
-            environment = new Environment("bookkeeper",
-                Jackson.newObjectMapper(), Validators.newValidator(), metricRegistry,
-                ClassLoader.getSystemClassLoader());
+            environment = new Environment("bookkeeper");
 
             // Set up a PostgreSQL datasource for testing (Stores)
 
