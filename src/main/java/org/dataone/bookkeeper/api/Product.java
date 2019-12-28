@@ -296,7 +296,7 @@ public class Product {
     public String getCreatedTimestamp() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            return formatter.format(new Date(getCreated().intValue() * 1000));
+            return formatter.format(new Date((long) getCreated().intValue() * 1000));
     }
 
     /**

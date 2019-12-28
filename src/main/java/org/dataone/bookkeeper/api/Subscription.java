@@ -257,7 +257,7 @@ public class Subscription {
     public String getCanceledAtTimestamp() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getCanceledAt().intValue() * 1000));
+        return formatter.format(new Date((long) getCanceledAt().intValue() * 1000));
     }
 
     /**
@@ -303,7 +303,7 @@ public class Subscription {
     public String getCreatedTimestamp() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getCreated().intValue() * 1000));
+        return formatter.format(new Date((long) getCreated().intValue() * 1000));
     }
 
     /**
@@ -429,7 +429,7 @@ public class Subscription {
     public String getStartDateTimestamp() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getStartDate().intValue() * 1000));
+        return formatter.format(new Date((long) getStartDate().intValue() * 1000));
     }
 
     /**
@@ -475,7 +475,7 @@ public class Subscription {
     public String getTrialEndTimestamp() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getTrialEnd().intValue() * 1000));
+        return formatter.format(new Date((long) getTrialEnd().intValue() * 1000));
     }
 
     /**
@@ -503,7 +503,7 @@ public class Subscription {
     public String getTrailStartTimestamp() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(new Date(getTrialStart().intValue() * 1000));
+        return formatter.format(new Date((long) getTrialStart().intValue() * 1000));
     }
 
     /**
