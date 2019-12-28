@@ -126,7 +126,7 @@ public class Quota {
                  Integer subscriptionId,
                  String subject) {
         if ( id != null ) {
-            if ( ! id.equals("") ) {
+            if ( ! id.toString().equals("") ) {
                 this.id = id;
             }
         }
@@ -199,7 +199,7 @@ public class Quota {
      * @return softLimit
      */
     @JsonProperty
-    public @NotEmpty @NotNull Integer getSoftLimit() {
+    public @NotNull Integer getSoftLimit() {
         return softLimit;
     }
 
@@ -208,7 +208,7 @@ public class Quota {
      * @param softLimit
      */
     @JsonProperty
-    public void setSoftLimit(@NotEmpty @NotNull Integer softLimit) {
+    public void setSoftLimit(@NotNull Integer softLimit) {
         this.softLimit = softLimit;
     }
 
@@ -217,7 +217,7 @@ public class Quota {
      * @return hardLimit
      */
     @JsonProperty
-    public @NotEmpty @NotNull Integer getHardLimit() {
+    public @NotNull Integer getHardLimit() {
         return hardLimit;
     }
 
@@ -226,7 +226,7 @@ public class Quota {
      * @param hardLimit
      */
     @JsonProperty
-    public void setHardLimit(@NotEmpty @NotNull Integer hardLimit) {
+    public void setHardLimit(@NotNull Integer hardLimit) {
         this.hardLimit = hardLimit;
     }
 
