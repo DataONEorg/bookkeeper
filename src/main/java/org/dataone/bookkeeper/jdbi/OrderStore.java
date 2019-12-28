@@ -26,6 +26,7 @@ import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.UseRowMapper;
@@ -100,6 +101,7 @@ public interface OrderStore {
      * @param order the order to insert
      */
     @SqlUpdate("INSERT INTO orders (" +
+        "id, " +
         "object, " +
         "amount, " +
         "amountReturned, " +
@@ -114,6 +116,7 @@ public interface OrderStore {
         "statusTransitions, " +
         "updated " +
         ") VALUES (" +
+        ":getId, " +
         ":getObject, " +
         ":getAmount, " +
         ":getAmountReturned, " +
@@ -126,7 +129,9 @@ public interface OrderStore {
         ":getMetadataJSON::json, " +
         ":getStatus, " +
         ":getStatusTransitionsJSON::json, " +
-        "to_timestamp(:getUpdated))")
+        "to_timestamp(:getUpdated)) " +
+        "RETURNING id")
+    @GetGeneratedKeys
     void insert(@BindMethods Order order);
 
     /**
@@ -147,7 +152,9 @@ public interface OrderStore {
         "status = :getStatus, " +
         "statusTransitions = :getStatusTransitionsJSON::json, " +
         "updated = to_timestamp(:getUpdated) " +
-        "WHERE id = :getId")
+        "WHERE id = :getId " +
+        "RETURNING id")
+    @GetGeneratedKeys
     void update(@BindMethods Order order);
 
     /**
