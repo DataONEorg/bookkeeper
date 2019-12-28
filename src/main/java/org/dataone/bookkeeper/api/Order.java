@@ -62,8 +62,6 @@ public class Order {
     private ObjectNode charge;
 
     /* The order creation date (seconds since the epoch) */
-    @NotEmpty
-    @NotNull
     private Integer created;
 
     /* The order currency id */
@@ -129,7 +127,7 @@ public class Order {
         @NotNull Integer amount,
         Integer amountReturned,
         ObjectNode charge,
-        @NotNull Integer created,
+        Integer created,
         @NotEmpty @NotNull String currency,
         @NotNull Integer customer,
         @NotEmpty @NotNull String email,

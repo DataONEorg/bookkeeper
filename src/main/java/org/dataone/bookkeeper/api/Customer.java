@@ -60,7 +60,6 @@ public class Customer {
     private Address address;
 
     /* The customer creation date, in seconds from the unix epoch */
-    @NotNull
     private Integer created;
 
     /* The customer default currency code */
@@ -107,7 +106,6 @@ public class Customer {
     private String surName;
 
     /* The customer phone number */
-    @NotEmpty
     private String phone;
 
     /**
@@ -142,7 +140,7 @@ public class Customer {
                     @NotEmpty @NotNull String subject,
                     @NotNull Integer balance,
                     @NotEmpty @NotNull Address address,
-                    @NotNull Integer created,
+                    Integer created,
                     @NotEmpty @NotNull @Pattern(regexp = "[A-Z]{3}") String currency,
                     @NotNull boolean delinquent,
                     @NotEmpty String description,
@@ -153,7 +151,7 @@ public class Customer {
                     ObjectNode metadata,
                     @NotEmpty @NotNull String givenName,
                     @NotEmpty @NotNull String surName,
-                    @NotEmpty String phone) {
+                    String phone) {
         super();
         this.id = id;
         this.object = object;

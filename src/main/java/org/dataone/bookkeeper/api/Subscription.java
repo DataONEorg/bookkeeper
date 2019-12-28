@@ -71,8 +71,6 @@ public class Subscription {
     private String collectionMethod;
 
     /* The subscription creation timestamp (seconds since the epoch) */
-    @NotNull
-    @NotEmpty
     private Integer created;
 
     /* The subscription current period end timestamp (seconds since the epoch)
@@ -172,7 +170,7 @@ public class Subscription {
         @NotNull @NotEmpty @Pattern(regexp = "subscription") String object,
         Integer canceledAt,
         @NotNull @NotEmpty @Pattern(regexp = "charge_automatically|send_invoice") String collectionMethod,
-        @NotNull @NotEmpty Integer created,
+        Integer created,
         @NotNull @NotEmpty Integer customerId,
         ObjectNode metadata,
         @NotNull @NotEmpty Product product,
