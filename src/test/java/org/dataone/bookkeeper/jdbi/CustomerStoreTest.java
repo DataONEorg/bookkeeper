@@ -156,12 +156,13 @@ public class CustomerStoreTest extends BaseTestCase {
         this.customerIds.add(expectedCustomer.getId());
 
         // Insert the customer
-        customerStore.insert(expectedCustomer);
+        Integer id = customerStore.insert(expectedCustomer);
+        expectedCustomer.setId(id);
 
         // Then get the customer to ensure it was inserted
-        Customer customer = CustomerHelper.getCustomerById(expectedCustomer.getId());
+        Customer customer = CustomerHelper.getCustomerById(id);
 
-        assertTrue(customer.getId().equals(expectedCustomer.getId()));
+        assertTrue(customer.equals(expectedCustomer));
     }
 
     @Test
