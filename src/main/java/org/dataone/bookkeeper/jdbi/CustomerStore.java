@@ -26,6 +26,7 @@ import org.dataone.bookkeeper.jdbi.mappers.CustomerMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
@@ -148,7 +149,8 @@ public interface CustomerStore {
             ":getGivenName, " +
             ":getSurName, " +
             ":getPhone" +
-        ")")
+        ") RETURNING id")
+    @GetGeneratedKeys
     void insert(@BindMethods Customer customer);
 
     /**
@@ -171,7 +173,9 @@ public interface CustomerStore {
         "metadata = :getMetadataJSON::json, " +
         "givenName = :getGivenName, " +
         "surName = :getSurName, " +
-        "phone = :getPhone")
+        "phone = :getPhone " +
+        "RETURNING id")
+    @GetGeneratedKeys
     void update(@BindMethods Customer customer);
 
     /**
