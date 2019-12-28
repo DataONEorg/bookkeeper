@@ -29,6 +29,7 @@ import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.UseRowReducer;
@@ -140,6 +141,7 @@ public interface SubscriptionStore {
      */
     @SqlUpdate(
         "INSERT INTO subscriptions (" +
+            "id, " +
             "object, " +
             "canceledAt, " +
             "collectionMethod, " +
@@ -153,6 +155,7 @@ public interface SubscriptionStore {
             "trialEnd, " +
             "trialStart " +
         ") VALUES (" +
+            ":getId, " +
             ":getObject, " +
             "to_timestamp(:getCanceledAt), " +
             ":getCollectionMethod, " +
@@ -165,9 +168,10 @@ public interface SubscriptionStore {
             ":getStatus, " +
             "to_timestamp(:getTrialEnd), " +
             "to_timestamp(:getTrialStart) " +
-        ")"
+        ") RETURNING id"
     )
-    void insert(@BindMethods Subscription subscription);
+    @GetGeneratedKeys
+    Integer insert(@BindMethods Subscription subscription);
 
     /**
      * Update a subscription
@@ -187,9 +191,11 @@ public interface SubscriptionStore {
             "startDate = to_timestamp(:getStartDate), " +
             "status = :getStatus, " +
             "trialEnd = to_timestamp(:getTrialEnd), " +
-            "trialStart = to_timestamp(:getTrialStart) "
+            "trialStart = to_timestamp(:getTrialStart) " +
+            "RETURNING id"
     )
-    void update(@BindMethods Subscription subscription);
+    @GetGeneratedKeys
+    Integer update(@BindMethods Subscription subscription);
 
     /**
      * Delete a subscription

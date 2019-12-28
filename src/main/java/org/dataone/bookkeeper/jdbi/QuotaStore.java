@@ -99,7 +99,7 @@ public interface QuotaStore {
         "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
         "RETURNING id")
     @GetGeneratedKeys
-    void insert(@BindBean Quota quota);
+    Integer insert(@BindBean Quota quota);
 
     /**
      * Update a quota for a given id
@@ -117,7 +117,7 @@ public interface QuotaStore {
        "WHERE id = :id " +
        "RETURNING id")
    @GetGeneratedKeys
-    void update(@BindBean Quota quota);
+   Integer update(@BindBean Quota quota);
 
     /**
      * Delete a quota given the quota id

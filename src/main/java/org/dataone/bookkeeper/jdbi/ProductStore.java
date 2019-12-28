@@ -174,7 +174,7 @@ public interface ProductStore {
         "WHERE id = :getId " +
         "RETURNING id")
     @GetGeneratedKeys
-    void update(@BindMethods Product product);
+    Integer update(@BindMethods Product product);
 
     /**
      * Delete a product given the id

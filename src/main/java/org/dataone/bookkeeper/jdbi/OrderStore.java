@@ -132,7 +132,7 @@ public interface OrderStore {
         "to_timestamp(:getUpdated)) " +
         "RETURNING id")
     @GetGeneratedKeys
-    void insert(@BindMethods Order order);
+    Integer insert(@BindMethods Order order);
 
     /**
      * Update an order
@@ -155,7 +155,7 @@ public interface OrderStore {
         "WHERE id = :getId " +
         "RETURNING id")
     @GetGeneratedKeys
-    void update(@BindMethods Order order);
+    Integer update(@BindMethods Order order);
 
     /**
      * Delete an order

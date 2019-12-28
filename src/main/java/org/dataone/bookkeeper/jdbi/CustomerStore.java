@@ -151,7 +151,7 @@ public interface CustomerStore {
             ":getPhone" +
         ") RETURNING id")
     @GetGeneratedKeys
-    void insert(@BindMethods Customer customer);
+    Integer insert(@BindMethods Customer customer);
 
     /**
      * Update a customer
@@ -176,7 +176,7 @@ public interface CustomerStore {
         "phone = :getPhone " +
         "RETURNING id")
     @GetGeneratedKeys
-    void update(@BindMethods Customer customer);
+    Integer update(@BindMethods Customer customer);
 
     /**
      * Delete a customer
