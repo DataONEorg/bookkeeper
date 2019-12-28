@@ -48,6 +48,9 @@ public interface QuotaStore {
     /** The full ordered query */
     String SELECT_ALL = SELECT_CLAUSE;
 
+    /** The query used to find unassigned quotas (i.e. generic product quotas */
+    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE subscriptionId IS NULL";
+
     /** The query used to find an individual quota */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
 
@@ -64,8 +67,15 @@ public interface QuotaStore {
     List<Quota> listQuotas();
 
     /**
+     * List all unassigned quotas (no subscriptionId)
+     * @return
+     */
+    @SqlQuery(SELECT_UNASSIGNED)
+    List<Quota> listUnassignedQuotas();
+
+    /**
      * Find quotas by quota identifier
-     * @param id
+     * @param id the quota identifier
      */
     @SqlQuery(SELECT_ONE)
     Quota getQuota(@Bind("id") Integer id);
@@ -74,7 +84,7 @@ public interface QuotaStore {
      * Find quotas by subscription identifier.
      *
      * Pass a null subscriptionId to list all product-associated quotas (i.e. not bound to a subscription).
-     * @param subscriptionId
+     * @param subscriptionId the subscription identifier
      */
     @SqlQuery(SELECT_SUBSCRIPTION)
     List<Quota> findQuotasBySubscriptionId(@Bind("subscriptionId") Integer subscriptionId);
@@ -91,7 +101,7 @@ public interface QuotaStore {
 
     /**
      * Insert a quota with a given Quota instance
-     * @param quota
+     * @param quota the quota to insert
      */
     @SqlUpdate("INSERT INTO quotas " +
         "(object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
@@ -103,7 +113,7 @@ public interface QuotaStore {
 
     /**
      * Update a quota for a given id
-     * @param quota
+     * @param quota the quota to update
      */
    @SqlUpdate("UPDATE quotas " +
        "SET object = :object, " +
@@ -121,7 +131,7 @@ public interface QuotaStore {
 
     /**
      * Delete a quota given the quota id
-     * @param id
+     * @param id the quota to delete
      */
     @SqlUpdate("DELETE FROM quotas WHERE id = :id")
     void delete(@Bind("id") Integer id);
