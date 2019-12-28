@@ -48,7 +48,7 @@ class QuotaTest {
     private static final Integer HARDLIMIT = 3;
     private static final Integer USAGE = null;
     private static final String UNIT =  "portal";
-    private static final Integer CUSTOMER_ID = null;
+    private static final Integer SUBSCRIPTION_ID = null;
     private static final String SUBJECT = null;
 
     /**
@@ -57,11 +57,10 @@ class QuotaTest {
     @Test
     @DisplayName("Test Quota model serialization")
     public void serializesToJSON() throws Exception {
-        // Build the Customer instance
+        // Build the Quota instance
         final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT,
-            USAGE, UNIT, CUSTOMER_ID, SUBJECT);
-        quota.getCustomerId();
-        // Test the Customer instance
+            USAGE, UNIT, SUBSCRIPTION_ID, SUBJECT);
+        // Test the Quota instance
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture("fixtures/quota.json"), Quota.class));
         assertThat(MAPPER.writeValueAsString(quota)).isEqualTo(expected);
@@ -76,7 +75,7 @@ class QuotaTest {
     public void deserializesFromJSON() throws Exception {
         // Build the Quota instance
         final Quota quota = new Quota(ID, OBJECT, NAME, SOFTLIMIT, HARDLIMIT,
-            USAGE, UNIT, CUSTOMER_ID, SUBJECT);
+            USAGE, UNIT, SUBSCRIPTION_ID, SUBJECT);
 
         // Test the Quota instance
         final Quota deserializedQuota =
