@@ -26,6 +26,7 @@ import org.dataone.bookkeeper.jdbi.mappers.ProductMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.UseRowMapper;
@@ -146,8 +147,10 @@ public interface ProductStore {
         ":getType, " +
         ":getUnitLabel, " +
         ":getUrl, " +
-        ":getMetadataJSON::json)")
-    void insert(@BindMethods Product product);
+        ":getMetadataJSON::json) " +
+        "RETURNING id")
+    @GetGeneratedKeys
+    Integer insert(@BindMethods Product product);
 
     /**
      * Update a product
@@ -168,7 +171,9 @@ public interface ProductStore {
         "unitLabel = :getUnitLabel, " +
         "url = :getUrl, " +
         "metadata = :getMetadataJSON::json " +
-        "WHERE id = :getId")
+        "WHERE id = :getId " +
+        "RETURNING id")
+    @GetGeneratedKeys
     void update(@BindMethods Product product);
 
     /**
