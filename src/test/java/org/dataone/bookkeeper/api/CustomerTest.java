@@ -68,7 +68,6 @@ class CustomerTest {
     private final String GIVENNAME = "Christopher";
     private final String SURNAME = "Jones";
     private final String PHONE = "805-893-2500";
-    private final List<Quota> QUOTAS = null;
 
     /**
      * Test serialization to JSON
@@ -79,7 +78,7 @@ class CustomerTest {
         // Build the Customer instance
         final Customer customer = new Customer(ID, OBJECT, SUBJECT, BALANCE, ADDRESS, CREATED,
             CURRENCY, DELINQUENT, DESCRIPTION, DISCOUNT, EMAIL, INVOICEPREFIX, INVOICESETTINGS,
-            METADATA, GIVENNAME, SURNAME, PHONE, QUOTAS);
+            METADATA, GIVENNAME, SURNAME, PHONE);
 
         // Test the Customer instance
         final String expected = MAPPER.writeValueAsString(
@@ -97,7 +96,7 @@ class CustomerTest {
         // Build the Customer instance
         final Customer customer = new Customer(ID, OBJECT, SUBJECT, BALANCE, ADDRESS, CREATED,
             CURRENCY, DELINQUENT, DESCRIPTION, DISCOUNT, EMAIL, INVOICEPREFIX, INVOICESETTINGS,
-            METADATA, GIVENNAME, SURNAME, PHONE, QUOTAS);
+            METADATA, GIVENNAME, SURNAME, PHONE);
 
         // Test the Customer instance
         final Customer deserializedCustomer =
