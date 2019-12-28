@@ -62,13 +62,14 @@ public interface QuotaStore {
 
     /**
      * List all quotas
+     * @return quotas the list of quotas
      */
     @SqlQuery(SELECT_ALL)
     List<Quota> listQuotas();
 
     /**
      * List all unassigned quotas (no subscriptionId)
-     * @return
+     * @return quotas the list of unnassigned quotas
      */
     @SqlQuery(SELECT_UNASSIGNED)
     List<Quota> listUnassignedQuotas();
@@ -76,6 +77,7 @@ public interface QuotaStore {
     /**
      * Find quotas by quota identifier
      * @param id the quota identifier
+     * @return quota the quota for the identifier
      */
     @SqlQuery(SELECT_ONE)
     Quota getQuota(@Bind("id") Integer id);
@@ -85,6 +87,7 @@ public interface QuotaStore {
      *
      * Pass a null subscriptionId to list all product-associated quotas (i.e. not bound to a subscription).
      * @param subscriptionId the subscription identifier
+     * @return quotas the quotas for the subscriptionId
      */
     @SqlQuery(SELECT_SUBSCRIPTION)
     List<Quota> findQuotasBySubscriptionId(@Bind("subscriptionId") Integer subscriptionId);
