@@ -25,6 +25,7 @@ import org.dataone.bookkeeper.api.Quota;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
@@ -95,7 +96,9 @@ public interface QuotaStore {
     @SqlUpdate("INSERT INTO quotas " +
         "(object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
         "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject)")
+        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
+        "RETURNING id")
+    @GetGeneratedKeys
     void insert(@BindBean Quota quota);
 
     /**
@@ -111,7 +114,9 @@ public interface QuotaStore {
        "usage = :usage, " +
        "subscriptionId = :subscriptionId, " +
        "subject = :subject " +
-       "WHERE id = :id")
+       "WHERE id = :id " +
+       "RETURNING id")
+   @GetGeneratedKeys
     void update(@BindBean Quota quota);
 
     /**
