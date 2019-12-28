@@ -74,13 +74,13 @@ public class EmbeddedPostgresqlTest extends BaseTestCase {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT count(*) FROM quotas;");
             assertTrue(resultSet.next());
-            assertEquals(11, resultSet.getInt(1));
+            assertEquals(14, resultSet.getInt(1));
             assertFalse(resultSet.next());
 
             // Check for
             resultSet = statement.executeQuery("SELECT count(*) FROM quotas WHERE subscriptionId IS NULL;");
             assertTrue(resultSet.next());
-            assertEquals(11, resultSet.getInt(1));
+            assertEquals(14, resultSet.getInt(1));
 
         } catch (SQLException sqle) {
             sqle.printStackTrace();
