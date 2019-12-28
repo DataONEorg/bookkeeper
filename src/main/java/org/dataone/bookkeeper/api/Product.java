@@ -74,7 +74,6 @@ public class Product {
     private String currency;
 
     /* The product creation timestamp (from the unix epoch in seconds)*/
-    @NotNull
     private Integer created;
 
     /* The product description */
@@ -130,7 +129,7 @@ public class Product {
         @NotNull @Min(0) Integer amount,
         @NotEmpty @NotNull @Length(max = 500) String caption,
         @NotEmpty @NotNull @Length(max = 3) String currency,
-        @NotNull Integer created,
+        Integer created,
         @NotEmpty @NotNull @Length(max = 1000) String description,
         @NotEmpty @NotNull @Pattern(regexp = "day|week|month|year") String interval,
         @NotEmpty @NotNull @Length(max = 250) String name,
@@ -172,6 +171,7 @@ public class Product {
     public int getIdAsInt() {
         return getId().intValue();
     }
+
     /**
      * Set the product id
      * @param id
