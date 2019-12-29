@@ -53,7 +53,7 @@ import java.util.List;
 @Timed
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
-public class ProductsResource {
+public class ProductsResource extends BaseResource {
 
     /* The logging facility for this class */
     private Log log = LogFactory.getLog(ProductsResource.class);
@@ -134,7 +134,7 @@ public class ProductsResource {
     @Timed
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{productId}")
+    @Path("{productId}")
     public Product retrieve(@PathParam("productId") @NotNull Integer productId)
         throws WebApplicationException {
 
@@ -158,12 +158,13 @@ public class ProductsResource {
     @Timed
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{productId}")
+    @Path("{productId}")
     public Product update(@NotNull @Valid Product product) throws WebApplicationException {
         // Update the product after validation
         try {
             // Reset the created field to keep it managed server-side
             Product existing = productStore.getProduct(product.getId());
+
             product.setCreated(existing.getCreated());
             productStore.update(product);
         } catch (Exception e) {
@@ -181,7 +182,7 @@ public class ProductsResource {
      */
     @Timed
     @DELETE
-    @Path("/{productId}")
+    @Path("{productId}")
     public Response delete(@PathParam("productId") @Valid Integer productId) throws WebApplicationException {
         String message = "The productId cannot be null.";
         if (productId == null) {
