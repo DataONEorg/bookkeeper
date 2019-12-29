@@ -53,7 +53,7 @@ import java.util.List;
 @Timed
 @Path("/quotas")
 @Produces(MediaType.APPLICATION_JSON)
-public class QuotasResource {
+public class QuotasResource extends BaseResource {
 
     /* The logging facility for this class */
     private Log log = LogFactory.getLog(QuotasResource.class);
@@ -88,15 +88,20 @@ public class QuotasResource {
         @QueryParam("subject") String subject) throws WebApplicationException {
 
         List<Quota> quotas;
-        if (subject != null) {
-            quotas = quotaStore.findQuotasBySubject(subject);
-        } else if (subscriptionId != null) {
-            quotas = quotaStore.findQuotasBySubscriptionId(subscriptionId);
-        // } else if ( // determine admin role) {
+        try {
+            if (subject != null) {
+                quotas = quotaStore.findQuotasBySubject(subject);
+            } else if (subscriptionId != null) {
+                quotas = quotaStore.findQuotasBySubscriptionId(subscriptionId);
             // TODO: If authenticated as an admin, list all quotas
-            quotas = quotaStore.listQuotas();
-        } else {
-            quotas = quotaStore.listUnassignedQuotas();
+            // } else if ( // determine admin role) {
+                // quotas = quotaStore.listQuotas();
+            } else {
+                quotas = quotaStore.listUnassignedQuotas();
+            }
+        } catch (Exception e) {
+            String message = "Couldn't list quotas: " + e.getMessage();
+            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
         }
 
         // TODO: Incorporate paging params - new QuotaList(start, count, total, quotas)
@@ -131,7 +136,7 @@ public class QuotasResource {
     @Timed
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{quotaId}")
+    @Path("{quotaId}")
     public Quota retrieve(@PathParam("quotaId") @NotNull Integer quotaId)
         throws WebApplicationException {
 
@@ -155,12 +160,10 @@ public class QuotasResource {
     @Timed
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{quotaId}")
+    @Path("{quotaId}")
     public Quota update(@NotNull @Valid Quota quota) throws WebApplicationException {
         // Update the quota after validation
         try {
-            // Reset the created field to keep it managed server-side
-            Quota existing = quotaStore.getQuota(quota.getId());
             quotaStore.update(quota);
         } catch (Exception e) {
             String message = "Couldn't update the quota: " + e.getMessage();
@@ -177,7 +180,7 @@ public class QuotasResource {
      */
     @Timed
     @DELETE
-    @Path("/{quotaId}")
+    @Path("{quotaId}")
     public Response delete(@PathParam("quotaId") @Valid Integer quotaId) throws WebApplicationException {
         String message = "The quotaId cannot be null.";
         if (quotaId == null) {
