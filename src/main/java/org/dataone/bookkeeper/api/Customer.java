@@ -52,28 +52,22 @@ public class Customer {
     private String subject;
 
     /* The customer account balance */
-    @NotNull
     private Integer balance;
 
     /* The customer address */
-    @NotNull
     private Address address;
 
     /* The customer creation date, in seconds from the unix epoch */
     private Integer created;
 
     /* The customer default currency code */
-    @NotEmpty
-    @NotNull
     @Pattern(regexp = "[A-Z]{3}")
     private String currency;
 
     /* The customer invoice delinquency status */
-    @NotNull
     private boolean delinquent;
 
     /* The customer description, can be null */
-    @NotEmpty
     private String description;
 
     /* The customer discount settings as a JSON object */
@@ -86,7 +80,6 @@ public class Customer {
     private String email;
 
     /* The customer invoice prefix to generate unique invoice numbers */
-    @NotEmpty
     private String invoicePrefix;
 
     /* The customer invoice settings */
@@ -138,15 +131,15 @@ public class Customer {
     public Customer(Integer id,
                     @NotEmpty @NotNull @Pattern(regexp = "customer") String object,
                     @NotEmpty @NotNull String subject,
-                    @NotNull Integer balance,
-                    @NotEmpty @NotNull Address address,
+                    Integer balance,
+                    Address address,
                     Integer created,
-                    @NotEmpty @NotNull @Pattern(regexp = "[A-Z]{3}") String currency,
+                    @Pattern(regexp = "[A-Z]{3}") String currency,
                     @NotNull boolean delinquent,
                     @NotEmpty String description,
                     ObjectNode discount,
                     @NotEmpty @NotNull String email,
-                    @NotEmpty String invoicePrefix,
+                    String invoicePrefix,
                     ObjectNode invoiceSettings,
                     ObjectNode metadata,
                     @NotEmpty @NotNull String givenName,
