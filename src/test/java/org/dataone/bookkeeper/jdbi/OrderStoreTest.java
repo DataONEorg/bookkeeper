@@ -21,7 +21,9 @@
 
 package org.dataone.bookkeeper.jdbi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.dataone.bookkeeper.BaseTestCase;
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.helpers.CustomerHelper;
 import org.dataone.bookkeeper.helpers.StoreHelper;
@@ -36,6 +38,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -149,6 +152,35 @@ public class OrderStoreTest extends BaseTestCase {
             assertTrue(orders.size() == 1);
             assertTrue(orders.get(0).getId().equals(expected.getId()));
         } catch (SQLException e) {
+            fail(e);
+        }
+    }
+
+    /**
+     * Test getting orders by subject
+     */
+    @Test
+    @DisplayName("Test getting orders by subject")
+    public void testFindOrdersBySubject() {
+        try {
+            // Insert a new customer
+            Customer customer =
+                CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId())
+                );
+            this.customerIds.add(customer.getId());
+
+            // Create new order for the customer and insert it
+            Order expected = OrderHelper.insertTestOrder(
+                OrderHelper.createTestOrder(StoreHelper.getRandomId(),
+                    customer.getId(), StoreHelper.getRandomId(), StoreHelper.getRandomId()));
+            this.orderIds.add(expected.getId());
+
+            // Get orders for the given subject
+            List<Order> orders = orderStore.findOrdersBySubject(customer.getSubject());
+            assertEquals(1, orders.size());
+            assertEquals(orders.get(0).getId(), expected.getId());
+        } catch (SQLException | JsonProcessingException e) {
             fail(e);
         }
     }
