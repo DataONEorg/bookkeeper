@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -116,7 +116,7 @@ public class QuotaStoreTest extends BaseTestCase {
     @Test
     @DisplayName("Test listing the quotas")
     public void testListQuotas() {
-        assertTrue(quotaStore.listQuotas().size() >= 11);
+        assertThat(quotaStore.listQuotas().size() >= 3);
     }
 
     /**
@@ -126,7 +126,7 @@ public class QuotaStoreTest extends BaseTestCase {
     @DisplayName("Test get quota")
     public void testGetQuota() {
 
-        assertTrue(quotaStore.getQuota(1).getId().equals(1));
+        assertEquals(1, (int) quotaStore.getQuota(1).getId());
     }
 
     /**
@@ -147,7 +147,7 @@ public class QuotaStoreTest extends BaseTestCase {
             this.subscriptionIds.add(subscriptionId); // To be deleted
             Integer quotaId = QuotaHelper.insertTestQuotaWithSubscription(StoreHelper.getRandomId(), subscriptionId);
             this.quotaIds.add(quotaId); // To be deleted
-            assertTrue(quotaStore.findQuotasBySubscriptionId(subscriptionId).size() == 1);
+            assertEquals(1, quotaStore.findQuotasBySubscriptionId(subscriptionId).size());
             assertThat(quotaStore.findQuotasBySubscriptionId(0).isEmpty());
 
         } catch (SQLException e) {
@@ -176,9 +176,11 @@ public class QuotaStoreTest extends BaseTestCase {
 
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
                 StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
+            this.quotaIds.add(quotaOneId);
             Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
                 StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
-            assertTrue(quotaStore.findQuotasBySubject(customer.getSubject()).size() == 2);
+            this.quotaIds.add(quotaTwoId);
+            assertEquals(2, quotaStore.findQuotasBySubject(customer.getSubject()).size());
         } catch (SQLException e) {
             fail(e);
         } catch (JsonProcessingException e) {
@@ -243,7 +245,7 @@ public class QuotaStoreTest extends BaseTestCase {
             quota.setUnit("megabyte");
             quota.setSubscriptionId(subscriptionId);
             quotaStore.update(quota);
-            assertThat(QuotaHelper.getQuotaById(quotaId).getName() == quotaName);
+            assertEquals(QuotaHelper.getQuotaById(quotaId).getName(), quotaName);
             assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 56789);
             assertThat(QuotaHelper.getQuotaById(quotaId).getHardLimit() == 567890);
             assertThat(QuotaHelper.getQuotaById(quotaId).getUsage() == 96789);
@@ -282,6 +284,7 @@ public class QuotaStoreTest extends BaseTestCase {
             quotaId = QuotaHelper.insertTestQuotaWithSubscription(
                 StoreHelper.getRandomId(), subscriptionId
             );
+            this.quotaIds.add(quotaId);
 
             // Delete the quota
             quotaStore.delete(quotaId);

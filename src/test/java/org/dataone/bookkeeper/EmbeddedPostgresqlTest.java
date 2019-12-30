@@ -74,13 +74,13 @@ public class EmbeddedPostgresqlTest extends BaseTestCase {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT count(*) FROM quotas;");
             assertTrue(resultSet.next());
-            assertEquals(14, resultSet.getInt(1));
+            assertEquals(3, resultSet.getInt(1));
             assertFalse(resultSet.next());
 
             // Check for
             resultSet = statement.executeQuery("SELECT count(*) FROM quotas WHERE subscriptionId IS NULL;");
             assertTrue(resultSet.next());
-            assertEquals(14, resultSet.getInt(1));
+            assertEquals(3, resultSet.getInt(1));
 
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -91,15 +91,15 @@ public class EmbeddedPostgresqlTest extends BaseTestCase {
     /**
      * Test reading a specific quota
      */
-    @DisplayName("Test 10GB Quota")
+    @DisplayName("Test 1GB Quota")
     @Test
-    public void testSelect10GBQuota() {
+    public void testSelect1GBQuota() {
         try {
 
-            // Check for 11 preset quotas
+            // Check for 3 preset quotas
             Statement statement = connection.createStatement();
             ResultSet resultSet =
-                statement.executeQuery("SELECT * FROM quotas WHERE softLimit = 10485760;");
+                statement.executeQuery("SELECT * FROM quotas WHERE softLimit = 1024;");
             assertTrue(resultSet.next());
             assertEquals(1, resultSet.getRow());
             assertFalse(resultSet.next());
