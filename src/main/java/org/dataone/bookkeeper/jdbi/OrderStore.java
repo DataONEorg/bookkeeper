@@ -54,8 +54,10 @@ public interface OrderStore {
         "o.metadata::json AS metadata, " +
         "o.status, " +
         "o.statusTransitions::json AS statusTransitions, " +
-        "date_part('epoch', o.updated)::int AS updated " +
-        "FROM orders o ";
+        "date_part('epoch', o.updated)::int AS updated, " +
+        "c.subject AS subject " +
+        "FROM orders o " +
+        "INNER JOIN customers c ON o.customer = c.id ";
 
     /** Clause to order listed results */
     String ORDER_CLAUSE = "ORDER BY o.id, o.created, o.updated ";
@@ -63,9 +65,11 @@ public interface OrderStore {
     /** The full ordered query */
     String SELECT_ALL = SELECT_CLAUSE + ORDER_CLAUSE;
 
-    String SELECT_ONE = SELECT_CLAUSE + "WHERE o.id = :id";
+    String SELECT_ONE = SELECT_CLAUSE + "WHERE o.id = :id ";
 
-    String SELECT_CUSTOMER = SELECT_CLAUSE + "WHERE customer = :customer";
+    String SELECT_CUSTOMER = SELECT_CLAUSE + "WHERE customer = :customer ";
+
+    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE subject = :subject " + ORDER_CLAUSE;
 
     /**
      * List all orders
@@ -95,6 +99,16 @@ public interface OrderStore {
     @RegisterRowMapper(OrderMapper.class)
     @UseRowMapper(OrderMapper.class)
     List<Order> findOrdersByCustomerId(@Bind("customer") Integer customerId);
+
+    /**
+     * Find orders by subject
+     * @param subject the subject of the customer
+     * @return
+     */
+    @SqlQuery(SELECT_SUBJECT)
+    @RegisterRowMapper(OrderMapper.class)
+    @UseRowMapper(OrderMapper.class)
+    List<Order> findOrdersBySubject(@Bind("subject") String subject);
 
     /**
      * Insert an order
