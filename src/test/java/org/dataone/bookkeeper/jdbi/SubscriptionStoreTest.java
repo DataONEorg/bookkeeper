@@ -251,7 +251,8 @@ public class SubscriptionStoreTest extends BaseTestCase {
             this.subscriptionIds.add(expectedSubscription.getId());
 
             // Insert the subscription
-            subscriptionStore.insert(expectedSubscription);
+            Integer id = subscriptionStore.insert(expectedSubscription);
+            expectedSubscription.setId(id);
 
             // Then get the subscription to ensure it was inserted
             Subscription subscription = SubscriptionHelper.getSubscriptionById(expectedSubscription.getId());
