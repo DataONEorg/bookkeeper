@@ -65,8 +65,6 @@ public class Order {
     private Integer created;
 
     /* The order currency id */
-    @NotEmpty
-    @NotNull
     private String currency;
 
     /* The order customer id */
@@ -74,8 +72,6 @@ public class Order {
     private Integer customer;
 
     /* The order customer's email */
-    @NotEmpty
-    @NotNull
     private String email;
 
     /* The order item list of products */
@@ -86,7 +82,6 @@ public class Order {
 
     /* The order status */
     @NotEmpty
-    @NotNull
     @Pattern(regexp = "created|paid|canceled|fulfilled|returned")
     private String status;
 
