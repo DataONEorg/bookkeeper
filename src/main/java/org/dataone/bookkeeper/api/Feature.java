@@ -21,7 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
@@ -32,7 +32,7 @@ import java.util.Objects;
 /**
  * A Feature describes an aspect of a Product, with optional limits.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Feature {
 
     /* The feature name */

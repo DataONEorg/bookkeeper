@@ -21,13 +21,13 @@
 
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * A base list type with start, count, and total properties
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class BaseList {
 
     /* The start index in the list */

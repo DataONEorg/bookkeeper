@@ -21,15 +21,15 @@
 
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
 
 /**
  * A list of subscriptions used as a representation response
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SubscriptionList extends BaseList {
 
     private List<Subscription> subscriptions;

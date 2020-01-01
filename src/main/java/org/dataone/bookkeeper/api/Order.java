@@ -21,9 +21,9 @@
 
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
@@ -39,11 +39,11 @@ import java.util.Objects;
 /**
  * Orders represent a list of purchased products by customers
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Order {
 
     /* The order unique id */
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     private Integer id;
 
     /* The order object type */

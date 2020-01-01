@@ -21,7 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
@@ -33,7 +33,7 @@ import java.util.Objects;
 /**
  * OrderItem represents a single line item of an order
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class OrderItem {
 
     /* The order item object type */
