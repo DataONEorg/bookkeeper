@@ -129,7 +129,7 @@ public class Order {
         String currency,
         @NotNull Integer customer,
         String email,
-        @NotEmpty @NotNull List<OrderItem> items,
+        @NotEmpty @NotNull @Valid List<OrderItem> items,
         ObjectNode metadata,
         @NotEmpty @NotNull @Pattern(regexp = "created|paid|canceled|fulfilled|returned") String status,
         ObjectNode statusTransitions,
