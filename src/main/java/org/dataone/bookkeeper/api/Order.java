@@ -70,7 +70,6 @@ public class Order {
     private String currency;
 
     /* The order customer id */
-    @NotEmpty
     @NotNull
     private Integer customer;
 
