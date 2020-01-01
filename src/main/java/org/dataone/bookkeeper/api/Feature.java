@@ -21,6 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
@@ -31,6 +32,7 @@ import java.util.Objects;
 /**
  * A Feature describes an aspect of a Product, with optional limits.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Feature {
 
     /* The feature name */

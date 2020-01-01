@@ -21,6 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 /**
  * A list of orders used as a representation response
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderList extends BaseList {
 
     private List<Order> orders;

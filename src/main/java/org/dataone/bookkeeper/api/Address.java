@@ -21,6 +21,7 @@
 
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dropwizard.jackson.Jackson;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.Objects;
 /**
  * Addresses are a part of Customers, storing their mailing address information.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Address {
 
     /* The address line 1*/
