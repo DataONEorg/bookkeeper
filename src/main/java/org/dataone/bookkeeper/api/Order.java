@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -77,6 +78,7 @@ public class Order {
     /* The order item list of products */
     @NotEmpty
     @NotNull
+    @Valid
     private List<OrderItem> items;
 
     /* The order metadata */
