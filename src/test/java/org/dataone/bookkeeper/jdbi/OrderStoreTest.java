@@ -201,7 +201,8 @@ public class OrderStoreTest extends BaseTestCase {
                 StoreHelper.getRandomId(), customerId, StoreHelper.getRandomId(), StoreHelper.getRandomId());
 
             // Insert the order
-            orderStore.insert(expected);
+            Integer id = orderStore.insert(expected);
+            expected.setId(id);
 
             // Fetch the order by id
             Integer count = OrderHelper.getTestOrderCountById(expected.getId());

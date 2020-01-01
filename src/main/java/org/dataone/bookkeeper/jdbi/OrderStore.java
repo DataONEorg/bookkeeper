@@ -115,7 +115,6 @@ public interface OrderStore {
      * @param order the order to insert
      */
     @SqlUpdate("INSERT INTO orders (" +
-        "id, " +
         "object, " +
         "amount, " +
         "amountReturned, " +
@@ -130,7 +129,6 @@ public interface OrderStore {
         "statusTransitions, " +
         "updated " +
         ") VALUES (" +
-        ":getId, " +
         ":getObject, " +
         ":getAmount, " +
         ":getAmountReturned, " +
