@@ -22,14 +22,14 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
 /**
  * A list of quotas used as a representation response
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuotaList extends BaseList {
 
     private List<Quota> quotas;

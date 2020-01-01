@@ -22,7 +22,7 @@
 package org.dataone.bookkeeper.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dropwizard.jackson.Jackson;
 
 import javax.validation.constraints.NotEmpty;
@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Quotas represent limits placed on services resources (storage, etc.)
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Quota {
     /* The quota id (assigned by db layer) */
     private Integer id;
