@@ -75,6 +75,8 @@ public class Order {
     private String email;
 
     /* The order item list of products */
+    @NotEmpty
+    @NotNull
     private List<OrderItem> items;
 
     /* The order metadata */
@@ -122,10 +124,10 @@ public class Order {
         Integer amountReturned,
         ObjectNode charge,
         Integer created,
-        @NotEmpty @NotNull String currency,
+        String currency,
         @NotNull Integer customer,
-        @NotEmpty @NotNull String email,
-        List<OrderItem> items,
+        String email,
+        @NotEmpty @NotNull List<OrderItem> items,
         ObjectNode metadata,
         @NotEmpty @NotNull @Pattern(regexp = "created|paid|canceled|fulfilled|returned") String status,
         ObjectNode statusTransitions,
@@ -195,6 +197,18 @@ public class Order {
         this.amount = amount;
     }
 
+
+    public Integer getTotalAmount() {
+        Integer total = 0;
+
+        // If we have an item list, total the items
+        if ( ! getItems().isEmpty() ) {
+            for (OrderItem item : getItems() ) {
+                total = total + item.getAmount();
+            }
+        }
+        return total;
+    }
     /**
      * Get the order amount returned
      * @return the order amount returned
