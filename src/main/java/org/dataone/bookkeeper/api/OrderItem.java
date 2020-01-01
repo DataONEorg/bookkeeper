@@ -40,20 +40,16 @@ public class OrderItem {
     private String object;
 
     /* The order item amount */
-    @NotNull
     private Integer amount;
 
     /* The order item currency */
-    @NotNull
-    @NotEmpty
     private String currency;
 
     /* The order item description */
-    @NotNull
-    @NotEmpty
     private String description;
 
-    /* The order item parent id */
+    /* The order item parent product id */
+    @NotNull
     private Integer parent;
 
     /* The order item quantity */
