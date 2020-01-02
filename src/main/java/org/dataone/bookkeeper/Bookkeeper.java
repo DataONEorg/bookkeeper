@@ -27,6 +27,7 @@ import io.dropwizard.jdbi3.bundles.JdbiExceptionsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.dataone.bookkeeper.resources.CustomersResource;
+import org.dataone.bookkeeper.resources.OrdersResource;
 import org.dataone.bookkeeper.resources.ProductsResource;
 import org.dataone.bookkeeper.resources.QuotasResource;
 import org.jdbi.v3.core.Jdbi;
@@ -62,7 +63,6 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
 
         // Use the JDBI database exception bundle for better logging
         bootstrap.addBundle(new JdbiExceptionsBundle());
-
     }
 
     /**
@@ -91,6 +91,9 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
 
         // Register the customers resource
         environment.jersey().register(new CustomersResource(database));
+
+        // Register the orders resource
+        environment.jersey().register(new OrdersResource(database));
     }
 
     /**
