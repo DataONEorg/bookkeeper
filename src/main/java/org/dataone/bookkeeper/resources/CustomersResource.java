@@ -45,6 +45,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,6 +131,7 @@ public class CustomersResource extends BaseResource {
                     throw new Exception("A customer exists with the given subject.");
                 }
             }
+            customer.setCreated(new Integer((int) Instant.now().getEpochSecond()));
             Integer id = customerStore.insert(customer);
             customer = customerStore.getCustomer(id);
         } catch (Exception e) {
