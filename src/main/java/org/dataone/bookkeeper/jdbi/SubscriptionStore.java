@@ -28,12 +28,17 @@ import org.dataone.bookkeeper.jdbi.mappers.SubscriptionMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.UseRowReducer;
+import org.jdbi.v3.sqlobject.transaction.Transaction;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -170,6 +175,34 @@ public interface SubscriptionStore {
     )
     @GetGeneratedKeys
     Integer insert(@BindMethods Subscription subscription);
+
+    /**
+     * Insert a subscription and its quotas in a transaction
+     * @param subscription the subscription to insert
+     * @param quotas the quotas to insert
+     * @return id the id of the subscription
+     */
+    @Transaction
+    default Integer insertWithQuotas(Subscription subscription, @NotNull @Valid Collection<Quota> quotas) {
+        Integer id = insert(subscription);
+        for ( Quota quota : quotas) {
+            quota.setSubscriptionId(id);
+            Integer quotaId = insertQuota(quota);
+        }
+        return id;
+    }
+
+    /**
+     * Insert a quota with a given Quota instance
+     * @param quota the quota to insert
+     */
+    @SqlUpdate("INSERT INTO quotas " +
+        "(object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
+        "VALUES " +
+        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
+        "RETURNING id")
+    @GetGeneratedKeys
+    Integer insertQuota(@BindBean Quota quota);
 
     /**
      * Update a subscription
