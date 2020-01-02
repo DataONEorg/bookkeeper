@@ -60,16 +60,16 @@ public class OrderMapper implements RowMapper<Order> {
     public Order map(ResultSet rs, StatementContext ctx) throws SQLException {
 
         ObjectMapper mapper = Jackson.newObjectMapper();
-        /** The order to return */
+        /* The order to return */
         Order order;
-        /** The list of order items */
+        /* The list of order items */
         List<OrderItem> items = new LinkedList<OrderItem>();
-        /** The list of items as a JSON array */
+        /* The list of items as a JSON array */
         ArrayNode itemsArray;
 
         try {
             itemsArray =
-                (ArrayNode) Jackson.newObjectMapper().readTree(rs.getString("items"));
+                (ArrayNode) mapper.readTree(rs.getString("items"));
 
             Iterator<JsonNode> iterator = itemsArray.elements();
             while ( iterator.hasNext() ) {
