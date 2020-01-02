@@ -1,12 +1,18 @@
 # Bookkeeper server configuration
 server:
-  rootPath:/bookkeper/v1
+  rootPath: /bookkeeper/v1
+  adminContextPath: /admin
+
+logging:
+  level: DEBUG
+  appenders:
+    - type: console
 
 # PostgreSQL database configuration
 database:
   # Driver details
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost/bookkeeper
+  url: jdbc:postgresql://localhost:5432/bookkeeper
 
   # Connect with database username and password
   user: bookkeeper
