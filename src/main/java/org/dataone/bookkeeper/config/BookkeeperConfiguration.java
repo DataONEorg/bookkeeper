@@ -3,7 +3,7 @@
  * jointly copyrighted by participating institutions in DataONE. For
  * more information on DataONE, see our web site at http://dataone.org.
  *
- *   Copyright 2019. All rights reserved.
+ *   Copyright 2019
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  *
  */
 
-package org.dataone.bookkeeper;
+package org.dataone.bookkeeper.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
@@ -35,6 +35,9 @@ public class BookkeeperConfiguration extends Configuration {
 
     /* The database configuration keyword */
     private static final String DATABASE = "database";
+
+    /* The DataONE configuration */
+    public DataONEConfiguration dataONEConfiguration = new DataONEConfiguration();
 
     /* The DataSource to be used for persistence */
     @Valid
