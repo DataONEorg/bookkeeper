@@ -34,13 +34,6 @@ public class DataONEConfiguration extends Configuration {
 
     /* The Identity API endpoint */
     private String cnIdentityServiceEndpoint;
-
-    /* The path to the CN private key */
-    private String cnPrivateKeyPath;
-
-    /* The path to the CN private key */
-    private String cnPublicCertPath;
-
     /**
      * Get the CN base URL
      * @return cnBaseUrl  the CN base URL
@@ -75,41 +68,5 @@ public class DataONEConfiguration extends Configuration {
     @JsonProperty(DATAONE)
     public void setCnIdentityServiceEndpoint(String cnIdentityServiceEndpoint) {
         this.cnIdentityServiceEndpoint = cnIdentityServiceEndpoint;
-    }
-
-    /**
-     * Get the CN base URL
-     * @return cnPrivateKeyPath the CN private key path
-     */
-    @JsonProperty(DATAONE)
-    public String getCnPrivateKeyPath() {
-        return cnPrivateKeyPath;
-    }
-
-    /**
-     * Set the CN base URL
-     * @param cnPrivateKeyPath  the CN private key path
-     */
-    @JsonProperty(DATAONE)
-    public void setCnPrivateKeyPath(String cnPrivateKeyPath) {
-        this.cnPrivateKeyPath = cnPrivateKeyPath;
-    }
-
-    /**
-     * Get the CN public certificate path
-     * @return cnPublicCertPath the CN public certificate path
-     */
-    @JsonProperty(DATAONE)
-    public String getCnPublicCertPath() {
-        return cnPublicCertPath;
-    }
-
-    /**
-     * Set the CN public certificate path
-     * @param cnPublicCertPath  the CN public certificate path
-     */
-    @JsonProperty(DATAONE)
-    public void setCnPublicCertPath(String cnPublicCertPath) {
-        this.cnPublicCertPath = cnPublicCertPath;
     }
 }
