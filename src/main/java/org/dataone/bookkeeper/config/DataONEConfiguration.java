@@ -24,21 +24,19 @@ package org.dataone.bookkeeper.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 
+/**
+ * Configuration for DataONE library settings
+ */
 public class DataONEConfiguration extends Configuration {
-
-    /* The dataone configuration key */
-    private final String DATAONE = "dataone";
 
     /* The Coordinating Node base URL */
     private String cnBaseUrl;
 
-    /* The Identity API endpoint */
-    private String cnIdentityServiceEndpoint;
     /**
      * Get the CN base URL
      * @return cnBaseUrl  the CN base URL
      */
-    @JsonProperty(DATAONE)
+    @JsonProperty("cnBaseUrl")
     public String getCnBaseUrl() {
         return cnBaseUrl;
     }
@@ -47,26 +45,8 @@ public class DataONEConfiguration extends Configuration {
      * Get the CN base URL
      * @param cnBaseUrl the CN base URL
      */
-    @JsonProperty(DATAONE)
+    @JsonProperty("cnBaseUrl")
     public void setCnBaseUrl(String cnBaseUrl) {
         this.cnBaseUrl = cnBaseUrl;
-    }
-
-    /**
-     * Get the CN identity service endpoint
-     * @return cnIdentityServiceEndpoint  the CN identity service endpoint
-     */
-    @JsonProperty(DATAONE)
-    public String getCnIdentityServiceEndpoint() {
-        return cnIdentityServiceEndpoint;
-    }
-
-    /**
-     * Set the CN identity service endpoint
-     * @param cnIdentityServiceEndpoint the CN identity service endpoint
-     */
-    @JsonProperty(DATAONE)
-    public void setCnIdentityServiceEndpoint(String cnIdentityServiceEndpoint) {
-        this.cnIdentityServiceEndpoint = cnIdentityServiceEndpoint;
     }
 }
