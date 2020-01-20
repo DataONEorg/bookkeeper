@@ -24,11 +24,15 @@ package org.dataone.bookkeeper.resources;
 import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.QuotaList;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
+import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -42,9 +46,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.Instant;
+import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,12 +67,17 @@ public class QuotasResource extends BaseResource {
     /* The quota store for database calls */
     private final QuotaStore quotaStore;
 
+    /* An instance of the DataONE authn and authz delegate */
+    private final DataONEAuthHelper dataONEAuthHelper;
+
     /**
      * Construct a quota collection
      * @param database  the jdbi database access reference
      */
-    public QuotasResource(Jdbi database) {
+    public QuotasResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
         this.quotaStore = database.onDemand(QuotaStore.class);
+        this.dataONEAuthHelper = dataONEAuthHelper;
+
     }
 
     /**
@@ -75,28 +86,48 @@ public class QuotasResource extends BaseResource {
      * @param start  the paging start index
      * @param count  the paging size count
      * @param subscriptionId  the subscriptionId
-     * @param subject  the quota subject
+     * @param subjects  the quota subjects (repeatable and treated as a list)
      * @return quotas  the quota list
      */
     @Timed
     @GET
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public QuotaList listQuotas(
+        @Context SecurityContext context,
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
         @QueryParam("subscriptionId") Integer subscriptionId,
-        @QueryParam("subject") String subject) throws WebApplicationException {
+        @QueryParam("subject") List<String> subjects) throws WebApplicationException {
 
-        List<Quota> quotas;
+        // The calling user injected in the security context via authentication
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+
+        List<Quota> quotas = new ArrayList<Quota>();
         try {
-            if (subject != null) {
-                quotas = quotaStore.findQuotasBySubject(subject);
+            if (subjects != null) {
+                // Filter out non-associated subjects if not an admin
+                if ( ! isAdmin ) {
+                    subjects = this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                }
+                // Get quotas if the subject list is non-zero
+                if ( subjects.size() > 0 ) {
+                    quotas = quotaStore.findQuotasBySubjects(subjects);
+                }
             } else if (subscriptionId != null) {
+
                 quotas = quotaStore.findQuotasBySubscriptionId(subscriptionId);
-            // TODO: If authenticated as an admin, list all quotas
-            // } else if ( // determine admin role) {
-                // quotas = quotaStore.listQuotas();
+
+                // Allow admin access only for now
+                if ( ! isAdmin ) {
+                    throw new Exception(caller.getSubject() + " doesn't have access to subscriptions.");
+                }
+            } else if ( isAdmin ) {
+                // For admins, list all quotas
+                quotas = quotaStore.listQuotas();
             } else {
+                // Fall back to list product quotas not assigned to users
                 quotas = quotaStore.listUnassignedQuotas();
             }
         } catch (Exception e) {
@@ -115,8 +146,11 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @POST
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Quota create(@NotNull @Valid Quota quota) throws WebApplicationException {
+    public Quota create(
+        @Context SecurityContext context,
+        @NotNull @Valid Quota quota) throws WebApplicationException {
         // Insert the quota after it is validated
         try {
             Integer id = quotaStore.insert(quota);
@@ -135,20 +169,39 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @GET
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{quotaId}")
-    public Quota retrieve(@PathParam("quotaId") @NotNull Integer quotaId)
+    public Quota retrieve(
+        @Context SecurityContext context,
+        @PathParam("quotaId") @NotNull Integer quotaId)
         throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
 
         Quota quota = null;
         // Get the quota from the store
         try {
             quota = quotaStore.getQuota(quotaId);
+
+            if ( this.dataONEAuthHelper.isAdmin(caller.getSubject()) ) {
+                return quota;
+            }
+            // Ensure the caller is asssociated with the quota subject
+            String quotaSubject = quota.getSubject();
+            List<String> subjects = new ArrayList<String>();
+            subjects.add(quotaSubject);
+            List<String> associatedSubjects =
+                this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+            if ( associatedSubjects.size() > 0 ) {
+                return quota;
+            } else {
+                throw new Exception(caller.getSubject() + " is not associated with this quota.");
+            }
         } catch (Exception e) {
             String message = "Couldn't get the quota: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
         }
-        return quota;
     }
 
     /**
@@ -159,9 +212,12 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @PUT
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{quotaId}")
-    public Quota update(@NotNull @Valid Quota quota) throws WebApplicationException {
+    public Quota update(
+        @Context SecurityContext context,
+        @NotNull @Valid Quota quota) throws WebApplicationException {
         // Update the quota after validation
         try {
             quotaStore.update(quota);
@@ -180,8 +236,11 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @DELETE
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Path("{quotaId}")
-    public Response delete(@PathParam("quotaId") @Valid Integer quotaId) throws WebApplicationException {
+    public Response delete(
+        @Context SecurityContext context,
+        @PathParam("quotaId") @Valid Integer quotaId) throws WebApplicationException {
         String message = "The quotaId cannot be null.";
         if (quotaId == null) {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
