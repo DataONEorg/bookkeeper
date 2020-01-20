@@ -24,6 +24,8 @@ package org.dataone.bookkeeper.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 
+import java.util.List;
+
 /**
  * Configuration for DataONE library settings
  */
@@ -31,6 +33,9 @@ public class DataONEConfiguration extends Configuration {
 
     /* The Coordinating Node base URL */
     private String cnBaseUrl;
+
+    /* The list of subjects will all CRUD permissions */
+    private List<String> adminSubjects;
 
     /**
      * Get the CN base URL
@@ -48,5 +53,23 @@ public class DataONEConfiguration extends Configuration {
     @JsonProperty("cnBaseUrl")
     public void setCnBaseUrl(String cnBaseUrl) {
         this.cnBaseUrl = cnBaseUrl;
+    }
+
+    /**
+     * Get the admin subjects list
+     * @return adminSubjects  the list of admin subjects
+     */
+    @JsonProperty("adminSubjects")
+    public List<String> getAdminSubjects() {
+        return adminSubjects;
+    }
+
+    /**
+     * Set the admin subjects list
+     * @param adminSubjects  the list of admin subjects
+     */
+    @JsonProperty("adminSubjects")
+    public void setAdminSubjects(List<String> adminSubjects) {
+        this.adminSubjects = adminSubjects;
     }
 }
