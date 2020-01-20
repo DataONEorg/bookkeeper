@@ -96,16 +96,16 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
         // https://stackoverflow.com/questions/25775364/enabling-cors-in-dropwizard-not-working#25801822
 
         // Register the products resource
-        environment.jersey().register(new ProductsResource(database));
+        environment.jersey().register(new ProductsResource(database, dataONEHelper));
 
         // Register the quotas resource
-        environment.jersey().register(new QuotasResource(database));
+        environment.jersey().register(new QuotasResource(database, dataONEHelper));
 
         // Register the customers resource
-        environment.jersey().register(new CustomersResource(database));
+        environment.jersey().register(new CustomersResource(database, dataONEHelper));
 
         // Register the orders resource
-        environment.jersey().register(new OrdersResource(database));
+        environment.jersey().register(new OrdersResource(database, dataONEHelper));
 
         // Register role-based authorization
         environment.jersey().register(RolesAllowedDynamicFeature.class);
