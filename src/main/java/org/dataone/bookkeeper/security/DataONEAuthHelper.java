@@ -38,6 +38,8 @@ import org.dataone.client.v2.itk.D1Client;
 import org.dataone.service.exceptions.BaseException;
 import org.dataone.service.exceptions.NotImplemented;
 import org.dataone.service.exceptions.ServiceFailure;
+import org.dataone.service.types.v1.Group;
+import org.dataone.service.types.v1.Person;
 import org.dataone.service.types.v1.SubjectInfo;
 import org.jdbi.v3.core.Jdbi;
 
@@ -51,6 +53,8 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A delegate used to connect with DataONE services
@@ -323,5 +327,54 @@ public class DataONEAuthHelper {
             customer.setSubjectInfo(subjectInfo);
         }
         return customer;
+    }
+
+    /**
+     * Check if the given subject is an administrator
+     * @param subject the subject to check
+     * @return true if the subject is a  DataONE admin
+     */
+    public boolean isAdmin(String subject) {
+        return getConfiguration().getAdminSubjects().contains(subject);
+    }
+
+    /**
+     * For a given customer, return a filtered subject list with only associated subjects
+     *
+     * This method expands the subjects found in the customer subjectInfo list, and filters
+     * out subjects in the subjects argument that are not found in the subjectInfo.  This
+     * helps keep callers from getting database information not related to them.
+     * @param customer  the calling customer
+     * @param subjects  the list of subjects they want to get information about
+     * @return subjects the list of subjects they are associated with
+     */
+    public List<String> getAssociatedSubjects(Customer customer, List<String> subjects) {
+
+        SubjectInfo subjectInfo = customer.getSubjectInfo();
+        List<String> associatedSubjects = new ArrayList<String>();
+
+        if ( subjectInfo != null ) {
+            List<Group> groups = subjectInfo.getGroupList();
+            List<Person> persons = subjectInfo.getPersonList();
+
+            for (String subject : subjects ) {
+                // Check the groups list
+                for (Group group : groups) {
+                    if ( group.getSubject().getValue().equals(subject) ) {
+                        associatedSubjects.add(subject);
+                        break;
+                    }
+                }
+                // Check the persons list (equivalent identities)
+                for ( Person person : persons) {
+                    if ( person.getSubject().getValue().equals(subject) ) {
+                        associatedSubjects.add(subject);
+                        break;
+                    }
+                }
+
+            }
+        }
+        return associatedSubjects;
     }
 }
