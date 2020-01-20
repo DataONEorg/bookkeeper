@@ -22,14 +22,23 @@
 package org.dataone.bookkeeper;
 
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.jdbi3.bundles.JdbiExceptionsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.dataone.bookkeeper.api.Customer;
+import org.dataone.bookkeeper.config.BookkeeperConfiguration;
 import org.dataone.bookkeeper.resources.CustomersResource;
 import org.dataone.bookkeeper.resources.OrdersResource;
 import org.dataone.bookkeeper.resources.ProductsResource;
 import org.dataone.bookkeeper.resources.QuotasResource;
+import org.dataone.bookkeeper.security.DataONEAuthHelper;
+import org.dataone.bookkeeper.security.DataONEAuthenticator;
+import org.dataone.bookkeeper.security.DataONEAuthorizer;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.ws.rs.WebApplicationException;
@@ -80,6 +89,9 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
         final Jdbi database = factory.build(environment,
             configuration.getDataSourceFactory(), "postgresql");
 
+        final DataONEAuthHelper dataONEHelper =
+            new DataONEAuthHelper(environment, database, configuration.getDataONEConfiguration());
+
         // TODO: Do we need to enable CORS, or let the ingress controller handle it?
         // https://stackoverflow.com/questions/25775364/enabling-cors-in-dropwizard-not-working#25801822
 
@@ -94,6 +106,21 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
 
         // Register the orders resource
         environment.jersey().register(new OrdersResource(database));
+
+        // Register role-based authorization
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
+
+        // Register the DataONE authenticator and authorizer
+        environment.jersey().register(new AuthDynamicFeature(
+            new OAuthCredentialAuthFilter.Builder<Customer>()
+            .setAuthenticator(new DataONEAuthenticator(dataONEHelper))
+            .setAuthorizer(new DataONEAuthorizer(dataONEHelper))
+            .setPrefix("Bearer")
+            .buildAuthFilter()
+        ));
+
+        // Inject the authenticated Customer into resources for further authorization
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(Customer.class));
     }
 
     /**
