@@ -40,8 +40,11 @@ import org.dataone.bookkeeper.jdbi.CustomerStore;
 import org.dataone.bookkeeper.jdbi.OrderStore;
 import org.dataone.bookkeeper.jdbi.ProductStore;
 import org.dataone.bookkeeper.jdbi.SubscriptionStore;
+import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -91,15 +94,19 @@ public class OrdersResource extends BaseResource {
     /* A Jackson mapper for marshaling types */
     private final ObjectMapper mapper = Jackson.newObjectMapper();
 
+    /* An instance of the DataONE authn and authz delegate */
+    private final DataONEAuthHelper dataONEAuthHelper;
+
     /**
      * Construct an order collection
      * @param database  the jdbi database access reference
      */
-    public OrdersResource(Jdbi database) {
+    public OrdersResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
         this.orderStore = database.onDemand(OrderStore.class);
         this.productStore = database.onDemand(ProductStore.class);
         this.subscriptionStore = database.onDemand(SubscriptionStore.class);
         this.customerStore = database.onDemand(CustomerStore.class);
+        this.dataONEAuthHelper = dataONEAuthHelper;
     }
 
     /**
@@ -113,6 +120,7 @@ public class OrdersResource extends BaseResource {
      */
     @Timed
     @GET
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public OrderList listOrders(
         @QueryParam("start") @DefaultValue("0") Integer start,
@@ -149,6 +157,7 @@ public class OrdersResource extends BaseResource {
      */
     @Timed
     @POST
+    @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
     public Order create(@NotNull @Valid Order order) throws WebApplicationException {
         // Insert the order after it is validated
@@ -190,6 +199,7 @@ public class OrdersResource extends BaseResource {
      */
     @Timed
     @GET
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
     public Order retrieve(@PathParam("orderId") @NotNull Integer orderId)
@@ -214,6 +224,7 @@ public class OrdersResource extends BaseResource {
      */
     @Timed
     @PUT
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
     public Order update(@NotNull @Valid Order order) throws WebApplicationException {
@@ -268,6 +279,7 @@ public class OrdersResource extends BaseResource {
 
     @Timed
     @POST
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}/pay")
     public Order pay(@NotNull @PathParam("orderId") Integer orderId) throws WebApplicationException {
@@ -367,6 +379,7 @@ public class OrdersResource extends BaseResource {
      */
     @Timed
     @DELETE
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Path("{orderId}")
     public Response delete(@PathParam("orderId") @Valid Integer orderId) throws WebApplicationException {
         String message = "The orderId cannot be null.";

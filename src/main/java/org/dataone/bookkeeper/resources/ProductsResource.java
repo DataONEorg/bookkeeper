@@ -27,8 +27,10 @@ import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Product;
 import org.dataone.bookkeeper.api.ProductList;
 import org.dataone.bookkeeper.jdbi.ProductStore;
+import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -61,12 +63,16 @@ public class ProductsResource extends BaseResource {
     /* The product store for database calls */
     private final ProductStore productStore;
 
+    /* An instance of the DataONE authn and authz delegate */
+    private final DataONEAuthHelper dataONEAuthHelper;
+
     /**
      * Construct a product collection
      * @param database  the jdbi database access reference
      */
-    public ProductsResource(Jdbi database) {
+    public ProductsResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
         this.productStore = database.onDemand(ProductStore.class);
+        this.dataONEAuthHelper = dataONEAuthHelper;
     }
 
     /**
@@ -111,6 +117,7 @@ public class ProductsResource extends BaseResource {
      */
     @Timed
     @POST
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Consumes(MediaType.APPLICATION_JSON)
     public Product create(@NotNull @Valid Product product) throws WebApplicationException {
         // Insert the product after it is validated
@@ -157,6 +164,7 @@ public class ProductsResource extends BaseResource {
      */
     @Timed
     @PUT
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{productId}")
     public Product update(@NotNull @Valid Product product) throws WebApplicationException {
@@ -182,6 +190,7 @@ public class ProductsResource extends BaseResource {
      */
     @Timed
     @DELETE
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Path("{productId}")
     public Response delete(@PathParam("productId") @Valid Integer productId) throws WebApplicationException {
         String message = "The productId cannot be null.";

@@ -27,8 +27,11 @@ import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.CustomerList;
 import org.dataone.bookkeeper.jdbi.CustomerStore;
+import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -63,12 +66,16 @@ public class CustomersResource extends BaseResource {
     /* The customer store for database calls */
     private final CustomerStore customerStore;
 
+    /* An instance of the DataONE authn and authz delegate */
+    private final DataONEAuthHelper dataONEAuthHelper;
+
     /**
      * Construct a customer collection
      * @param database  the jdbi database access reference
      */
-    public CustomersResource(Jdbi database) {
+    public CustomersResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
         this.customerStore = database.onDemand(CustomerStore.class);
+        this.dataONEAuthHelper = dataONEAuthHelper;
     }
 
     /**
@@ -80,6 +87,7 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @GET
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Produces(MediaType.APPLICATION_JSON)
     public CustomerList listCustomers(
         @QueryParam("start") @DefaultValue("0") Integer start,
@@ -116,6 +124,7 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @POST
+    @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
     public Customer create(@NotNull @Valid Customer customer) throws WebApplicationException {
         // Insert the customer after it is validated
@@ -148,6 +157,7 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @GET
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{customerId: [0-9]+}")
     public Customer retrieve(@PathParam("customerId") Integer customerId)
@@ -174,6 +184,7 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @PUT
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{customerId}")
     public Customer update(@NotNull @Valid Customer customer) throws WebApplicationException {
@@ -197,6 +208,7 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @DELETE
+    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
     @Path("{customerId}")
     public Response delete(@PathParam("customerId") @Valid Integer customerId) throws WebApplicationException {
         String message = "The customerId cannot be null.";
