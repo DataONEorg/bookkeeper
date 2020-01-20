@@ -33,11 +33,14 @@ import javax.validation.constraints.NotNull;
  */
 public class BookkeeperConfiguration extends Configuration {
 
-    /* The database configuration keyword */
+    /* The database YAML configuration keyword */
     private static final String DATABASE = "database";
 
+    /* The dataone YAML configuration keyword */
+    private static final String DATAONE = "dataone";
+
     /* The DataONE configuration */
-    public DataONEConfiguration dataONEConfiguration = new DataONEConfiguration();
+    private DataONEConfiguration dataone = new DataONEConfiguration();
 
     /* The DataSource to be used for persistence */
     @Valid
@@ -46,7 +49,7 @@ public class BookkeeperConfiguration extends Configuration {
 
     /**
      * Set the DataSource factory
-     * @param factory
+     * @param factory  the DataSource factory
      */
     @JsonProperty(DATABASE)
     public void setDataSourceFactory(DataSourceFactory factory) {
@@ -60,5 +63,23 @@ public class BookkeeperConfiguration extends Configuration {
     @JsonProperty(DATABASE)
     public DataSourceFactory getDataSourceFactory() {
         return this.database;
+    }
+
+    /**
+     * Get the DataONE configuration
+     * @return dataONEConfiguration  the DataONE configuration
+     */
+    @JsonProperty(DATAONE)
+    public DataONEConfiguration getDataONEConfiguration() {
+        return dataone;
+    }
+
+    /**
+     * Set the DataONE configuration
+     * @param dataONEConfiguration  the DataONE configuration
+     */
+    @JsonProperty(DATAONE)
+    public void setDataONEConfiguration(DataONEConfiguration dataONEConfiguration) {
+        this.dataone = dataONEConfiguration;
     }
 }
