@@ -25,18 +25,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
+import org.dataone.service.types.v1.SubjectInfo;
 
+import javax.security.auth.Subject;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.security.Principal;
 import java.util.Objects;
 
 /**
  * Customers represent individuals that order products.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Customer {
+public class Customer implements Principal {
     /* The customer unique id */
     private Integer id;
 
@@ -50,6 +53,12 @@ public class Customer {
     @NotEmpty
     @NotNull
     private String subject;
+
+    /* The DataONE SubjectInfo for the subject (i.e. roles) */
+    private SubjectInfo subjectInfo;
+
+    /* The customer JSON web token */
+    private String token;
 
     /* The customer account balance */
     private Integer balance;
@@ -211,6 +220,38 @@ public class Customer {
      */
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    /**
+     * Get the customer subject info
+     * @return subjectInfo  the customer subject info
+     */
+    public SubjectInfo getSubjectInfo() {
+        return this.subjectInfo;
+    }
+
+    /**
+     * Set the customer subject info
+     * @param subjectInfo  the customer subject info
+     */
+    public void setSubjectInfo(SubjectInfo subjectInfo) {
+        this.subjectInfo = subjectInfo;
+    }
+
+    /**
+     * Get the JSON web token
+     * @return token  the JSON web token
+     */
+    public String getToken() {
+        return this.token;
+    }
+
+    /**
+     * Set the JSON web token
+     * @param token  the JSON web token
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 
     /**
@@ -531,4 +572,37 @@ public class Customer {
             getEmail(), getInvoicePrefix(), getInvoiceSettings(), getMetadata(),
             getGivenName(), getSurName(), getPhone());
     }
+
+    /**
+     * Returns the name of this principal.
+     *
+     * @return the name of this principal.
+     */
+    @Override
+    public String getName() {
+        return getSubject();
+    }
+
+    /**
+     * Returns true if the specified subject is implied by this principal.
+     *
+     * <p>The default implementation of this method returns true if
+     * {@code subject} is non-null and contains at least one principal that
+     * is equal to this principal.
+     *
+     * <p>Subclasses may override this with a different implementation, if
+     * necessary.
+     *
+     * @param subject the {@code Subject}
+     * @return true if {@code subject} is non-null and is
+     * implied by this principal, or false otherwise.
+     * @since 1.8
+     */
+    @Override
+    public boolean implies(Subject subject) {
+
+        // TODO: Iterate through subjectInfo groups that this subject is a member of?
+        return false;
+    }
+
 }
