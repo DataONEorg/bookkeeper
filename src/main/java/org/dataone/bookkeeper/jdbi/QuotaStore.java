@@ -25,6 +25,7 @@ import org.dataone.bookkeeper.api.Quota;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
+import org.jdbi.v3.sqlobject.customizer.BindList;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -59,6 +60,10 @@ public interface QuotaStore {
 
     /** The query used to find a quota by subject identifier */
     String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE q.subject = :subject ";
+
+    /** The query used to find quotas by multiple subject identifiers */
+    String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
+
 
     /**
      * List all quotas
@@ -101,6 +106,15 @@ public interface QuotaStore {
      */
     @SqlQuery(SELECT_SUBJECT)
     List<Quota> findQuotasBySubject(@Bind("subject") String subject);
+
+    /**
+     * Find quotas by a list of subject identifiers
+     *
+     * @param subjects the subject identifiers list (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subjects
+     */
+    @SqlQuery(SELECT_SUBJECTS)
+    List<Quota> findQuotasBySubjects(@BindList("subjects") List<String> subjects);
 
     /**
      * Insert a quota with a given Quota instance
