@@ -37,6 +37,8 @@ public class DataONEConfiguration extends Configuration {
     /* The list of subjects will all CRUD permissions */
     private List<String> adminSubjects;
 
+    /* The default trial period in days */
+    private long trialDurationDays;
     /**
      * Get the CN base URL
      * @return cnBaseUrl  the CN base URL
@@ -71,5 +73,23 @@ public class DataONEConfiguration extends Configuration {
     @JsonProperty("adminSubjects")
     public void setAdminSubjects(List<String> adminSubjects) {
         this.adminSubjects = adminSubjects;
+    }
+
+    /**
+     * Get the trial duration days
+     * @return trialDurationDays the trial duration days
+     */
+    @JsonProperty("trialDurationDays")
+    public long getTrialDurationDays() {
+        return trialDurationDays;
+    }
+
+    /**
+     * Set the trial duration days
+     * @param trialDurationDays the trial duration days
+     */
+    @JsonProperty("trialDurationDays")
+    public void setTrialDurationDays(long trialDurationDays) {
+        this.trialDurationDays = trialDurationDays;
     }
 }
