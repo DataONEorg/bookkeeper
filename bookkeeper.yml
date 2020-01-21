@@ -16,7 +16,8 @@ database:
 
   # Connect with database username and password
   user: bookkeeper
-  password: <password-goes-here>
+  # password: <password-goes-here>
+  password: bookkeeper
 
   # JDBC driver properties
   properties:
@@ -55,3 +56,6 @@ dataone:
   adminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"
     - "http://orcid.org/0000-0002-8121-2341"
+
+  # The default trial period in days
+  trialDurationDays: 180
