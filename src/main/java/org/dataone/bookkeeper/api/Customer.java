@@ -57,9 +57,6 @@ public class Customer implements Principal {
     /* The DataONE SubjectInfo for the subject (i.e. roles) */
     private SubjectInfo subjectInfo;
 
-    /* The customer JSON web token */
-    private String token;
-
     /* The customer account balance */
     private Integer balance;
 
@@ -236,22 +233,6 @@ public class Customer implements Principal {
      */
     public void setSubjectInfo(SubjectInfo subjectInfo) {
         this.subjectInfo = subjectInfo;
-    }
-
-    /**
-     * Get the JSON web token
-     * @return token  the JSON web token
-     */
-    public String getToken() {
-        return this.token;
-    }
-
-    /**
-     * Set the JSON web token
-     * @param token  the JSON web token
-     */
-    public void setToken(String token) {
-        this.token = token;
     }
 
     /**
