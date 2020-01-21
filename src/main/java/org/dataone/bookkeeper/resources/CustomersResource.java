@@ -46,8 +46,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,20 +128,29 @@ public class CustomersResource extends BaseResource {
     @POST
     @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
-    public Customer create(@NotNull @Valid Customer customer) throws WebApplicationException {
+    public Customer create(@Context SecurityContext context,
+        @NotNull @Valid Customer customer) throws WebApplicationException {
+
         // Insert the customer after it is validated
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        // Ensure the caller is the customer being created, except for admins
+        if ( ! isAdmin ) {
+            customer.setSubject(caller.getSubject());
+        }
         Customer existing = null;
         try {
             // Ensure the email and subject are unique
             existing = customerStore.findCustomerByEmail(customer.getEmail());
             if ( existing != null ) {
                 throw new Exception("A customer exists with the given email.");
-            } else {
-                existing = customerStore.findCustomerBySubject(customer.getSubject());
-                if ( existing != null ) {
-                    throw new Exception("A customer exists with the given subject.");
-                }
             }
+            existing = customerStore.findCustomerBySubject(customer.getSubject());
+            if ( existing != null ) {
+                throw new Exception("A customer exists with the given subject.");
+            }
+
+            // Create the customer
             customer.setCreated(new Integer((int) Instant.now().getEpochSecond()));
             Integer id = customerStore.insert(customer);
             customer = customerStore.getCustomer(id);
@@ -160,15 +171,25 @@ public class CustomersResource extends BaseResource {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{customerId: [0-9]+}")
-    public Customer retrieve(@PathParam("customerId") Integer customerId)
+    public Customer retrieve(@Context SecurityContext context,
+        @PathParam("customerId") Integer customerId)
         throws WebApplicationException {
 
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
         Customer customer = null;
         // Get the customer from the store
         try {
             if ( customerId != null ) {
                 customer = customerStore.getCustomer(customerId);
             }
+            // Ensure the caller is the customer being retrieved, except for admins
+            if ( ! isAdmin ) {
+                if ( customer != null && ! customer.getSubject().equals(caller.getSubject()) ) {
+                    throw new Exception("The caller and customer subject don't match.");
+                }
+            }
+
         } catch (Exception e) {
             String message = "Couldn't get the customer: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
@@ -187,11 +208,34 @@ public class CustomersResource extends BaseResource {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{customerId}")
-    public Customer update(@NotNull @Valid Customer customer) throws WebApplicationException {
+    public Customer update(@Context SecurityContext context,
+        @NotNull @Valid Customer customer) throws WebApplicationException {
+
         // Update the customer after validation
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+
         try {
-            // TODO: Vet fields to maintain server-maintained values
             Customer existing = customerStore.getCustomer(customer.getId());
+
+            // Ensure the caller is the customer being updated, except for admins
+            if ( ! isAdmin ) {
+                if ( existing != null && ! existing.getSubject().equals(caller.getSubject()) ) {
+                    throw new Exception("The caller and customer subject don't match.");
+                }
+            }
+
+            // Vet fields to maintain server-maintained values
+            assert existing != null;
+            customer.setCreated(existing.getCreated());
+            customer.setBalance(existing.getBalance());
+            customer.setDelinquent(existing.isDelinquent());
+            customer.setSubject(existing.getSubject());
+            customer.setSubjectInfo(null);
+            if (! isAdmin ) {
+                customer.setDiscount(existing.getDiscount());
+            }
+            // Then update the customer
             Integer id = customerStore.update(customer);
         } catch (Exception e) {
             String message = "Couldn't update the customer: " + e.getMessage();
