@@ -58,8 +58,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -123,23 +125,41 @@ public class OrdersResource extends BaseResource {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public OrderList listOrders(
+        @Context SecurityContext context,
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
         @QueryParam("subject") String subject,
         @QueryParam("customerId") Integer customerId)
         throws WebApplicationException {
 
-        List<Order> orders = new ArrayList<Order>();
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
 
-        // TODO: Ensure token.subject = customer.subject
+        List<Order> orders = new ArrayList<Order>();
+        Customer existing;
         try {
             if (customerId != null) {
+                if ( ! isAdmin ) {
+                    // Customer subjects must match
+                    existing = this.customerStore.getCustomer(customerId);
+                    if ( ! caller.getSubject().equals(existing.getSubject()) ) {
+                        throw new Exception("Customer doesn't have access to this record.");
+                    }
+                }
                 orders = orderStore.findOrdersByCustomerId(customerId);
             } else if ( ! subject.isEmpty() ) {
+                if ( ! isAdmin ) {
+                    // Customer subjects must match
+                    existing = this.customerStore.getCustomer(customerId);
+                    if ( ! caller.getSubject().equals(existing.getSubject()) ) {
+                        throw new Exception("Customer doesn't have access to this record.");
+                    }
+                }
                 orders = orderStore.findOrdersBySubject(subject);
-                // TODO: If authenticated as an admin, list all orders
-            // } else ( // determine admin role) {
-                // orders = orderStore.listOrders();
+
+            } else if ( isAdmin ) {
+                // Allow admins to list all orders
+                orders = orderStore.listOrders();
             }
         } catch (Exception e) {
             String message = "Couldn't list orders: " + e.getMessage();
@@ -159,7 +179,12 @@ public class OrdersResource extends BaseResource {
     @POST
     @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
-    public Order create(@NotNull @Valid Order order) throws WebApplicationException {
+    public Order create(@Context SecurityContext context,
+        @NotNull @Valid Order order) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+
         // Insert the order after it is validated
         try {
             order.setStatus("created");
@@ -183,6 +208,10 @@ public class OrdersResource extends BaseResource {
             // Reset the total based on product amounts that were set
             order.setAmount(order.getTotalAmount());
 
+            if ( ! isAdmin ) {
+                // Ensure the correct customer id for non-admins
+                order.setCustomer(caller.getId());
+            }
             Integer id = orderStore.insert(order);
             order = orderStore.getOrder(id);
         } catch (Exception e) {
@@ -202,13 +231,23 @@ public class OrdersResource extends BaseResource {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
-    public Order retrieve(@PathParam("orderId") @NotNull Integer orderId)
+    public Order retrieve(@Context SecurityContext context,
+        @PathParam("orderId") @NotNull Integer orderId)
         throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
 
         Order order = null;
         // Get the order from the store
         try {
             order = orderStore.getOrder(orderId);
+            if ( ! isAdmin ) {
+                // Allow customers to get their own order
+                if ( ! order.getCustomer().equals(caller.getId()) ) {
+                    throw new Exception("Customer doesn't have access to this order.");
+                }
+            }
         } catch (Exception e) {
             String message = "Couldn't get the order: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
@@ -227,8 +266,11 @@ public class OrdersResource extends BaseResource {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
-    public Order update(@NotNull @Valid Order order) throws WebApplicationException {
+    public Order update(@Context SecurityContext context,
+        @NotNull @Valid Order order) throws WebApplicationException {
         // Update the order after validation
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
 
         Order existing = orderStore.getOrder(order.getId());
 
@@ -238,6 +280,14 @@ public class OrdersResource extends BaseResource {
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
         }
 
+        // Ensure we have the right customer
+        if ( ! isAdmin ) {
+            if ( ! existing.getCustomer().equals(caller.getId()) ) {
+                throw new WebApplicationException(
+                    "Customer doesn't have access to this order.", Response.Status.EXPECTATION_FAILED
+                );
+            }
+        }
         // Update the order
         try {
             order.setCreated(existing.getCreated());
@@ -282,21 +332,37 @@ public class OrdersResource extends BaseResource {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}/pay")
-    public Order pay(@NotNull @PathParam("orderId") Integer orderId) throws WebApplicationException {
+    public Order pay(@Context SecurityContext context,
+        @NotNull @PathParam("orderId") Integer orderId) throws WebApplicationException {
         Order order = null;
         Integer secondsSinceEpoch = new Integer((int) Instant.now().getEpochSecond());
 
-        // TODO: Set trial periods via configuration
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+
+        long trialDurationDays = this.dataONEAuthHelper.getConfiguration().getTrialDurationDays();
         Integer trialEndSecondsSinceEpoch =
             new Integer((int) (Instant.ofEpochSecond(
-                (long) secondsSinceEpoch).plus(180L, ChronoUnit.DAYS)).getEpochSecond()
+                (long) secondsSinceEpoch).plus(
+                    trialDurationDays, ChronoUnit.DAYS
+                )
+            ).getEpochSecond()
             );
 
         // Confirm a trial without payment
         // TODO: Pay the order through the Aventri callback proxy
         try {
             order = orderStore.getOrder(orderId);
-            if ( order !=null ) {
+            // Ensure we have the right customer
+            if ( ! isAdmin ) {
+                if ( ! order.getCustomer().equals(caller.getId()) ) {
+                    throw new WebApplicationException(
+                        "Customer doesn't have access to this order.", Response.Status.EXPECTATION_FAILED
+                    );
+                }
+            }
+
+            if ( order != null ) {
                 List<OrderItem> orderItems = order.getItems();
                 Customer customer = customerStore.getCustomer(order.getCustomer());
                 Integer productId = null;
