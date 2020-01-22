@@ -51,7 +51,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The entry point to the quotas collection
@@ -98,7 +100,7 @@ public class QuotasResource extends BaseResource {
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
         @QueryParam("subscriptionId") Integer subscriptionId,
-        @QueryParam("subject") List<String> subjects) throws WebApplicationException {
+        @QueryParam("subject") Set<String> subjects) throws WebApplicationException {
 
         // The calling user injected in the security context via authentication
         Customer caller = (Customer) context.getUserPrincipal();
@@ -109,7 +111,7 @@ public class QuotasResource extends BaseResource {
             if ( subjects != null && subjects.size() > 0 ) {
                 // Filter out non-associated subjects if not an admin
                 if ( ! isAdmin ) {
-                    List<String> associatedSubjects =
+                    Set<String> associatedSubjects =
                         this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
                     if ( associatedSubjects.size() > 0 ) {
                         subjects.addAll(associatedSubjects);
@@ -117,7 +119,8 @@ public class QuotasResource extends BaseResource {
                 }
                 // Get quotas if the subject list is non-zero
                 if ( subjects.size() > 0 ) {
-                    quotas = quotaStore.findQuotasBySubjects(subjects);
+                    List<String> subjectsList = new ArrayList<String>(subjects);
+                    quotas = quotaStore.findQuotasBySubjects(subjectsList);
                 }
             } else if (subscriptionId != null) {
 
@@ -193,9 +196,9 @@ public class QuotasResource extends BaseResource {
             }
             // Ensure the caller is asssociated with the quota subject
             String quotaSubject = quota.getSubject();
-            List<String> subjects = new ArrayList<String>();
+            Set<String> subjects = new HashSet<String>();
             subjects.add(quotaSubject);
-            List<String> associatedSubjects =
+            Set<String> associatedSubjects =
                 this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
             if ( associatedSubjects.size() > 0 ) {
                 return quota;

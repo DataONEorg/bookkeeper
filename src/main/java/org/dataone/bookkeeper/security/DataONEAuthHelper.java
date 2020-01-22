@@ -40,6 +40,7 @@ import org.dataone.service.exceptions.NotImplemented;
 import org.dataone.service.exceptions.ServiceFailure;
 import org.dataone.service.types.v1.Group;
 import org.dataone.service.types.v1.Person;
+import org.dataone.service.types.v1.Subject;
 import org.dataone.service.types.v1.SubjectInfo;
 import org.jdbi.v3.core.Jdbi;
 
@@ -53,8 +54,9 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A delegate used to connect with DataONE services
@@ -279,11 +281,12 @@ public class DataONEAuthHelper {
     public SubjectInfo getSubjectInfo(String token, String subject) throws BaseException {
         SubjectInfo subjectInfo = null;
         AuthTokenSession session = new AuthTokenSession(token);
+        Subject d1Subject = new Subject();
+        d1Subject.setValue(subject);
+        session.setSubject(d1Subject);
         D1Client.setCN(this.configuration.getCnBaseUrl());
         this.cn = D1Client.getCN();
-        if ( session.getSubjectInfo() != null ) {
-            subjectInfo = this.cn.getSubjectInfo(session, session.getSubject());
-        }
+        subjectInfo = this.cn.getSubjectInfo(session, session.getSubject());
 
         return subjectInfo;
     }
@@ -342,16 +345,16 @@ public class DataONEAuthHelper {
      * For a given customer, return a filtered subject list with only associated subjects
      *
      * This method expands the subjects found in the customer subjectInfo list, and filters
-     * out subjects in the subjects argument that are not found in the subjectInfo.  This
+     * out subjects in the subjects argument that are not found in the customer subjectInfo.  This
      * helps keep callers from getting database information not related to them.
      * @param customer  the calling customer
      * @param subjects  the list of subjects they want to get information about
      * @return subjects the list of subjects they are associated with
      */
-    public List<String> getAssociatedSubjects(Customer customer, List<String> subjects) {
+    public Set<String> getAssociatedSubjects(Customer customer, Set<String> subjects) {
 
         SubjectInfo subjectInfo = customer.getSubjectInfo();
-        List<String> associatedSubjects = new ArrayList<String>();
+        Set<String> associatedSubjects = new HashSet<String>(); // no dupes with a Set
 
         if ( subjectInfo != null ) {
             List<Group> groups = subjectInfo.getGroupList();
