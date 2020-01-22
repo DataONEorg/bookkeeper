@@ -24,6 +24,7 @@ package org.dataone.bookkeeper;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.jdbi3.bundles.JdbiExceptionsBundle;
@@ -110,10 +111,16 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
         // Register role-based authorization
         environment.jersey().register(RolesAllowedDynamicFeature.class);
 
-        // Register the DataONE authenticator and authorizer
+        // Register the DataONE authenticator and authorizer, enabling principal caching
+        DataONEAuthenticator dataONEAuthenticator = new DataONEAuthenticator(dataONEHelper);
+        CachingAuthenticator<String, Customer> cachingAuthenticator =
+            new CachingAuthenticator<String, Customer>(
+                environment.metrics(),
+                dataONEAuthenticator,
+                configuration.getAuthenticationCachePolicy());
         environment.jersey().register(new AuthDynamicFeature(
             new OAuthCredentialAuthFilter.Builder<Customer>()
-            .setAuthenticator(new DataONEAuthenticator(dataONEHelper))
+            .setAuthenticator(cachingAuthenticator)
             .setAuthorizer(new DataONEAuthorizer(dataONEHelper))
             .setPrefix("Bearer")
             .buildAuthFilter()
