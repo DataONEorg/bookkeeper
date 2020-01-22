@@ -22,6 +22,7 @@
 package org.dataone.bookkeeper.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import javax.validation.Valid;
@@ -38,6 +39,12 @@ public class BookkeeperConfiguration extends Configuration {
 
     /* The dataone YAML configuration keyword */
     private static final String DATAONE = "dataone";
+
+    /* The Caffeine caching YAML configuration keyword */
+    private static final String CAFFEINE = "authenticationCachePolicy";
+
+    /* The authentication cache policy string */
+    private String authenticationCachePolicy;
 
     /* The DataONE configuration */
     private DataONEConfiguration dataone = new DataONEConfiguration();
@@ -81,5 +88,23 @@ public class BookkeeperConfiguration extends Configuration {
     @JsonProperty(DATAONE)
     public void setDataONEConfiguration(DataONEConfiguration dataONEConfiguration) {
         this.dataone = dataONEConfiguration;
+    }
+
+    /**
+     * Get the authentication cache policy
+     * @return authenticationCachePolicy  the parsed authentication cache policy
+     */
+    @JsonProperty(CAFFEINE)
+    public CaffeineSpec getAuthenticationCachePolicy() {
+        return CaffeineSpec.parse(this.authenticationCachePolicy);
+    }
+
+    /**
+     * Set the authentication cache policy
+     * @param authenticationCachePolicy the authentication cache policy
+     */
+    @JsonProperty(CAFFEINE)
+    public void setAuthenticationCachePolicy(String authenticationCachePolicy) {
+        this.authenticationCachePolicy = authenticationCachePolicy;
     }
 }
