@@ -16,8 +16,7 @@ database:
 
   # Connect with database username and password
   user: bookkeeper
-  # password: <password-goes-here>
-  password: bookkeeper
+  password: <password-goes-here>
 
   # JDBC driver properties
   properties:
