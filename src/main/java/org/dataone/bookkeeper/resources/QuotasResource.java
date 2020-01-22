@@ -106,10 +106,14 @@ public class QuotasResource extends BaseResource {
 
         List<Quota> quotas = new ArrayList<Quota>();
         try {
-            if (subjects != null) {
+            if ( subjects != null && subjects.size() > 0 ) {
                 // Filter out non-associated subjects if not an admin
                 if ( ! isAdmin ) {
-                    subjects = this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                    List<String> associatedSubjects =
+                        this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                    if ( associatedSubjects.size() > 0 ) {
+                        subjects.addAll(associatedSubjects);
+                    }
                 }
                 // Get quotas if the subject list is non-zero
                 if ( subjects.size() > 0 ) {
