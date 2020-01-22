@@ -3,10 +3,14 @@ server:
   rootPath: /bookkeeper/v1
   adminContextPath: /admin
 
+# Logging configuration
 logging:
   level: DEBUG
   appenders:
     - type: console
+
+# Caching policy for authenticated principals
+authenticationCachePolicy: maximumSize=1000, expireAfterAccess=10m
 
 # PostgreSQL database configuration
 database:
@@ -54,7 +58,6 @@ dataone:
   # The list of admin subjects with all CRUD permissions
   adminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"
-    - "http://orcid.org/0000-0002-8121-2341"
 
   # The default trial period in days
   trialDurationDays: 180
