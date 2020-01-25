@@ -20,6 +20,7 @@
  */
 package org.dataone.bookkeeper.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -38,6 +39,7 @@ import java.util.Objects;
 /**
  * Subscriptions represent a Product purchased by a Customer, charged for periodically.
  */
+@JsonIgnoreProperties({"metadataJSON"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Subscription {
 
