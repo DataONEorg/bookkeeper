@@ -28,6 +28,8 @@ import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import javax.validation.constraints.NotNull;
+
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,9 +46,9 @@ class QuotaTest {
     private static final Integer ID = 1;
     private static final String OBJECT = "quota";
     private static final String NAME = "custom_portal_count";
-    private static final Integer SOFTLIMIT = 3;
-    private static final Integer HARDLIMIT = 3;
-    private static final Integer USAGE = null;
+    private static final @NotNull Double SOFTLIMIT = 3.0;
+    private static final @NotNull Double HARDLIMIT = 3.0;
+    private static final Double USAGE = null;
     private static final String UNIT =  "portal";
     private static final Integer SUBSCRIPTION_ID = null;
     private static final String SUBJECT = null;

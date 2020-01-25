@@ -278,9 +278,9 @@ public class QuotaStoreTest extends BaseTestCase {
             quota.setObject("quota");
             String quotaName = "test_quota_" + StoreHelper.getRandomId().toString();
             quota.setName(quotaName);
-            quota.setSoftLimit(56789);
-            quota.setHardLimit(567890);
-            quota.setUsage(96789);
+            quota.setSoftLimit(56789.0);
+            quota.setHardLimit(567890.0);
+            quota.setUsage(96789.0);
             quota.setUnit("megabyte");
             quota.setSubscriptionId(subscriptionId);
             quotaStore.update(quota);
