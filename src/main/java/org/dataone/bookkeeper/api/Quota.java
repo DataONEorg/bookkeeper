@@ -51,15 +51,13 @@ public class Quota {
     private String name;
 
     /* The quota soft limit */
-    @NotNull
-    private Integer softLimit;
+    private @NotNull Double softLimit;
 
     /* The quota hard limit */
-    @NotNull
-    private Integer hardLimit;
+    private @NotNull Double hardLimit;
 
     /* The usage of the quota */
-    private Integer usage;
+    private Double usage;
 
     /* The quota unit */
     @NotEmpty
@@ -119,9 +117,9 @@ public class Quota {
     public Quota(Integer id,
                  @NotNull @NotEmpty String object,
                  @NotNull @NotEmpty String name,
-                 @NotNull Integer softLimit,
-                 @NotNull Integer hardLimit,
-                 Integer usage,
+                 @NotNull Double softLimit,
+                 @NotNull Double hardLimit,
+                 Double usage,
                  @NotNull @NotEmpty String unit,
                  Integer subscriptionId,
                  String subject) {
@@ -199,7 +197,7 @@ public class Quota {
      * @return softLimit
      */
     @JsonProperty
-    public @NotNull Integer getSoftLimit() {
+    public @NotNull Double getSoftLimit() {
         return softLimit;
     }
 
@@ -208,7 +206,7 @@ public class Quota {
      * @param softLimit
      */
     @JsonProperty
-    public void setSoftLimit(@NotNull Integer softLimit) {
+    public void setSoftLimit(@NotNull Double softLimit) {
         this.softLimit = softLimit;
     }
 
@@ -217,7 +215,7 @@ public class Quota {
      * @return hardLimit
      */
     @JsonProperty
-    public @NotNull Integer getHardLimit() {
+    public @NotNull Double getHardLimit() {
         return hardLimit;
     }
 
@@ -226,7 +224,7 @@ public class Quota {
      * @param hardLimit
      */
     @JsonProperty
-    public void setHardLimit(@NotNull Integer hardLimit) {
+    public void setHardLimit(@NotNull Double hardLimit) {
         this.hardLimit = hardLimit;
     }
 
@@ -236,7 +234,7 @@ public class Quota {
      * @return usage
      */
     @JsonProperty
-    public Integer getUsage() {
+    public Double getUsage() {
         return usage;
     }
 
@@ -245,7 +243,7 @@ public class Quota {
      * @param usage
      */
     @JsonProperty
-    public void setUsage(Integer usage) {
+    public void setUsage(Double usage) {
         this.usage = usage;
     }
 
