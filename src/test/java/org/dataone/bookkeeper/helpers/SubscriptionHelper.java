@@ -185,7 +185,7 @@ public class SubscriptionHelper {
             if ( quota != null ) {
                 quota.setSubscriptionId(subscriptionId);
                 quota.setSubject(customer.getSubject());
-                quota.setUsage(0);
+                quota.setUsage(0.0);
             }
             quotas.add(quota);
         }

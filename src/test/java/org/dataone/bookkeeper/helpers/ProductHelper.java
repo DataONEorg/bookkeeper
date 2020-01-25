@@ -102,9 +102,9 @@ public class ProductHelper {
         Integer quota_id = 1;
         String quota_type = "quota";
         String quota_name = "custom_portal_count";
-        Integer quota_soft_limit = 3;
-        Integer quota_hard_limit = 3;
-        Integer quota_usage = null;
+        @javax.validation.constraints.NotNull Double quota_soft_limit = 3.0;
+        @javax.validation.constraints.NotNull Double quota_hard_limit = 3.0;
+        Double quota_usage = null;
         String quota_unit = "portal";
         Integer quota_customer_id = null;
         String quota_subject = null;

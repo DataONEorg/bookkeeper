@@ -166,8 +166,8 @@ public class QuotaHelper {
         quota.setId(quotaId);
         quota.setObject("quota");
         quota.setName("test_storage_quota_" + quotaId);
-        quota.setSoftLimit(4000000);
-        quota.setHardLimit(5000000);
+        quota.setSoftLimit(4000000.0);
+        quota.setHardLimit(5000000.0);
         quota.setUsage(null);
         quota.setUnit("megabyte");
         quota.setSubscriptionId(subscriptionId);
@@ -180,8 +180,8 @@ public class QuotaHelper {
         quota.setId(quotaId);
         quota.setObject("quota");
         quota.setName("test_portal_quota_" + quotaId);
-        quota.setSoftLimit(3);
-        quota.setHardLimit(3);
+        quota.setSoftLimit(3.0);
+        quota.setHardLimit(3.0);
         quota.setUsage(null);
         quota.setUnit("portal");
         quota.setSubscriptionId(subscriptionId);
