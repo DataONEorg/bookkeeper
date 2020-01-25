@@ -107,11 +107,13 @@ public class QuotasResource extends BaseResource {
         boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
 
         List<Quota> quotas = new ArrayList<Quota>();
+        Set<String> associatedSubjects;
+        List<String> subjectsList;
         try {
             if ( subjects != null && subjects.size() > 0 ) {
                 // Filter out non-associated subjects if not an admin
                 if ( ! isAdmin ) {
-                    Set<String> associatedSubjects =
+                    associatedSubjects =
                         this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
                     if ( associatedSubjects.size() > 0 ) {
                         subjects.addAll(associatedSubjects);
@@ -119,7 +121,7 @@ public class QuotasResource extends BaseResource {
                 }
                 // Get quotas if the subject list is non-zero
                 if ( subjects.size() > 0 ) {
-                    List<String> subjectsList = new ArrayList<String>(subjects);
+                    subjectsList = new ArrayList<String>(subjects);
                     quotas = quotaStore.findQuotasBySubjects(subjectsList);
                 }
             } else if (subscriptionId != null) {
@@ -134,8 +136,16 @@ public class QuotasResource extends BaseResource {
                 // For admins, list all quotas
                 quotas = quotaStore.listQuotas();
             } else {
-                // Fall back to list product quotas not assigned to users
-                quotas = quotaStore.listUnassignedQuotas();
+                // Fall back to list product quotas for the caller only
+                subjects = new HashSet<String>();
+                subjects.add(caller.getSubject());
+                associatedSubjects =
+                    this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                if ( associatedSubjects.size() > 0 ) {
+                    subjects.addAll(associatedSubjects);
+                }
+                subjectsList = new ArrayList<String>(subjects);
+                quotas = quotaStore.findQuotasBySubjects(subjectsList);
             }
         } catch (Exception e) {
             String message = "Couldn't list quotas: " + e.getMessage();
