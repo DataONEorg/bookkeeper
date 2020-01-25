@@ -268,7 +268,7 @@ public class DataONEAuthHelper {
             log.warn(message);
             throw new AuthenticationException(message);
         }
-
+        log.debug("Token is verified: " + verified);
         return verified;
     }
 
@@ -313,22 +313,28 @@ public class DataONEAuthHelper {
 
         Customer customer = null;
         String errorMessage = "Couldn't get subject information from the Coordinating Node: ";
+        String subject = null;
         try {
-            customer = getCustomerStore().findCustomerBySubject(getTokenSubject(token));
+            subject = getTokenSubject(token);
+            customer = getCustomerStore().findCustomerBySubject(subject);
+            if ( customer == null ) {
+                log.info("A customer record doesn't exist yet for " + subject +
+                    ". Creating a new customer.");
+                customer = new Customer();
+                customer.setSubject(subject);
+            }
         } catch (ParseException e) {
             errorMessage = "Couldn't parse the given token: ";
             throw new AuthenticationException(errorMessage + e.getMessage());
         }
 
-        if ( customer != null ) {
-            SubjectInfo subjectInfo = null;
-            try {
-                subjectInfo = getSubjectInfo(token, customer.getSubject());
-            } catch (BaseException e) {
-                log.warn(errorMessage + e.getMessage());
-            }
-            customer.setSubjectInfo(subjectInfo);
+        SubjectInfo subjectInfo = null;
+        try {
+            subjectInfo = getSubjectInfo(token, customer.getSubject());
+        } catch (BaseException e) {
+            log.warn(errorMessage + e.getMessage());
         }
+        customer.setSubjectInfo(subjectInfo);
         return customer;
     }
 
