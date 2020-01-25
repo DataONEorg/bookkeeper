@@ -391,15 +391,15 @@ public class OrdersResource extends BaseResource {
                             (product.getMetadata().get("features")).elements();
                         Quota quota = null;
                         Quota existingQuota = null;
-                        Integer newSoftLimit;
-                        Integer newHardLimit;
+                        Double newSoftLimit;
+                        Double newHardLimit;
                         while ( featuresIterator.hasNext() ) {
                             // Find quotas in each feature, combining equivalent quotas
                             ObjectNode featureNode = (ObjectNode) featuresIterator.next();
                             Feature feature = mapper.readValue(featureNode.toString(), Feature.class);
                             quota = feature.getQuota();
                             if ( quota != null ) {
-                                quota.setUsage(0);
+                                quota.setUsage(0.0);
                                 quota.setSubject(customer.getSubject());
                                 if ( ! quotas.containsKey(quota.getName()) ) {
                                     // Add new quotas
