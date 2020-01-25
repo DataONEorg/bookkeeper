@@ -5,8 +5,8 @@
     "quota": {
         "object":"quota",
         "name":"custom_portal_count",
-        "softLimit": 3,
-        "hardLimit": 3,
+        "softLimit": 3.0,
+        "hardLimit": 3.0,
         "unit": "portal"
     }
 }
