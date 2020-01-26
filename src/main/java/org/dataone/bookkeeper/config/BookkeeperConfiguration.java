@@ -74,7 +74,7 @@ public class BookkeeperConfiguration extends Configuration {
 
     /**
      * Get the DataONE configuration
-     * @return dataONEConfiguration  the DataONE configuration
+     * @return dataoneConfiguration  the DataONE configuration
      */
     @JsonProperty(DATAONE)
     public DataONEConfiguration getDataONEConfiguration() {
@@ -83,11 +83,11 @@ public class BookkeeperConfiguration extends Configuration {
 
     /**
      * Set the DataONE configuration
-     * @param dataONEConfiguration  the DataONE configuration
+     * @param dataoneConfiguration  the DataONE configuration
      */
     @JsonProperty(DATAONE)
-    public void setDataONEConfiguration(DataONEConfiguration dataONEConfiguration) {
-        this.dataone = dataONEConfiguration;
+    public void setDataONEConfiguration(DataONEConfiguration dataoneConfiguration) {
+        this.dataone = dataoneConfiguration;
     }
 
     /**

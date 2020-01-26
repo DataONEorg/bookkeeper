@@ -38,14 +38,14 @@ public class DataONEAuthorizer implements Authorizer<Customer> {
     private Log log = LogFactory.getLog(DataONEAuthorizer.class);
 
     /* A delegate instance for DataONE authz and authn*/
-    private final DataONEAuthHelper dataONEAuthHelper;
+    private final DataONEAuthHelper dataoneAuthHelper;
 
     /**
      * Construct a DataONEAuthorizer
-     * @param dataONEAuthHelper  a DataONEAuthHelper instance
+     * @param dataoneAuthHelper  a DataONEAuthHelper instance
      */
-    public DataONEAuthorizer(DataONEAuthHelper dataONEAuthHelper) {
-        this.dataONEAuthHelper = dataONEAuthHelper;
+    public DataONEAuthorizer(DataONEAuthHelper dataoneAuthHelper) {
+        this.dataoneAuthHelper = dataoneAuthHelper;
     }
 
     /**

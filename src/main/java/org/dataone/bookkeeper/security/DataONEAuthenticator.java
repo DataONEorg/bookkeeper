@@ -39,14 +39,14 @@ public class DataONEAuthenticator implements Authenticator<String, Customer> {
     Log log = LogFactory.getLog(DataONEAuthenticator.class);
 
     /* A delegate instance for DataONE authz and authn*/
-    private final DataONEAuthHelper dataONEAuthHelper;
+    private final DataONEAuthHelper dataoneAuthHelper;
 
     /**
      * Construct a DataONEAuthorizer
-     * @param dataONEAuthHelper  a DataONEAuthHelper instance
+     * @param dataoneAuthHelper  a DataONEAuthHelper instance
      */
-    public DataONEAuthenticator(DataONEAuthHelper dataONEAuthHelper) {
-        this.dataONEAuthHelper = dataONEAuthHelper;
+    public DataONEAuthenticator(DataONEAuthHelper dataoneAuthHelper) {
+        this.dataoneAuthHelper = dataoneAuthHelper;
     }
 
     /**
@@ -63,11 +63,11 @@ public class DataONEAuthenticator implements Authenticator<String, Customer> {
     public Optional<Customer> authenticate(String token) throws AuthenticationException {
         Customer customer = null;
         // Verify the token
-        boolean verified = this.dataONEAuthHelper.verify(token);
+        boolean verified = this.dataoneAuthHelper.verify(token);
 
         if ( verified ) {
             // Amend the Customer with SubjectInfo from the DataONE Identity service
-            customer = this.dataONEAuthHelper.getCustomerWithSubjectInfo(token);
+            customer = this.dataoneAuthHelper.getCustomerWithSubjectInfo(token);
         }
         if ( customer != null ) {
             return Optional.of(customer);

@@ -70,15 +70,15 @@ public class QuotasResource extends BaseResource {
     private final QuotaStore quotaStore;
 
     /* An instance of the DataONE authn and authz delegate */
-    private final DataONEAuthHelper dataONEAuthHelper;
+    private final DataONEAuthHelper dataoneAuthHelper;
 
     /**
      * Construct a quota collection
      * @param database  the jdbi database access reference
      */
-    public QuotasResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
+    public QuotasResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.quotaStore = database.onDemand(QuotaStore.class);
-        this.dataONEAuthHelper = dataONEAuthHelper;
+        this.dataoneAuthHelper = dataoneAuthHelper;
 
     }
 
@@ -104,7 +104,7 @@ public class QuotasResource extends BaseResource {
 
         // The calling user injected in the security context via authentication
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         List<Quota> quotas = new ArrayList<Quota>();
         Set<String> associatedSubjects;
@@ -114,7 +114,7 @@ public class QuotasResource extends BaseResource {
                 // Filter out non-associated subjects if not an admin
                 if ( ! isAdmin ) {
                     associatedSubjects =
-                        this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                        this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
                     if ( associatedSubjects.size() > 0 ) {
                         subjects.addAll(associatedSubjects);
                     }
@@ -140,7 +140,7 @@ public class QuotasResource extends BaseResource {
                 subjects = new HashSet<String>();
                 subjects.add(caller.getSubject());
                 associatedSubjects =
-                    this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                    this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
                 if ( associatedSubjects.size() > 0 ) {
                     subjects.addAll(associatedSubjects);
                 }
@@ -201,7 +201,7 @@ public class QuotasResource extends BaseResource {
         try {
             quota = quotaStore.getQuota(quotaId);
 
-            if ( this.dataONEAuthHelper.isAdmin(caller.getSubject()) ) {
+            if ( this.dataoneAuthHelper.isAdmin(caller.getSubject()) ) {
                 return quota;
             }
             // Ensure the caller is asssociated with the quota subject
@@ -209,7 +209,7 @@ public class QuotasResource extends BaseResource {
             Set<String> subjects = new HashSet<String>();
             subjects.add(quotaSubject);
             Set<String> associatedSubjects =
-                this.dataONEAuthHelper.getAssociatedSubjects(caller, subjects);
+                this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
             if ( associatedSubjects.size() > 0 ) {
                 return quota;
             } else {

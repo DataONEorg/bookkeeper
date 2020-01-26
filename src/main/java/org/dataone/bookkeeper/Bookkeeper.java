@@ -90,38 +90,38 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
         final Jdbi database = factory.build(environment,
             configuration.getDataSourceFactory(), "postgresql");
 
-        final DataONEAuthHelper dataONEHelper =
+        final DataONEAuthHelper dataoneHelper =
             new DataONEAuthHelper(environment, database, configuration.getDataONEConfiguration());
 
         // TODO: Do we need to enable CORS, or let the ingress controller handle it?
         // https://stackoverflow.com/questions/25775364/enabling-cors-in-dropwizard-not-working#25801822
 
         // Register the products resource
-        environment.jersey().register(new ProductsResource(database, dataONEHelper));
+        environment.jersey().register(new ProductsResource(database, dataoneHelper));
 
         // Register the quotas resource
-        environment.jersey().register(new QuotasResource(database, dataONEHelper));
+        environment.jersey().register(new QuotasResource(database, dataoneHelper));
 
         // Register the customers resource
-        environment.jersey().register(new CustomersResource(database, dataONEHelper));
+        environment.jersey().register(new CustomersResource(database, dataoneHelper));
 
         // Register the orders resource
-        environment.jersey().register(new OrdersResource(database, dataONEHelper));
+        environment.jersey().register(new OrdersResource(database, dataoneHelper));
 
         // Register role-based authorization
         environment.jersey().register(RolesAllowedDynamicFeature.class);
 
         // Register the DataONE authenticator and authorizer, enabling principal caching
-        DataONEAuthenticator dataONEAuthenticator = new DataONEAuthenticator(dataONEHelper);
+        DataONEAuthenticator dataoneAuthenticator = new DataONEAuthenticator(dataoneHelper);
         CachingAuthenticator<String, Customer> cachingAuthenticator =
             new CachingAuthenticator<String, Customer>(
                 environment.metrics(),
-                dataONEAuthenticator,
+                dataoneAuthenticator,
                 configuration.getAuthenticationCachePolicy());
         environment.jersey().register(new AuthDynamicFeature(
             new OAuthCredentialAuthFilter.Builder<Customer>()
             .setAuthenticator(cachingAuthenticator)
-            .setAuthorizer(new DataONEAuthorizer(dataONEHelper))
+            .setAuthorizer(new DataONEAuthorizer(dataoneHelper))
             .setPrefix("Bearer")
             .buildAuthFilter()
         ));

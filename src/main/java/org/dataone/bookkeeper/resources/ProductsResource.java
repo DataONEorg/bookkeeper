@@ -64,15 +64,15 @@ public class ProductsResource extends BaseResource {
     private final ProductStore productStore;
 
     /* An instance of the DataONE authn and authz delegate */
-    private final DataONEAuthHelper dataONEAuthHelper;
+    private final DataONEAuthHelper dataoneAuthHelper;
 
     /**
      * Construct a product collection
      * @param database  the jdbi database access reference
      */
-    public ProductsResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
+    public ProductsResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.productStore = database.onDemand(ProductStore.class);
-        this.dataONEAuthHelper = dataONEAuthHelper;
+        this.dataoneAuthHelper = dataoneAuthHelper;
     }
 
     /**

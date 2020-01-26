@@ -69,15 +69,15 @@ public class CustomersResource extends BaseResource {
     private final CustomerStore customerStore;
 
     /* An instance of the DataONE authn and authz delegate */
-    private final DataONEAuthHelper dataONEAuthHelper;
+    private final DataONEAuthHelper dataoneAuthHelper;
 
     /**
      * Construct a customer collection
      * @param database  the jdbi database access reference
      */
-    public CustomersResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
+    public CustomersResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.customerStore = database.onDemand(CustomerStore.class);
-        this.dataONEAuthHelper = dataONEAuthHelper;
+        this.dataoneAuthHelper = dataoneAuthHelper;
     }
 
     /**
@@ -133,7 +133,7 @@ public class CustomersResource extends BaseResource {
 
         // Insert the customer after it is validated
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
         // Ensure the caller is the customer being created, except for admins
         if ( ! isAdmin ) {
             customer.setSubject(caller.getSubject());
@@ -176,7 +176,7 @@ public class CustomersResource extends BaseResource {
         throws WebApplicationException {
 
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
         Customer customer = null;
         // Get the customer from the store
         try {
@@ -213,7 +213,7 @@ public class CustomersResource extends BaseResource {
 
         // Update the customer after validation
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         try {
             Customer existing = customerStore.getCustomer(customer.getId());

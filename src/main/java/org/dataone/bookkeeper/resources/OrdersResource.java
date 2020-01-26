@@ -97,18 +97,18 @@ public class OrdersResource extends BaseResource {
     private final ObjectMapper mapper = Jackson.newObjectMapper();
 
     /* An instance of the DataONE authn and authz delegate */
-    private final DataONEAuthHelper dataONEAuthHelper;
+    private final DataONEAuthHelper dataoneAuthHelper;
 
     /**
      * Construct an order collection
      * @param database  the jdbi database access reference
      */
-    public OrdersResource(Jdbi database, DataONEAuthHelper dataONEAuthHelper) {
+    public OrdersResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.orderStore = database.onDemand(OrderStore.class);
         this.productStore = database.onDemand(ProductStore.class);
         this.subscriptionStore = database.onDemand(SubscriptionStore.class);
         this.customerStore = database.onDemand(CustomerStore.class);
-        this.dataONEAuthHelper = dataONEAuthHelper;
+        this.dataoneAuthHelper = dataoneAuthHelper;
     }
 
     /**
@@ -133,7 +133,7 @@ public class OrdersResource extends BaseResource {
         throws WebApplicationException {
 
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         List<Order> orders = new ArrayList<Order>();
         Customer existing;
@@ -183,7 +183,7 @@ public class OrdersResource extends BaseResource {
         @NotNull @Valid Order order) throws WebApplicationException {
 
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         // Insert the order after it is validated
         try {
@@ -236,7 +236,7 @@ public class OrdersResource extends BaseResource {
         throws WebApplicationException {
 
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         Order order = null;
         // Get the order from the store
@@ -270,7 +270,7 @@ public class OrdersResource extends BaseResource {
         @NotNull @Valid Order order) throws WebApplicationException {
         // Update the order after validation
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         Order existing = orderStore.getOrder(order.getId());
 
@@ -338,9 +338,9 @@ public class OrdersResource extends BaseResource {
         Integer secondsSinceEpoch = new Integer((int) Instant.now().getEpochSecond());
 
         Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataONEAuthHelper.isAdmin(caller.getSubject());
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
-        long trialDurationDays = this.dataONEAuthHelper.getConfiguration().getTrialDurationDays();
+        long trialDurationDays = this.dataoneAuthHelper.getConfiguration().getTrialDurationDays();
         Integer trialEndSecondsSinceEpoch =
             new Integer((int) (Instant.ofEpochSecond(
                 (long) secondsSinceEpoch).plus(
