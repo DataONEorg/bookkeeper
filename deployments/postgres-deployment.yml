@@ -1,0 +1,142 @@
+
+# Store non-secret configuration in a ConfigMap resource
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  database: bookkeeper
+
+---
+
+# Store the credentials in a Secret resource
+kind: Secret
+apiVersion: v1
+metadata:
+  name: postgres-credentials
+type: Opaque
+data:
+  # Note: these aren't encrypted, just encoded, so don't git commit
+  # echo "your-postgres-username" | base64
+  user: Ym9va2tlZXBlcgo=
+  # echo "your-postgres-password" | base64
+  password: <your-base64-password>
+
+---
+
+# Get NFS running on MacOS for development, change for production
+# sudo mkdir /k8s-data
+# minikube start --mount --mount-string "/k8s-data:/opt/local"
+# echo "/opt/local -alldirs -mapall="$(id -u)":"$(id -g)" $(minikube ip)" | sudo tee -a /etc/exports && sudo nfsd restart
+# Troubleshooting with Peter, used the
+# showmount -e 127.0.0.1
+
+# create an NFS persistent volume
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-volume
+  annotations:
+    pv.beta.kubernetes.io/gid: 20
+spec:
+  capacity:
+    # change capacity for production
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  nfs:
+    # cluster IP address - change for production or minkube restart
+    server: 192.168.64.1
+    path: /opt/local
+    readOnly: false
+
+---
+
+# Create a persistent volume claim
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+# Use StatefulSets later with pg replication
+# See https://kubernetes.io/blog/2017/02/postgresql-clusters-kubernetes-statefulsets/
+
+# Provision a deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        tier: backend
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11.5-alpine
+          command: "/bin/sh"
+          args: '[ "-c" ,"if [[ ! -e /opt/local/postgresql/data/postgresql.conf ]]; then
+            su - postgres -c 'initdb -D /opt/local/postgresql/data -E UTF8 -U ${POSTGRES_USER}';
+            fi;
+            su - postgres -c 'pg_ctl -D /opt/local/postgresql/data -l logfile start'" ]'
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: database
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /opt/local/postgresql/data
+              readOnly: false
+          imagePullPolicy: IfNotPresent
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+---
+
+# See https://kubernetes.io/docs/concepts/services-networking/service/
+# Provision the postgres service
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
