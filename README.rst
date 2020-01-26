@@ -37,9 +37,7 @@ Installation
 
 Flyway is used to manage the SQL database schema.
 
-.. note::
-
-    Adjust the values in ``db/flyway.conf`` to your database and password
+    **Note**: Adjust the values in ``db/flyway.conf`` to your database and password
 
 .. code:: bash
 
@@ -178,7 +176,7 @@ The customer object is returned with an ``id`` attribute which is used to  creat
         "subject": "http://orcid.org/0000-0002-8121-2343"
     }
 
-#. Create an ``Order`` (``order.json``), and update it as many times as needed. The order can be ``POST``ed to the ``/orders`` endpoint, or built locally and uploaded once.
+#. Create an ``Order`` (``order.json``), and update it as many times as needed. ``POST`` the order to the ``/orders`` endpoint, and ``PUT`` it to ``/orders/:id`` for updates.
 
 .. code:: json
 
