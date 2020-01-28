@@ -1,4 +1,4 @@
-FROM java:8-jre
+FROM openjdk:8-jre
 RUN mkdir -p /opt/bookkeeper
 COPY bookkeeper.yml /opt/bookkeeper/
 COPY target/bookkeeper-1.0-SNAPSHOT.jar /opt/bookkeeper/
