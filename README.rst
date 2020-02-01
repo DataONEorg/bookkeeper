@@ -55,7 +55,7 @@ The database schema should be created, and you're ready to start the application
 Getting Started
 ---------------
 
-This example uses ``bash`` and ``curl`` to demonstrate client connections.
+The following example uses ``bash`` and ``curl`` to demonstrate client connections.
 
 Interacting with the service requires authentication for most REST method
 calls using a JSON Web Token.  Log in at https://search.daataone.org to get
@@ -299,3 +299,84 @@ This returns a ``QuotaList``:
             "subject": "http://orcid.org/0000-0002-8121-2341"
         }]
     }
+
+Creating an object
+------------------
+
+Once quotas are established through an order and a subsequent subscription, the quotas are
+enforced by participating repositories.  The following diagram shows the sequence of calls made
+when a portal document is uploaded to a repository.
+
+..
+    @startuml ./docs/images/create-portal.png
+    !include ./docs/plantuml-styles.txt
+
+    autonumber "<font color=999999>"
+    title "Uploading a portal document"
+    actor Researcher
+    participant Client
+    participant Repository
+    participant Bookkeeper <<Service>>
+    participant "CN" <<Service>>
+
+    Researcher o-> Client : Chooses "Save" after creating a portal
+
+    activate Client
+        Client -> Repository : create(session, pid, object, sysmeta)
+    deactivate Client
+
+    activate Repository
+        note left
+            For all calls, the JWT
+            authentication token in the
+            Authorization HTTP header
+            represents the session
+        end note
+        note right
+            The Client sends the quota subject
+            in the X-DataONE-QuotaSubject HTTP header
+        end note
+
+        Repository -> Bookkeeper : "hasRemaining(session, quotaSubject, \nrequestorSubject, quotaName, requestedUsage)"
+    deactivate Repository
+
+    activate Bookkeeper
+        note right
+            Bookkeeper caches subjectInfo
+            about the requestor to minimize
+                calls to the CN
+        end note
+        Bookkeeper -> CN : getSubjectInfo(session, requestorSubject)
+    deactivate Bookkeeper
+
+    activate CN
+        CN --> Bookkeeper: subjectInfo
+    deactivate CN
+
+    activate Bookkeeper
+        note left
+            If the insert doesn't exceed 
+            the quota limit, the quota is
+            returned, otherwise an exception.
+        end note
+        Bookkeeper --> Repository : quota
+    deactivate Bookkeeper
+
+    activate Repository
+        Repository -> Repository : create(session, pid, object, sysmeta)
+        Repository --> Client : pid
+        Repository --> Bookkeeper : increaseUsage(session, quotaSubject,\nquotaName, usage)
+    deactivate Repository
+    
+    activate Bookkeeper
+        note right
+            The repository asynchronously 
+            updates the usage for the portal count
+        end note
+        Bookkeeper --> Repository : quota
+    deactivate Bookkeeper
+    
+    @enduml
+
+
+.. image:: docs/images/create-portal.png
