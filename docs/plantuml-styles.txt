@@ -1,9 +1,9 @@
-' change the default styles   
+' Change the default styles
 skinparam shadowing false   
-skinparam roundcorner 10
+skinparam roundcorner 5
 skinparam linetype ortho
 
-' style sequences
+' Style the sequences
 skinparam sequence {
   ArrowColor #1F4260
   LifeLineBorderColor #1F4260
@@ -14,34 +14,34 @@ skinparam sequence {
   ActorBorderColor #333333
 }
 
-' style notes
+' Style the notes
 skinparam noteFontColor #C49858
 skinparam note {
   BackgroundColor #FCF8E4
   BorderColor #FCEED6   
 }
 
-' style classes
+' Style the classes
 skinparam class {
   BackgroundColor #F5F5F5
   BorderColor #333333
   ArrowColor #333333   
 }   
 
-' style packages
+' Style the packages
 skinparam packageFontColor #9DA0A4
 skinparam package {
   BorderColor #CCCCCC
 }
 
-' style components
+' Style the components
 skinparam component {
     BackgroundColor #F5F5F5
     BorderColor #333333
     Style uml2
 }
 
-' style interfaces
+' Style the interfaces
 skinparam interface {
     BackgroundColor #F5F5F5
     BorderColor #333333

@@ -315,22 +315,22 @@ when a portal document is uploaded to a repository.
     title "Uploading a portal document"
     actor Researcher
     participant Client
-    participant Repository
+    participant Repository <<Service>>
     participant Bookkeeper <<Service>>
     participant "CN" <<Service>>
 
-    Researcher o-> Client : Chooses "Save" after creating a portal
+    Researcher o-> Client : Chooses "Save" after editing a portal
 
     note right
-        The Client can optionally call
-        Bookkeeper hasRemaining() to
+        Note that the Client can optionally
+        call Bookkeeper's hasRemaining() to
         proactively check quotas before
-        opening a new portal editor.
+        allowing a new portal editor session.
     end note
 
     activate Client
         Client -> Repository : create(session, pid, object, sysmeta)
-    deactivate Clien
+    deactivate Client
 
     activate Repository
         note left
@@ -372,13 +372,20 @@ when a portal document is uploaded to a repository.
     activate Repository
         Repository -> Repository : create(session, pid, object, sysmeta)
         Repository --> Client : pid
-        Repository --> Bookkeeper : increaseUsage(session, quotaSubject,\nquotaName, usage)
+        activate Client
+            Client --> Researcher : Indicates portal is saved
+        deactivate Client
+        Repository --> Bookkeeper : adjustUsage(session, quotaId, usage)
     deactivate Repository
     
     activate Bookkeeper
         note right
             The repository asynchronously 
             updates the usage for the portal count
+            (adds a positive usage value, subtracts
+            a negative value). Note the quotaId
+            comes from the quota returned from
+            hasRemaining().
         end note
         Bookkeeper --> Repository : quota
     deactivate Bookkeeper
