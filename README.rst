@@ -321,9 +321,16 @@ when a portal document is uploaded to a repository.
 
     Researcher o-> Client : Chooses "Save" after creating a portal
 
+    note right
+        The Client can optionally call
+        Bookkeeper hasRemaining() to
+        proactively check quotas before
+        opening a new portal editor.
+    end note
+
     activate Client
         Client -> Repository : create(session, pid, object, sysmeta)
-    deactivate Client
+    deactivate Clien
 
     activate Repository
         note left
