@@ -35,6 +35,7 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -271,5 +272,57 @@ public class QuotasResource extends BaseResource {
             throw e;
         }
         return Response.ok().build();
+    }
+
+    /**
+     * Check if the requested usage exceeds the quota hard limit for the given
+     * quota subject and quota name.  Administrators can use the submitterSubject
+     * as the calling subject for authorization, otherwise the authenticated subject is used.
+     *
+     * @param context  the security context of the authenticated user
+     * @param quotaSubject  the subject of the quota to be checked (person or group)
+     * @param submitterSubject  the subject of the calling user, used by admins (repositories)
+     * @param quotaName  the name of the quota to be checked
+     * @param requestedUsage  the total requested usage to be checked
+     * @return quota  The quota object if the usage does not exceed the hard limit
+     * @throws WebApplicationException  an exception if the usage exceeds the hard limit
+     */
+    @Timed
+    @GET
+    @PermitAll
+    @Path("usage")
+    public Quota hasRemaining(
+        @Context SecurityContext context,
+        @QueryParam("quotaSubject") @NotNull String quotaSubject,
+        @QueryParam("submitterSubject") String submitterSubject,
+        @QueryParam("quotaName") @NotNull String quotaName,
+        @QueryParam("requestedUsage") @NotNull Double requestedUsage
+    ) throws WebApplicationException {
+        Quota quota = null;
+        // TODO: Implement this
+        return quota;
+    }
+
+    /**
+     * Adjust the usage of teh given quota, adding or subtracting the usage value to the
+     * current total usage. Requires administrative authorization.
+     * @param context  the security context of the authenticated user
+     * @param quotaId  the quota identifier
+     * @param usage  the used or gained quota amount in units of the given quota
+     * @return quota  the quota object with the updated usage
+     * @throws WebApplicationException  if adjusting the quota fails
+     */
+    @Timed
+    @PUT
+    @PermitAll
+    @Path("{quotaId}/usage")
+    public Quota adjustUsage(
+        @Context SecurityContext context,
+        @PathParam("quotaId") @NotNull @Positive Integer quotaId,
+        @NotNull Double usage
+        ) throws WebApplicationException {
+        Quota quota = null;
+        // TODO: Implement this
+        return quota;
     }
 }
