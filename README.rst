@@ -351,7 +351,10 @@ when a portal document is uploaded to a repository.
         note right
             Bookkeeper caches subjectInfo
             about the requestor to minimize
-                calls to the CN
+            calls to the CN. Also, for portal
+            documents, call hasRemaining()
+            twice, once to check portal quotas,
+            once to check storage quotas.
         end note
         Bookkeeper -> CN : getSubjectInfo(session, requestorSubject)
     deactivate Bookkeeper
