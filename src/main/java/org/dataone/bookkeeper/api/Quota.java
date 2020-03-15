@@ -58,7 +58,7 @@ public class Quota {
     /* The quota hard limit */
     private @NotNull Double hardLimit;
 
-    /* The usage of the quota */
+    /* The total usage of the quota */
     private Double usage;
 
     /* The quota unit */
@@ -81,8 +81,8 @@ public class Quota {
 
     /**
      * Construct a Quota from a JSON string
-     * @param json
-     * @throws IOException
+     * @param json the JSON quota object
+     * @throws IOException when an I/O exception occurs
      */
     public Quota(String json) throws IOException {
         super();
@@ -106,15 +106,15 @@ public class Quota {
 
     /**
      * Construct a quota
-     * @param id
-     * @param object
-     * @param name
-     * @param softLimit
-     * @param hardLimit
-     * @param unit
-     * @param usage
-     * @param subscriptionId
-     * @param subject
+     * @param id              the quota identifier
+     * @param object          the quota object type
+     * @param name            the quota name
+     * @param softLimit       the quota soft limit
+     * @param hardLimit       the quota hard limit
+     * @param unit            the quota unit
+     * @param usage      the quota usage
+     * @param subscriptionId  the quota subscription identifier
+     * @param subject         the quota subject
      */
     public Quota(Integer id,
                  @NotNull @NotEmpty String object,
@@ -142,7 +142,7 @@ public class Quota {
 
     /**
      * Get the quota id
-     * @return
+     * @return  id  the quota identifier
      */
     @JsonProperty
     public Integer getId() {
@@ -151,7 +151,7 @@ public class Quota {
 
     /**
      * Set the quota id
-     * @param id
+     * @param id the quota identifier
      */
     @JsonProperty
     public void setId(Integer id) {
@@ -160,7 +160,7 @@ public class Quota {
 
     /**
      * Get the quota object type
-     * @return object
+     * @return object  the quota object type
      */
     @JsonProperty
     public String getObject() {
@@ -169,7 +169,7 @@ public class Quota {
 
     /**
      * Set the quota object type
-     * @param object
+     * @param object  the quota object type
      */
     @JsonProperty
     public void setObject(String object) {
@@ -178,7 +178,7 @@ public class Quota {
 
     /**
      * Get the quota name
-     * @return name
+     * @return name  the quota name
      */
     @JsonProperty
     public String getName() {
@@ -187,7 +187,7 @@ public class Quota {
 
     /**
      * Set the quota name
-     * @param name
+     * @param name  the quota name
      */
     @JsonProperty
     public void setName(String name) {
@@ -196,7 +196,7 @@ public class Quota {
 
     /**
      * Get the quota soft limit
-     * @return softLimit
+     * @return softLimit  the quota soft limit
      */
     @JsonProperty
     public @NotNull Double getSoftLimit() {
@@ -205,7 +205,7 @@ public class Quota {
 
     /**
      * Set the quota soft limit
-     * @param softLimit
+     * @param softLimit the quota soft limit
      */
     @JsonProperty
     public void setSoftLimit(@NotNull Double softLimit) {
@@ -214,7 +214,7 @@ public class Quota {
 
     /**
      * Get the quota hard limit
-     * @return hardLimit
+     * @return hardLimit  the quota hard limit
      */
     @JsonProperty
     public @NotNull Double getHardLimit() {
@@ -223,7 +223,7 @@ public class Quota {
 
     /**
      * Set the quota hard limit
-     * @param hardLimit
+     * @param hardLimit  the quota hard limit
      */
     @JsonProperty
     public void setHardLimit(@NotNull Double hardLimit) {
@@ -232,8 +232,8 @@ public class Quota {
 
 
     /**
-     * Get the quota usage
-     * @return usage
+     * Get the quota total usage
+     * @return usage  the quota total usage
      */
     @JsonProperty
     public Double getUsage() {
@@ -242,7 +242,7 @@ public class Quota {
 
     /**
      * Set the quota usage
-     * @param usage
+     * @param usage  the quota total usage
      */
     @JsonProperty
     public void setUsage(Double usage) {
@@ -251,7 +251,7 @@ public class Quota {
 
     /**
      * Get the quota unit
-     * @return unit
+     * @return unit  the quota unit
      */
     @JsonProperty
     public String getUnit() {
@@ -260,7 +260,7 @@ public class Quota {
 
     /**
      * Set the quota unit
-     * @param unit
+     * @param unit  the quota unit
      */
     @JsonProperty
     public void setUnit(String unit) {
@@ -269,7 +269,7 @@ public class Quota {
 
     /**
      * Get the subscription id
-     * @return subscriptionId
+     * @return subscriptionId  the quota subscription identifier
      */
     @JsonProperty
     public Integer getSubscriptionId() {
@@ -278,7 +278,7 @@ public class Quota {
 
     /**
      * Set the subscription id
-     * @param subscriptionId
+     * @param subscriptionId  the quota subscription identifier
      */
     @JsonProperty
     public void setSubscriptionId(Integer subscriptionId) {
@@ -287,7 +287,7 @@ public class Quota {
 
     /**
      * Get the subject
-     * @return subject
+     * @return subject  the quota subject
      */
     @JsonProperty
     public String getSubject() {
@@ -296,7 +296,7 @@ public class Quota {
 
     /**
      * Set the subject
-     * @param subject
+     * @param subject  the quota subject
      */
     @JsonProperty
     public void setSubject(String subject) {
@@ -306,7 +306,7 @@ public class Quota {
     /**
      * Determine object equality based on the equality of all fields
      * @param o the object to be compared
-     * @return
+     * @return  true if the given object is equal
      */
     @Override
     public boolean equals(Object o) {
@@ -326,11 +326,10 @@ public class Quota {
 
     /**
      * Calculate a hash based on all fields
-     * @return hashcode
+     * @return hashcode  the hashcode of the object
      */
     @Override
     public int hashCode() {
-
         return Objects.hash(getId(), getObject(), getName(), getSoftLimit(),
             getHardLimit(), getUsage(), getUnit(), getSubscriptionId(), getSubject());
     }
