@@ -45,8 +45,7 @@ public class Usage {
     private String instanceId;
 
     /* The identifier of the quota usage */
-    @NotNull
-    private Integer quantity;
+    private @NotNull Double quantity;
 
 
     /**
@@ -64,10 +63,10 @@ public class Usage {
      * @param quantity  the quantity of the quota used
      */
     public Usage(Integer id,
-        @NotEmpty @NotNull @Pattern(regexp = "usage") String object,
-        @NotNull Integer quotaId,
-        @NotNull String instanceId,
-        @NotNull Integer quantity) {
+                 @NotEmpty @NotNull @Pattern(regexp = "usage") String object,
+                 @NotNull Integer quotaId,
+                 @NotNull String instanceId,
+                 @NotNull Double quantity) {
         this.id = id;
         this.object = object;
         this.quotaId = quotaId;
@@ -143,7 +142,7 @@ public class Usage {
      * Get the quota usage quantity
      * @return quantity  the quota usage quantity
      */
-    public Integer getQuantity() {
+    public @NotNull Double getQuantity() {
         return quantity;
     }
 
@@ -151,7 +150,7 @@ public class Usage {
      * Set the quota usage quantity
      * @param quantity  the quota usage quantity
      */
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(@NotNull Double quantity) {
         this.quantity = quantity;
     }
 }
