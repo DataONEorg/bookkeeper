@@ -42,12 +42,38 @@ public class Usage {
 
     /* The identifier of the quota usage */
     @NotNull
-    private Integer instanceId;
+    private String instanceId;
 
     /* The identifier of the quota usage */
     @NotNull
     private Integer quantity;
 
+
+    /**
+     * Construct an empty usage instance
+     */
+    public Usage() {
+    }
+
+    /**
+     * Construct a Usage instance
+     * @param id  the identifier of the quota usage instance
+     * @param object the object type of the quota usage instance ("usage")
+     * @param quotaId  the identifier of the associated quota
+     * @param instanceId  the identifier of the instance object using a portion of the quota
+     * @param quantity  the quantity of the quota used
+     */
+    public Usage(Integer id,
+        @NotEmpty @NotNull @Pattern(regexp = "usage") String object,
+        @NotNull Integer quotaId,
+        @NotNull String instanceId,
+        @NotNull Integer quantity) {
+        this.id = id;
+        this.object = object;
+        this.quotaId = quotaId;
+        this.instanceId = instanceId;
+        this.quantity = quantity;
+    }
 
     /**
      * Get the quota usage identifier
@@ -101,7 +127,7 @@ public class Usage {
      * Get the quota usage instance identifier
      * @return instanceId  the quota usage instance identifier
      */
-    public Integer getInstanceId() {
+    public String getInstanceId() {
         return instanceId;
     }
 
@@ -109,7 +135,7 @@ public class Usage {
      * Set the quota usage instance identifier
      * @param instanceId the quota usage instance identifier
      */
-    public void setInstanceId(Integer instanceId) {
+    public void setInstanceId(String instanceId) {
         this.instanceId = instanceId;
     }
 
