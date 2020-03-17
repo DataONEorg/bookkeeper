@@ -24,6 +24,7 @@ package org.dataone.bookkeeper.api;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.Objects;
 
 public class Usage {
 
@@ -152,6 +153,32 @@ public class Usage {
      */
     public void setQuantity(@NotNull Double quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * Determine equality with the given object
+     * @param o  the object to compare
+     * @return  true if the objects are equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usage usage = (Usage) o;
+        return Objects.equals(getId(), usage.getId()) &&
+            getObject().equals(usage.getObject()) &&
+            getQuotaId().equals(usage.getQuotaId()) &&
+            getInstanceId().equals(usage.getInstanceId()) &&
+            getQuantity().equals(usage.getQuantity());
+    }
+
+    /**
+     * Generate a hashcode for the object based on its members
+     * @return  the object hashcode
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getObject(), getQuotaId(), getInstanceId(), getQuantity());
     }
 }
 
