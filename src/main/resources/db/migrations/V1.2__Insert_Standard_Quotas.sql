@@ -11,4 +11,4 @@ INSERT INTO quotas (object, name, softLimit, hardLimit, usage, unit, subscriptio
 
 -- Single base branded portal limit
 INSERT INTO quotas (object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject)
-    VALUES ('quota', 'portal', 1.0, 1.0, NULL, 'portal_count', NULL, NULL);
+    VALUES ('quota', 'portal', 1.0, 1.0, NULL, 'portal', NULL, NULL);

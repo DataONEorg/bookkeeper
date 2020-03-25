@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS quotas (
     id integer DEFAULT nextval('quotas_id_seq') PRIMARY KEY,
     object text NOT NULL,
     name text NOT NULL,
-    softLimit real NOT NULL,
-    hardLimit real NOT NULL,
-    usage real,
+    softLimit double precision NOT NULL,
+    hardLimit double precision NOT NULL,
+    usage double precision,
     unit text NOT NULL,
     subscriptionId integer,
     subject text
