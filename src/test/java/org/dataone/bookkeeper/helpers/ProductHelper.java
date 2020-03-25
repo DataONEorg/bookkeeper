@@ -101,7 +101,7 @@ public class ProductHelper {
         // Build a quota for feature 1
         Integer quota_id = 1;
         String quota_type = "quota";
-        String quota_name = "custom_portal_count";
+        String quota_name = "portal";
         @javax.validation.constraints.NotNull Double quota_soft_limit = 3.0;
         @javax.validation.constraints.NotNull Double quota_hard_limit = 3.0;
         Double quota_usage = null;
