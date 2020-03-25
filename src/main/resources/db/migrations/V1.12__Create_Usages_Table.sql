@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS usages (
     object text NOT NULL,
     quotaId integer NOT NULL,
     instanceId text NOT NULL,
-    quantity real NOT NULL
+    quantity double precision NOT NULL
 );
 ALTER SEQUENCE usages_id_seq OWNED BY usages.id;
 
