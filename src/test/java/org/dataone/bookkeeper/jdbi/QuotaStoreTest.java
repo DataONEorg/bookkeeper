@@ -125,8 +125,9 @@ public class QuotaStoreTest extends BaseTestCase {
     @Test
     @DisplayName("Test get quota")
     public void testGetQuota() {
-
-        assertEquals(1, (int) quotaStore.getQuota(1).getId());
+        Quota quota = quotaStore.getQuota(3);
+        int identifier = (int) quota.getId();
+        assertEquals(3, identifier);
     }
 
     /**
@@ -276,18 +277,15 @@ public class QuotaStoreTest extends BaseTestCase {
             Quota quota = new Quota();
             quota.setId(quotaId);
             quota.setObject("quota");
-            String quotaName = "test_quota_" + StoreHelper.getRandomId().toString();
-            quota.setName(quotaName);
-            quota.setSoftLimit(56789.0);
-            quota.setHardLimit(567890.0);
-            quota.setUsage(96789.0);
-            quota.setUnit("megabyte");
+            quota.setName("portal");
+            quota.setSoftLimit(10.0);
+            quota.setHardLimit(15.0);
+            quota.setUnit("portal");
             quota.setSubscriptionId(subscriptionId);
             quotaStore.update(quota);
-            assertEquals(QuotaHelper.getQuotaById(quotaId).getName(), quotaName);
-            assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 56789);
-            assertThat(QuotaHelper.getQuotaById(quotaId).getHardLimit() == 567890);
-            assertThat(QuotaHelper.getQuotaById(quotaId).getUsage() == 96789);
+            assertEquals(QuotaHelper.getQuotaById(quotaId).getName(), quota.getName());
+            assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 10.0);
+            assertThat(QuotaHelper.getQuotaById(quotaId).getHardLimit() == 15.0);
         } catch (SQLException e) {
             fail();
         } catch (JsonProcessingException e) {
