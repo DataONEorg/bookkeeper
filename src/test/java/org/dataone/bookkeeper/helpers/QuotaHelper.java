@@ -58,11 +58,11 @@ public class QuotaHelper {
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
                 "quota",
-                "test_subscription_quota",
-                12345,
-                123450,
+                "portal",
+                5.0,
+                10.0,
                 null,
-                "megabyte",
+                "portal",
                 subscriptionId,
                 null)
         );
@@ -86,11 +86,11 @@ public class QuotaHelper {
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
                 "quota",
-                "test_subscription_quota",
-                12345,
-                123450,
+                "portal",
+                5.0,
+                5.0,
                 null,
-                "megabyte",
+                "portal",
                 subscriptionId,
                 subject)
         );
@@ -165,7 +165,7 @@ public class QuotaHelper {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
-        quota.setName("test_storage_quota_" + quotaId);
+        quota.setName("storage" + quotaId);
         quota.setSoftLimit(4000000.0);
         quota.setHardLimit(5000000.0);
         quota.setUsage(null);
