@@ -319,7 +319,27 @@ when a portal document is uploaded to a repository.
     participant Bookkeeper <<Service>>
     participant "CN" <<Service>>
 
-    Researcher o-> Client : Chooses "Save" after editing a portal
+    Researcher o-> Client: Chooses "Edit" for a listed portal
+    activate Client
+        Client -> Bookkeeper: isActive(session, sid, quotaName)
+    deactivate Client
+
+    activate Bookkeeper
+        Bookkeeper --> Client: true (HTTP 200)
+    deactivate Bookkeeper
+
+    note right
+        Checks usages of the given pid or sid
+        for the given quota name "portal"
+    end note
+
+    activate Client
+        Client --> Researcher: editor view
+    deactivate Client
+
+    activate Researcher
+        Researcher -> Client : Chooses "Save" after editing a portal
+    deactivate Researcher
 
     note right
         Note that the Client can optionally
