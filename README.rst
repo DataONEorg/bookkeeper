@@ -102,7 +102,7 @@ This returns a ``ProductList``:
                             "description": "Showcase your research, data, results, and usage metrics by building a custom web portal.",
                             "quota": {
                                 "object": "quota",
-                                "name": "portal_count",
+                                "name": "portal",
                                 "softLimit": "1",
                                 "hardLimit": "1",
                                 "unit": "portal"
@@ -290,7 +290,7 @@ This returns a ``QuotaList``:
         "quotas": [{
             "id": 4,
             "object": "quota",
-            "name": "portal_count",
+            "name": "portal",
             "softLimit": 1.0,
             "hardLimit": 1.0,
             "usage": 0.0,
@@ -378,17 +378,20 @@ when a portal document is uploaded to a repository.
         activate Client
             Client --> Researcher : Indicates portal is saved
         deactivate Client
-        Repository --> Bookkeeper : adjustUsage(session, quotaId, usage)
+        Repository --> Bookkeeper : updateUsage(session, quotaId, usage)
     deactivate Repository
     
     activate Bookkeeper
         note right
             The repository asynchronously 
             updates the usage for the portal count
-            (adds a positive usage value, subtracts
-            a negative value). Note the quotaId
-            comes from the quota returned from
-            hasRemaining().
+            by sending the usage object with the
+            instanceId (portal id) and quotaId. 
+            Note the quotaId comes from the quota 
+            returned from hasRemaining().  If the
+            portal has both a pid and sid, call
+            updateUsage() twice. The call with the sid 
+            usage should have a quantity of zero.
         end note
         Bookkeeper --> Repository : quota
     deactivate Bookkeeper
