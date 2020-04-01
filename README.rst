@@ -321,11 +321,11 @@ when a portal document is uploaded to a repository.
 
     Researcher o-> Client: Chooses "Edit" for a listed portal
     activate Client
-        Client -> Bookkeeper: isActive(session, sid, quotaName)
+        Client -> Bookkeeper: getUsage(session, sid, quotaName)
     deactivate Client
 
     activate Bookkeeper
-        Bookkeeper --> Client: true (HTTP 200)
+        Bookkeeper --> Client: usage
     deactivate Bookkeeper
 
     note right
