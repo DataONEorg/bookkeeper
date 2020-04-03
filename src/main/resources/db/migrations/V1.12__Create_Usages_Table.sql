@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS usages (
     object text NOT NULL,
     quotaId integer NOT NULL,
     instanceId text NOT NULL,
-    quantity double precision NOT NULL
+    quantity double precision NOT NULL,
+    status text
 );
 ALTER SEQUENCE usages_id_seq OWNED BY usages.id;
 
@@ -26,3 +27,4 @@ COMMENT ON COLUMN usages.object IS 'The serialized object type, set to "usage".'
 COMMENT ON COLUMN usages.quotaId IS 'The quota identifier.';
 COMMENT ON COLUMN usages.instanceId IS 'The instance identifier using a portion of the quota.';
 COMMENT ON COLUMN usages.quantity IS 'The quantity used by the instance, in the quota units.';
+COMMENT ON COLUMN usages.status IS 'The status of the usage, active or archived.';
