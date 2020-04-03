@@ -46,9 +46,12 @@ public class Usage {
     private String instanceId;
 
     /* The identifier of the quota usage */
-    private @NotNull Double quantity;
+    @NotNull
+    private Double quantity;
 
-
+    /*  The status of the usage, either active or archived */
+    @Pattern(regexp = "active|archived")
+    private String status;
     /**
      * Construct an empty usage instance
      */
@@ -156,6 +159,22 @@ public class Usage {
     }
 
     /**
+     * Get the usage status
+     * @return status  the usage status, either active or archived
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * Set the usage status
+     * @param status  the usage status, either active or archived
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
      * Determine equality with the given object
      * @param o  the object to compare
      * @return  true if the objects are equal
@@ -169,7 +188,8 @@ public class Usage {
             getObject().equals(usage.getObject()) &&
             getQuotaId().equals(usage.getQuotaId()) &&
             getInstanceId().equals(usage.getInstanceId()) &&
-            getQuantity().equals(usage.getQuantity());
+            getQuantity().equals(usage.getQuantity()) &&
+            Objects.equals(getStatus(), usage.getStatus());
     }
 
     /**
@@ -178,7 +198,7 @@ public class Usage {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getObject(), getQuotaId(), getInstanceId(), getQuantity());
+        return Objects.hash(getId(), getObject(), getQuotaId(), getInstanceId(), getQuantity(), getStatus());
     }
 }
 
