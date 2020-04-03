@@ -78,6 +78,7 @@ public class Usage {
         this.quotaId = quotaId;
         this.instanceId = instanceId;
         this.quantity = quantity;
+        this.status = status;
     }
 
     /**
