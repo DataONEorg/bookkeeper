@@ -65,12 +65,14 @@ public class Usage {
      * @param quotaId  the identifier of the associated quota
      * @param instanceId  the identifier of the instance object using a portion of the quota
      * @param quantity  the quantity of the quota used
+     * @param status  the usage status, either active or archived
      */
     public Usage(Integer id,
                  @NotEmpty @NotNull @Pattern(regexp = "usage") String object,
                  @NotNull Integer quotaId,
                  @NotNull String instanceId,
-                 @NotNull Double quantity) {
+                 @NotNull Double quantity,
+                 String status) {
         this.id = id;
         this.object = object;
         this.quotaId = quotaId;
