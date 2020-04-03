@@ -48,7 +48,7 @@ class FeatureTest {
     private final static Quota QUOTA = new Quota(
         null,
         "quota",
-        "custom_portal_count",
+        "portal",
         3.0,
         3.0,
         null,

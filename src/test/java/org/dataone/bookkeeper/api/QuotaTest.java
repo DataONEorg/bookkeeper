@@ -45,7 +45,7 @@ class QuotaTest {
     private final static String QUOTA_JSON = "fixtures/quota.json";
     private static final Integer ID = 1;
     private static final String OBJECT = "quota";
-    private static final String NAME = "custom_portal_count";
+    private static final String NAME = "portal";
     private static final @NotNull Double SOFTLIMIT = 3.0;
     private static final @NotNull Double HARDLIMIT = 3.0;
     private static final Double USAGE = null;
