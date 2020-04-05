@@ -42,15 +42,22 @@ public interface QuotaStore {
     /** The query used to find all quotas */
     String SELECT_CLAUSE =
         "SELECT " +
-            "q.id, q.object, q.name, q.softLimit, q.hardLimit, " +
-            "q.usage, q.unit, q.subscriptionId, q.subject " +
+            "q.id, " +
+            "q.object, " +
+            "q.name, " +
+            "q.softLimit, " +
+            "q.hardLimit, " +
+            "q.usage, " +
+            "q.unit, " +
+            "q.subscriptionId, " +
+            "q.subject " +
             "FROM quotas q ";
 
     /** The full ordered query */
     String SELECT_ALL = SELECT_CLAUSE;
 
     /** The query used to find unassigned quotas (i.e. generic product quotas */
-    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE subscriptionId IS NULL";
+    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE subscriptionId IS NULL ";
 
     /** The query used to find an individual quota */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
@@ -74,7 +81,7 @@ public interface QuotaStore {
 
     /**
      * List all unassigned quotas (no subscriptionId)
-     * @return quotas the list of unnassigned quotas
+     * @return quotas the list of unassigned quotas
      */
     @SqlQuery(SELECT_UNASSIGNED)
     List<Quota> listUnassignedQuotas();
@@ -121,9 +128,21 @@ public interface QuotaStore {
      * @param quota the quota to insert
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
+        "(object, " +
+        "name, " +
+        "softLimit, " +
+        "hardLimit, " +
+        "unit, " +
+        "subscriptionId, " +
+        "subject) " +
         "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
+        "(:object, " +
+        ":name, " +
+        ":softLimit, " +
+        ":hardLimit, " +
+        ":unit, " +
+        ":subscriptionId, " +
+        ":subject) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Quota quota);
@@ -138,7 +157,6 @@ public interface QuotaStore {
        "softLimit = :softLimit, " +
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
-       "usage = :usage, " +
        "subscriptionId = :subscriptionId, " +
        "subject = :subject " +
        "WHERE id = :id " +
