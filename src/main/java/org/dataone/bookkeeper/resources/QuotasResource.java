@@ -27,7 +27,9 @@ import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.QuotaList;
+import org.dataone.bookkeeper.api.Usage;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
+import org.dataone.bookkeeper.jdbi.UsageStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
@@ -69,6 +71,7 @@ public class QuotasResource extends BaseResource {
 
     /* The quota store for database calls */
     private final QuotaStore quotaStore;
+    private final UsageStore usageStore;
 
     /* An instance of the DataONE authn and authz delegate */
     private final DataONEAuthHelper dataoneAuthHelper;
@@ -79,6 +82,7 @@ public class QuotasResource extends BaseResource {
      */
     public QuotasResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.quotaStore = database.onDemand(QuotaStore.class);
+        this.usageStore = database.onDemand(UsageStore.class);
         this.dataoneAuthHelper = dataoneAuthHelper;
 
     }
@@ -275,37 +279,74 @@ public class QuotasResource extends BaseResource {
     }
 
     /**
-     * Check if the requested usage exceeds the quota hard limit for the given
+     * Check if the requested usage exceeds the quota soft limit for the given
      * quota subject and quota name.  Administrators can use the submitterSubject
      * as the calling subject for authorization, otherwise the authenticated subject is used.
      *
      * @param context  the security context of the authenticated user
-     * @param quotaSubject  the subject of the quota to be checked (person or group)
+     * @param subject  the subject of the quota to be checked (person or group)
      * @param submitterSubject  the subject of the calling user, used by admins (repositories)
      * @param quotaName  the name of the quota to be checked
      * @param requestedUsage  the total requested usage to be checked
-     * @return quota  The quota object if the usage does not exceed the hard limit
+     * @return quota  The quota object if the usage does not exceed the soft limit
      * @throws WebApplicationException  an exception if the usage exceeds the hard limit
      */
     @Timed
     @GET
     @PermitAll
-    @Path("usage")
+    @Path("{quotaName}/usage/remaining")
     public Quota hasRemaining(
         @Context SecurityContext context,
-        @QueryParam("quotaSubject") @NotNull String quotaSubject,
+        @QueryParam("subject") @NotNull String subject,
         @QueryParam("submitterSubject") String submitterSubject,
         @QueryParam("quotaName") @NotNull String quotaName,
         @QueryParam("requestedUsage") @NotNull Double requestedUsage
     ) throws WebApplicationException {
         Quota quota = null;
-        // TODO: Implement this
+
+        // The calling user injected in the security context via authentication
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
+
+        if ( isAdmin ) {
+            // TODO: Finish this
+        } else {
+            // TODO: Finish this
+        }
         return quota;
     }
 
     /**
-     * Adjust the usage of teh given quota, adding or subtracting the usage value to the
-     * current total usage. Requires administrative authorization.
+     * Get the usage for a given instance identifier and quota type
+     * @param context  the security context of the authenticated user
+     * @param instanceIdentifier  the instance identifier of the usage
+     * @param quotaName  the name of the quota being used
+     * @return usage  the usage object for the given instance identifier
+     */
+    @Timed
+    @GET
+    @PermitAll
+    @Path("{quotaName}/usage")
+    public Usage getUsage(@Context SecurityContext context,
+        @QueryParam("instanceId") @NotNull String instanceIdentifier,
+        @PathParam("quotaName") @NotNull String quotaName) {
+        Usage usage = null;
+        // The calling user injected in the security context via authentication
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
+
+        if ( isAdmin ) {
+            // TODO: Finish this
+        } else {
+            // TODO: Finish this
+            // Throw an exception, this is an admin-only call
+        }
+        return usage;
+    }
+
+    /**
+     * Update the usage of the given quota, adding or removing the usage row to the
+     * usages table.  Requires administrative authorization.
      * @param context  the security context of the authenticated user
      * @param quotaId  the quota identifier
      * @param usage  the used or gained quota amount in units of the given quota
@@ -316,13 +357,23 @@ public class QuotasResource extends BaseResource {
     @PUT
     @PermitAll
     @Path("{quotaId}/usage")
-    public Quota adjustUsage(
+    public Quota updateUsage(
         @Context SecurityContext context,
         @PathParam("quotaId") @NotNull @Positive Integer quotaId,
         @NotNull Double usage
         ) throws WebApplicationException {
         Quota quota = null;
-        // TODO: Implement this
+
+        // The calling user injected in the security context via authentication
+        Customer caller = (Customer) context.getUserPrincipal();
+        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
+
+        if ( isAdmin ) {
+            // TODO: Finish this
+        } else {
+            // TODO: Finish this
+            // Throw an exception, this is an admin-only call
+        }
         return quota;
     }
 }
