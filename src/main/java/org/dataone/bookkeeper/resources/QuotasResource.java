@@ -31,6 +31,7 @@ import org.dataone.bookkeeper.api.Usage;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
 import org.dataone.bookkeeper.jdbi.UsageStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
+import org.dataone.service.exceptions.BaseException;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.security.PermitAll;
@@ -53,6 +54,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -334,14 +336,48 @@ public class QuotasResource extends BaseResource {
         // The calling user injected in the security context via authentication
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
-
-        if ( isAdmin ) {
-            // TODO: Finish this
-        } else {
-            // TODO: Finish this
-            // Throw an exception, this is an admin-only call
+        if (isAdmin) {
+            try {
+                usage = usageStore.findUsageByQuotaNameAndInstanceId(quotaName, instanceIdentifier);
+                if (usage == null) {
+                    throw new WebApplicationException("The requested usage was not found.", Response.Status.NOT_FOUND);
+                } else {
+                    return usage;
+                }
+            } catch (Exception e) {
+                String message = "Couldn't get the uwage: " + e.getMessage();
+                throw new WebApplicationException(message, Response.Status.NOT_FOUND);
+            }
+        } else{
+            // Allow caller to access a usage for their own subject or associated subjects
+            // First retrieve the requested usage
+            usage = usageStore.findUsageByQuotaNameAndInstanceId(quotaName, instanceIdentifier);
+            if (usage == null) {
+                throw new WebApplicationException("The requested usage was not found.", Response.Status.NOT_FOUND);
+            }
+            // The usage store entries don't contain the associated subject, we have to get that from the associated quota entry.
+            // Now find a quota for the given quota id and check the quota subject to see if it matches the caller's subject
+            // or a subject associated with the caller.
+            Quota quota = quotaStore.getQuota(usage.getQuotaId());
+            // If the quota was found and the caller's subject matches the quota's subject
+            if (quota != null) {
+                try {
+                   caller.setSubjectInfo(this.dataoneAuthHelper.getSubjectInfo(null, caller.getSubject()));
+                } catch (BaseException be) {
+                    throw new WebApplicationException("Unable to get DataONE subject info for caller: " + caller.getSubject(), Response.Status.FORBIDDEN);
+                }
+                Set<String> associatedSubjects =
+                        this.dataoneAuthHelper.getAssociatedSubjects(caller, new HashSet<>(Arrays.asList(quota.getSubject())));
+                if ( associatedSubjects.size() > 0 ) {
+                    return usage;
+                } else {
+                    // Throw an exception, the associated subjects of the caller did not match the quota subject
+                    throw new WebApplicationException(caller.getSubject() + " is not associated with this usage.: ", Response.Status.FORBIDDEN);
+                }
+            } else {
+                throw new WebApplicationException("The requested quota was not found.", Response.Status.NOT_FOUND);
+            }
         }
-        return usage;
     }
 
     /**
