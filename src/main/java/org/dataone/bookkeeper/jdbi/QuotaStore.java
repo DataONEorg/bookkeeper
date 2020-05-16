@@ -71,6 +71,8 @@ public interface QuotaStore {
     /** The query used to find quotas by multiple subject identifiers */
     String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
 
+    /** The query used to find quotas by multiple subject identifiers */
+    String SELECT_BY_NAME_AND_SUBJECT = SELECT_CLAUSE + "WHERE q.name = :quotaName AND q.subject = :subject ";
 
     /**
      * List all quotas
@@ -122,6 +124,16 @@ public interface QuotaStore {
      */
     @SqlQuery(SELECT_SUBJECTS)
     List<Quota> findQuotasBySubjects(@BindList("subjects") List<String> subjects);
+
+    /**
+     * Find quotas by a quota by name and subject
+     *
+     * @param quotaName the quota name (e.g. "portal", "usage")
+     * @param subject the subject identifier (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subjects and names
+     */
+    @SqlQuery(SELECT_BY_NAME_AND_SUBJECT)
+    List<Quota> findQuotasByNameAndSubject(@Bind("quotaName") String quotaName, @Bind("subject") String subject);
 
     /**
      * Insert a quota with a given Quota instance
