@@ -345,7 +345,7 @@ public class QuotasResource extends BaseResource {
                     return usage;
                 }
             } catch (Exception e) {
-                String message = "Couldn't get the uwage: " + e.getMessage();
+                String message = "Couldn't get the usage: " + e.getMessage();
                 throw new WebApplicationException(message, Response.Status.NOT_FOUND);
             }
         } else{
