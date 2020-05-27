@@ -53,7 +53,7 @@ public interface UsageStore {
             "WHERE u.id = :id";
 
     /** Select by instance identifier */
-    String SELECT_ONE = SELECT_CLAUSE + "WHERE u.instanceId = :instanceId";
+    String SELECT_INSTANCE = SELECT_CLAUSE + "WHERE u.instanceId = :instanceId";
 
     /** Select by name and instance identifer */
     String SELECT_BY_OBJECT_AND_INSTANCE_ID = SELECT_CLAUSE +
