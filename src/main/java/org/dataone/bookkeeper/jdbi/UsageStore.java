@@ -72,7 +72,7 @@ public interface UsageStore {
      * @param id the usages identifier
      * @return usage the usage for the identifier
      */
-    @SqlQuery(SELECT_ONE)
+    @SqlQuery(SELECT_INSTANCE)
     Usage getUsage(@Bind("id") Integer id);
 
     /**
