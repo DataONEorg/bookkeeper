@@ -25,6 +25,7 @@
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <nimbus.version>7.9</nimbus.version>
         <client.artifact.id>bookkeeper-client</client.artifact.id>
+        <unshaded.jar.file>target/original-bookkeeper-${version}.jar</unshaded.jar.file>
     </properties>
     <distributionManagement>
         <repository>
@@ -241,9 +242,9 @@
                         </goals>
                         <phase>install</phase>
                         <configuration>
-                            <groupId>org.dataone</groupId>
+                            <groupId>${groupId}</groupId>
                             <artifactId>${client.artifact.id}</artifactId>
-                            <file>target/original-bookkeeper-${version}.jar</file>
+                            <file>${unshaded.jar.file}</file>
                             <version>${version}</version>
                             <generatePom>false</generatePom>
                             <pomFile>pom.xml</pomFile>
@@ -264,9 +265,9 @@
                         <phase>deploy</phase>
                         <configuration>
                             <url>${url}</url>
-                            <groupId>org.dataone</groupId>
+                            <groupId>${groupId}</groupId>
                             <artifactId>${client.artifact.id}</artifactId>
-                            <file>target/original-bookkeeper-${version}.jar</file>
+                            <file>${unshaded.jar.file}</file>
                             <version>${version}</version>
                             <generatePom>false</generatePom>
                             <pomFile>pom.xml</pomFile>
