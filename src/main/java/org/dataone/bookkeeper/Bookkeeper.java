@@ -32,10 +32,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.config.BookkeeperConfiguration;
-import org.dataone.bookkeeper.resources.CustomersResource;
-import org.dataone.bookkeeper.resources.OrdersResource;
-import org.dataone.bookkeeper.resources.ProductsResource;
-import org.dataone.bookkeeper.resources.QuotasResource;
+import org.dataone.bookkeeper.resources.*;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.dataone.bookkeeper.security.DataONEAuthenticator;
 import org.dataone.bookkeeper.security.DataONEAuthorizer;
@@ -101,6 +98,9 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
 
         // Register the quotas resource
         environment.jersey().register(new QuotasResource(database, dataoneHelper));
+
+        // Register the usages resource
+        environment.jersey().register(new UsagesResource(database, dataoneHelper));
 
         // Register the customers resource
         environment.jersey().register(new CustomersResource(database, dataoneHelper));
