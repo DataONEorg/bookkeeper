@@ -23,8 +23,21 @@
         <maven.shade.version>3.2.1</maven.shade.version>
         <maven.jar.version>3.1.2</maven.jar.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
+        <maven.install.version>3.0.0-M1</maven.install.version>
+        <maven.deploy.version>3.0.0-M1</maven.deploy.version>
         <nimbus.version>7.9</nimbus.version>
+        <client.artifact.id>bookkeeper-client</client.artifact.id>
+        <unshaded.jar.file>target/original-bookkeeper-${version}.jar</unshaded.jar.file>
     </properties>
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>jenkins.dataone.org</id>
+            <name>DataONE</name>
+            <url>${url}</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -219,6 +232,52 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>${maven.install.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${client.artifact.id}</artifactId>
+                            <file>${unshaded.jar.file}</file>
+                            <version>${version}</version>
+                            <generatePom>false</generatePom>
+                            <pomFile>pom.xml</pomFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven.deploy.version}</version>
+                <executions>
+                    <execution>
+                        <id>deploy-file</id>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <url>${url}</url>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${client.artifact.id}</artifactId>
+                            <file>${unshaded.jar.file}</file>
+                            <version>${version}</version>
+                            <generatePom>false</generatePom>
+                            <pomFile>pom.xml</pomFile>
+                            <packaging>jar</packaging>
+                            <repositoryId>jenkins.dataone.org</repositoryId>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
