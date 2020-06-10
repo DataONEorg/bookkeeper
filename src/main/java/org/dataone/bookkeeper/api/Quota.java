@@ -49,6 +49,7 @@ public class Quota {
 
     /* The quota name */
     @NotEmpty
+    @Pattern(regexp = "portal|storage|repository_storage")
     @NotNull
     private String name;
 
