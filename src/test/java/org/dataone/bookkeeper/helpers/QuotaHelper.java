@@ -165,13 +165,13 @@ public class QuotaHelper {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
-        quota.setName("storage" + quotaId);
+        quota.setName("storage");
         quota.setSoftLimit(4000000.0);
         quota.setHardLimit(5000000.0);
         quota.setUsage(null);
         quota.setUnit("megabyte");
         quota.setSubscriptionId(subscriptionId);
-        quota.setSubject(null);
+        quota.setSubject("http://orcid.org/0000-0000-0000-0000");
         return quota;
     }
 
@@ -179,13 +179,13 @@ public class QuotaHelper {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
-        quota.setName("test_portal_quota_" + quotaId);
+        quota.setName("portal");
         quota.setSoftLimit(3.0);
         quota.setHardLimit(3.0);
         quota.setUsage(null);
         quota.setUnit("portal");
         quota.setSubscriptionId(subscriptionId);
-        quota.setSubject(null);
+        quota.setSubject("http://orcid.org/0000-0000-0000-0000");
         return quota;
     }
     /**

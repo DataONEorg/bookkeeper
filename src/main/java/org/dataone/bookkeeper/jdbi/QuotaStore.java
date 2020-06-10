@@ -62,7 +62,10 @@ public interface QuotaStore {
     /** The query used to find an individual quota */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
 
-    /** The query used to find a quota by subject identifier */
+    /** The query used to find quotas by name */
+    String SELECT_BY_TYPE = SELECT_CLAUSE + "WHERE q.name = :quotaType";
+
+    /** The query used to find a quota by subscription identifier */
     String SELECT_SUBSCRIPTION = SELECT_CLAUSE + "WHERE q.subscriptionId = :subscriptionId ";
 
     /** The query used to find a quota by subject identifier */
@@ -71,6 +74,8 @@ public interface QuotaStore {
     /** The query used to find quotas by multiple subject identifiers */
     String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
 
+    /** The query used to find quotas by type and multiple subject identifiers */
+    String SELECT_BY_NAME_AND_SUBJECTS = SELECT_CLAUSE + "WHERE q.name = :quotaType AND q.subject IN (<subjects>) ";
 
     /**
      * List all quotas
@@ -104,6 +109,14 @@ public interface QuotaStore {
     @SqlQuery(SELECT_SUBSCRIPTION)
     List<Quota> findQuotasBySubscriptionId(@Bind("subscriptionId") Integer subscriptionId);
 
+    /**
+     * Find quotas by quota type
+     *
+     * @param quotaType quota type
+     * @return quotas the list of quotas for the quota type
+     */
+    @SqlQuery(SELECT_BY_TYPE)
+    List<Quota> findQuotasByType(@Bind("quotaType") String quotaType);
 
     /**
      * Find quotas by subject identifier
@@ -122,6 +135,16 @@ public interface QuotaStore {
      */
     @SqlQuery(SELECT_SUBJECTS)
     List<Quota> findQuotasBySubjects(@BindList("subjects") List<String> subjects);
+
+    /**
+     * Find quotas by a quota type and subjects
+     *
+     * @param quotaType the quota name (e.g. "portal", "usage")
+     * @param subjects the subject identifiers (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subjects and names
+     */
+    @SqlQuery(SELECT_BY_NAME_AND_SUBJECTS)
+    List<Quota> findQuotasByNameAndSubjects(@Bind("quotaType") String quotaType, @BindList("subjects") List<String> subjects);
 
     /**
      * Insert a quota with a given Quota instance
@@ -162,7 +185,7 @@ public interface QuotaStore {
        "WHERE id = :id " +
        "RETURNING id")
    @GetGeneratedKeys
-   Integer update(@BindBean Quota quota);
+   Quota update(@BindBean Quota quota);
 
     /**
      * Delete a quota given the quota id

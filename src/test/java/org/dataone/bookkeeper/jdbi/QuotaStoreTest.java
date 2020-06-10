@@ -228,6 +228,46 @@ public class QuotaStoreTest extends BaseTestCase {
         }
     }
 
+    @Test
+    @DisplayName("Test list quotas by type and subjects")
+    public void testListQuotasByNameAndSubjects() {
+
+        Customer customer;
+        Integer subscriptionId;
+        try {
+            // Insert a customer
+            customer = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customer.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionId =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customer.getId());
+            this.subscriptionIds.add(subscriptionId); // To be deleted
+
+            // Insert two quotas with separate subjects
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
+                    StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
+            this.quotaIds.add(quotaOneId);
+
+            String groupSubject = "CN=some-group,DC=dataone,DC=org";
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
+                    StoreHelper.getRandomId(), subscriptionId, groupSubject);
+            this.quotaIds.add(quotaTwoId);
+
+            List<String> subjects = new ArrayList<String>();
+            subjects.add(customer.getSubject());
+            subjects.add(groupSubject);
+            assertEquals(2, quotaStore.findQuotasByNameAndSubjects("portal", subjects).size());
+
+        } catch (SQLException e) {
+            fail(e);
+        } catch (JsonProcessingException e) {
+            fail(e);
+        }
+    }
+
     /**
      * Test inserting a Quota instance
      */
