@@ -27,9 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.QuotaList;
-import org.dataone.bookkeeper.api.Usage;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
-import org.dataone.bookkeeper.jdbi.UsageStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
@@ -37,7 +35,6 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -71,7 +68,6 @@ public class QuotasResource extends BaseResource {
 
     /* The quota store for database calls */
     private final QuotaStore quotaStore;
-    private final UsageStore usageStore;
 
     /* An instance of the DataONE authn and authz delegate */
     private final DataONEAuthHelper dataoneAuthHelper;
@@ -82,7 +78,6 @@ public class QuotasResource extends BaseResource {
      */
     public QuotasResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.quotaStore = database.onDemand(QuotaStore.class);
-        this.usageStore = database.onDemand(UsageStore.class);
         this.dataoneAuthHelper = dataoneAuthHelper;
 
     }
@@ -92,8 +87,9 @@ public class QuotasResource extends BaseResource {
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
-     * @param subscriptionId  the subscriptionId
-     * @param subjects  the quota subjects (repeatable and treated as a list)
+     * @param subscribers the quota subjects (repeatable and treated as a list)
+     * @param quotaType the quota type (e.g. "portal", "storage", ...)
+     * @param requestor the DataONE subject to make the request as
      * @return quotas  the quota list
      */
     @Timed
@@ -104,53 +100,71 @@ public class QuotasResource extends BaseResource {
         @Context SecurityContext context,
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
-        @QueryParam("subscriptionId") Integer subscriptionId,
-        @QueryParam("subject") Set<String> subjects) throws WebApplicationException {
+        @QueryParam("quotaType") String quotaType,
+        @QueryParam("subscribers") Set<String> subscribers,
+        @QueryParam("requestor") String requestor) throws WebApplicationException {
 
         // The calling user injected in the security context via authentication
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
-        List<Quota> quotas = new ArrayList<Quota>();
+        List<Quota> quotas;
         Set<String> associatedSubjects;
-        List<String> subjectsList;
+        List<String> subjects = new ArrayList<>();
+        /* Admin user is making this request as another subject */
+        Boolean isProxy = isAdmin && requestor != null;
+
+        if(requestor != null) {
+            if(isAdmin) {
+                caller.setSubject(requestor);
+            } else {
+                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+            }
+        }
+
         try {
-            if ( subjects != null && subjects.size() > 0 ) {
-                // Filter out non-associated subjects if not an admin
-                if ( ! isAdmin ) {
+            /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
+            if ( subscribers != null && subscribers.size() > 0 ) {
+                // Filter out non-associated subscribers if not an admin
+                if ( ! isAdmin || isProxy) {
                     associatedSubjects =
-                        this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
-                    if ( associatedSubjects.size() > 0 ) {
+                        this.dataoneAuthHelper.getAssociatedSubjects(caller, subscribers);
+                    if (associatedSubjects.size() > 0) {
                         subjects.addAll(associatedSubjects);
                     }
-                }
-                // Get quotas if the subject list is non-zero
-                if ( subjects.size() > 0 ) {
-                    subjectsList = new ArrayList<String>(subjects);
-                    quotas = quotaStore.findQuotasBySubjects(subjectsList);
-                }
-            } else if (subscriptionId != null) {
 
-                quotas = quotaStore.findQuotasBySubscriptionId(subscriptionId);
-
-                // Allow admin access only for now
-                if ( ! isAdmin ) {
-                    throw new Exception(caller.getSubject() + " doesn't have access to subscriptions.");
+                    /* Caller is not admin and is not associated with any of the specified subscribers. */
+                    if (subjects.size() == 0) {
+                        throw new WebApplicationException(caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+                    }
+                } else {
+                    /* Admin caller, so can see quotas for all requested subscribers */
+                    subjects.addAll(subscribers);
                 }
-            } else if ( isAdmin ) {
-                // For admins, list all quotas
-                quotas = quotaStore.listQuotas();
             } else {
-                // Fall back to list product quotas for the caller only
-                subjects = new HashSet<String>();
-                subjects.add(caller.getSubject());
-                associatedSubjects =
-                    this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
-                if ( associatedSubjects.size() > 0 ) {
-                    subjects.addAll(associatedSubjects);
+                /* No subscribers specified and caller is not admin, so caller is only allowed to
+                   view their own quotas. If the caller is admin, then don't set subject, as
+                   they will be able to view all subjects. */
+                if (! isAdmin || isProxy) {
+                    if (subjects.size() == 0) {
+                        subjects.add(caller.getSubject());
+                    }
                 }
-                subjectsList = new ArrayList<String>(subjects);
-                quotas = quotaStore.findQuotasBySubjects(subjectsList);
+            }
+
+            if (quotaType != null) {
+                if(subjects.size() > 0) {
+                    quotas = quotaStore.findQuotasByNameAndSubjects(quotaType, subjects);
+                } else {
+                    /* Not sure if this is useful or practical, i.e. admin user can view all quotas for a quota type. */
+                    quotas = quotaStore.findQuotasByType(quotaType);
+                }
+            } else {
+                if(subjects.size() > 0) {
+                    quotas = quotaStore.findQuotasBySubjects(subjects);
+                } else {
+                    quotas = quotaStore.listQuotas();
+                }
             }
         } catch (Exception e) {
             String message = "Couldn't list quotas: " + e.getMessage();
@@ -235,19 +249,21 @@ public class QuotasResource extends BaseResource {
     @Timed
     @PUT
     @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{quotaId}")
     public Quota update(
         @Context SecurityContext context,
         @NotNull @Valid Quota quota) throws WebApplicationException {
+        Quota updatedQuota = null;
         // Update the quota after validation
         try {
-            quotaStore.update(quota);
+            updatedQuota = quotaStore.update(quota);
         } catch (Exception e) {
             String message = "Couldn't update the quota: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
         }
-        return quota;
+        return updatedQuota;
     }
 
     /**
@@ -276,104 +292,5 @@ public class QuotasResource extends BaseResource {
             throw e;
         }
         return Response.ok().build();
-    }
-
-    /**
-     * Check if the requested usage exceeds the quota soft limit for the given
-     * quota subject and quota name.  Administrators can use the submitterSubject
-     * as the calling subject for authorization, otherwise the authenticated subject is used.
-     *
-     * @param context  the security context of the authenticated user
-     * @param subject  the subject of the quota to be checked (person or group)
-     * @param submitterSubject  the subject of the calling user, used by admins (repositories)
-     * @param quotaName  the name of the quota to be checked
-     * @param requestedUsage  the total requested usage to be checked
-     * @return quota  The quota object if the usage does not exceed the soft limit
-     * @throws WebApplicationException  an exception if the usage exceeds the hard limit
-     */
-    @Timed
-    @GET
-    @PermitAll
-    @Path("{quotaName}/usage/remaining")
-    public Quota hasRemaining(
-        @Context SecurityContext context,
-        @QueryParam("subject") @NotNull String subject,
-        @QueryParam("submitterSubject") String submitterSubject,
-        @QueryParam("quotaName") @NotNull String quotaName,
-        @QueryParam("requestedUsage") @NotNull Double requestedUsage
-    ) throws WebApplicationException {
-        Quota quota = null;
-
-        // The calling user injected in the security context via authentication
-        Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
-
-        if ( isAdmin ) {
-            // TODO: Finish this
-        } else {
-            // TODO: Finish this
-        }
-        return quota;
-    }
-
-    /**
-     * Get the usage for a given instance identifier and quota type
-     * @param context  the security context of the authenticated user
-     * @param instanceIdentifier  the instance identifier of the usage
-     * @param quotaName  the name of the quota being used
-     * @return usage  the usage object for the given instance identifier
-     */
-    @Timed
-    @GET
-    @PermitAll
-    @Path("{quotaName}/usage")
-    public Usage getUsage(@Context SecurityContext context,
-        @QueryParam("instanceId") @NotNull String instanceIdentifier,
-        @PathParam("quotaName") @NotNull String quotaName) {
-        Usage usage = null;
-        // The calling user injected in the security context via authentication
-        Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
-
-        if ( isAdmin ) {
-            // TODO: Finish this
-        } else {
-            // TODO: Finish this
-            // Throw an exception, this is an admin-only call
-        }
-        return usage;
-    }
-
-    /**
-     * Update the usage of the given quota, adding or removing the usage row to the
-     * usages table.  Requires administrative authorization.
-     * @param context  the security context of the authenticated user
-     * @param quotaId  the quota identifier
-     * @param usage  the used or gained quota amount in units of the given quota
-     * @return quota  the quota object with the updated usage
-     * @throws WebApplicationException  if adjusting the quota fails
-     */
-    @Timed
-    @PUT
-    @PermitAll
-    @Path("{quotaId}/usage")
-    public Quota updateUsage(
-        @Context SecurityContext context,
-        @PathParam("quotaId") @NotNull @Positive Integer quotaId,
-        @NotNull Double usage
-        ) throws WebApplicationException {
-        Quota quota = null;
-
-        // The calling user injected in the security context via authentication
-        Customer caller = (Customer) context.getUserPrincipal();
-        boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
-
-        if ( isAdmin ) {
-            // TODO: Finish this
-        } else {
-            // TODO: Finish this
-            // Throw an exception, this is an admin-only call
-        }
-        return quota;
     }
 }
