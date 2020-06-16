@@ -27,18 +27,22 @@ import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.Usage;
 import org.dataone.bookkeeper.helpers.*;
+import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class UsageStoreTest extends BaseTestCase {
@@ -63,6 +67,9 @@ public class UsageStoreTest extends BaseTestCase {
 
     // A list of subscription ids used in testing
     private List<Integer> subscriptionIds = new ArrayList<Integer>();
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     /**
      * Set up the Store for testing
@@ -379,22 +386,94 @@ public class UsageStoreTest extends BaseTestCase {
     @DisplayName("Test inserting a Usage instance")
     public void testInsertWithUsage() {
         try {
-            Integer quotaId = StoreHelper.getRandomId();
-            Integer customerId = null;
-            Quota quota = QuotaHelper.createTestStorageQuota(quotaId, customerId);
-            this.quotaIds.add(quotaId);
-            quotaStore.insert(quota);
+            Customer customer;
+            Integer subscriptionId;
+            // Insert a customer
+            customer = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customer.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionId =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customer.getId());
+            this.subscriptionIds.add(subscriptionId); // To be deleted
+
+            Integer storageQuotaId = StoreHelper.getRandomId();
+            Integer portalQuotaId = StoreHelper.getRandomId();
+
+            Map<Integer, Quota> quotas = QuotaHelper.insertTestStorageAndPortalQuotasWithSubscription(storageQuotaId, portalQuotaId, subscriptionId);
+            this.quotaIds.add(storageQuotaId);
+            this.quotaIds.add(portalQuotaId);
+
+            assertEquals(QuotaHelper.getQuotaCountById(storageQuotaId),1 ,"Portal quota not inserted." );
 
             Integer usageId = StoreHelper.getRandomId();
-            String instanceId = usageId.toString() + quotaId.toString() + quota.getSubject();
-            Usage usage = UsageHelper.createTestStorageUsage(usageId, quotaId, instanceId);
+            String instanceId = StoreHelper.getRandomId().toString();
+            Usage usage = UsageHelper.createTestStorageUsage(usageId, portalQuotaId, instanceId);
+            usageStore.insert(usage);
             this.usageIds.add(usageId);
 
             assertThat(UsageHelper.getUsageCountById(usageId) == 1);
         } catch (Exception e) {
             fail();
         }
+    }
 
+    /**
+     * Test inserting a duplicate Usage instance
+     */
+    @Test
+    @DisplayName("Test inserting a duplicate Usage instance")
+    public void testInsertDuplicateUsages() {
+        try {
+            Customer customer;
+            Integer subscriptionId;
+            // Insert a customer
+            customer = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customer.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionId =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customer.getId());
+            this.subscriptionIds.add(subscriptionId); // To be deleted
+
+            Integer storageQuotaId = StoreHelper.getRandomId();
+            Integer portalQuotaId = StoreHelper.getRandomId();
+
+            Map<Integer, Quota> quotas = QuotaHelper.insertTestStorageAndPortalQuotasWithSubscription(storageQuotaId, portalQuotaId, subscriptionId);
+            this.quotaIds.add(storageQuotaId);
+            this.quotaIds.add(portalQuotaId);
+
+            assertEquals(QuotaHelper.getQuotaCountById(storageQuotaId),1 ,"Portal quota not inserted." );
+
+            Integer usageId = StoreHelper.getRandomId();
+            String instanceId = StoreHelper.getRandomId().toString();
+            Usage usage = UsageHelper.createTestStorageUsage(usageId, portalQuotaId, instanceId);
+            usageStore.insert(usage);
+            this.usageIds.add(usageId);
+
+            assertThat(UsageHelper.getUsageCountById(usageId) == 1);
+
+            // Now attempt to insert a usage for the existing quotaId + instanceId
+            Integer newUsageId = StoreHelper.getRandomId();
+            Usage newUsage = UsageHelper.createTestStorageUsage(newUsageId, storageQuotaId, instanceId);
+            this.usageIds.add(newUsageId);
+
+            Exception exception = assertThrows(org.jdbi.v3.core.statement.UnableToExecuteStatementException.class, () -> {
+                usageStore.insert(usage);
+            });
+
+            String expectedMessage = "duplicate key value violates unique constraint";
+            String actualMessage = exception.getMessage();
+
+            assertTrue(actualMessage.contains(expectedMessage));
+
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     /**
