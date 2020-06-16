@@ -203,14 +203,17 @@ public class UsagesResource {
     public Usage create(
             @Context SecurityContext context,
             @NotNull @Valid Usage usage) throws WebApplicationException {
+        String DEFAULT_STATUS = "active";
         // Insert the usage after it is validated
-
         // The calling user injected in the security context via authentication
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         if ( isAdmin ) {
             try {
+                // On create, status is always set to 'active'
+                if(usage.getStatus().compareToIgnoreCase(DEFAULT_STATUS) != 0)
+                    usage.setStatus(DEFAULT_STATUS);
                 Integer id = usageStore.insert(usage);
                 usage = usageStore.getUsage(id);
             } catch (Exception e) {
