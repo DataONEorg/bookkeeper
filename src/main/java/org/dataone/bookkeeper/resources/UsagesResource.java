@@ -212,8 +212,9 @@ public class UsagesResource {
         if ( isAdmin ) {
             try {
                 // On create, status is always set to 'active'
-                if(usage.getStatus().compareToIgnoreCase(DEFAULT_STATUS) != 0)
+                if (usage.getStatus().compareToIgnoreCase(DEFAULT_STATUS) != 0) {
                     usage.setStatus(DEFAULT_STATUS);
+                }
                 Integer id = usageStore.insert(usage);
                 usage = usageStore.getUsage(id);
             } catch (Exception e) {
