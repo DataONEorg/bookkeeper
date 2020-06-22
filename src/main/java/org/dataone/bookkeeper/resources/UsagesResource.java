@@ -43,6 +43,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -93,6 +94,7 @@ public class UsagesResource {
                                  @QueryParam("quotaId") Integer quotaId,
                                  @QueryParam("quotaType") String quotaType,
                                  @QueryParam("instanceId") String instanceId,
+                                 @QueryParam("status") String status,
                                  @QueryParam("subscribers") Set<String> subscribers,
                                  @QueryParam("requestor") String requestor) {
 
@@ -211,6 +213,18 @@ public class UsagesResource {
 
             if (usages.size() == 0) {
                 throw new WebApplicationException("The requested usages were not found.", Response.Status.NOT_FOUND);
+            } else {
+                if(status != null) {
+                    List<Usage> filteredUsages = usages
+                            .stream()
+                            .filter(u -> u.getStatus().compareToIgnoreCase(status) == 0)
+                            .collect(Collectors.toList());
+                    if (filteredUsages.size() > 0) {
+                        usages = filteredUsages;
+                    } else {
+                        throw new WebApplicationException("No requested usages found with status = " + status, Response.Status.NOT_FOUND);
+                    }
+                }
             }
         } catch (Exception e) {
             String message = "The requested usages could not be listed: " + e.getMessage();
