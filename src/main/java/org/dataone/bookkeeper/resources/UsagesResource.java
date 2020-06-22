@@ -90,6 +90,7 @@ public class UsagesResource {
     public List<Usage> listUsages(@Context SecurityContext context,
                                  @QueryParam("start") @DefaultValue("0") Integer start,
                                  @QueryParam("count") @DefaultValue("1000") Integer count,
+                                 @QueryParam("quotaId") Integer quotaId,
                                  @QueryParam("quotaType") String quotaType,
                                  @QueryParam("instanceId") String instanceId,
                                  @QueryParam("subscribers") Set<String> subscribers,
@@ -148,22 +149,50 @@ public class UsagesResource {
                 Non-admin users will always have at least one subject set (their own).
                 At this point, the subject list for non-admin users is vetted.
              */
-            /* The instanceid is unique amoung all usages, so only one usage should be returned. */
-            if (instanceId != null) {
+            /* The "instanceid + quotaId" combination is unique among all usages, so only one usage should be returned. */
+            if (instanceId != null && quotaId != null) {
+                usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
                 if(subjects.size() == 0) {
-                    usage = usageStore.findUsageByInstanceId(instanceId);
                     usages = new ArrayList<>();
                     usages.add(usage);
                 } else {
-                    /* Non-admin users can only retrieve instanceIds for a subject that they are associated with,
-                     * so constrain results by subjects, i.e. if the instanceId they are trying to access must
-                      * belong to a subject they can access. */
-                    usage = usageStore.findUsageByInstanceIdAndSubjects(instanceId, subjects);
+                    /* Non-admin users can only retrieve instanceIds+quotaId for a subject that they are associated with,
+                     * so constrain results by subjects, i.e. if the instanceId+quotaId they are trying to access must
+                     * belong to a subject they can access.
+                     * Note: it's not possible to filter usage entries by subject after they are retrieved, as the
+                     * usage object doesn't contain the quota subject, therefor, the UsageStore has to do the
+                     * filtering by subject.
+                     */
+                    usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
                     if(usage == null) {
                         throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
                     }
                     usages = new ArrayList<>();
                     usages.add(usage);
+                }
+            } else if (instanceId != null) {
+                if(subjects.size() == 0) {
+                    usages = usageStore.findUsagesByInstanceId(instanceId);
+                } else {
+                    /* Non-admin users can only retrieve instanceIds for a subject that they are associated with,
+                     * so constrain results by subjects, i.e. if the instanceId they are trying to access must
+                     * belong to a subject they can access. */
+                    usages = usageStore.findUsagesByInstanceIdAndSubjects(instanceId, subjects);
+                    if(usages == null) {
+                        throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
+                    }
+                }
+            } else if (quotaId != null) {
+                if(subjects.size() == 0) {
+                    usages = usageStore.findUsagesByQuotaId(quotaId);
+                } else {
+                    /* Non-admin users can only retrieve instanceIds for a subject that they are associated with,
+                     * so constrain results by subjects, i.e. if the instanceId they are trying to access must
+                      * belong to a subject they can access. */
+                    usages = usageStore.findUsagesByQuotaIdAndSubjects(quotaId, subjects);
+                    if(usages == null) {
+                        throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
+                    }
                 }
             } else if (quotaType != null) {
                 if(subjects.size() == 0) {
