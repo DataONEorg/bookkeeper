@@ -357,7 +357,7 @@ public class DataONEAuthHelper {
      * @param subjects  the list of subjects they want to get information about
      * @return subjects the list of subjects they are associated with
      */
-    public Set<String> getAssociatedSubjects(Customer customer, Set<String> subjects) {
+    public Set<String> filterByAssociatedSubjects(Customer customer, Set<String> subjects) {
 
         SubjectInfo subjectInfo = customer.getSubjectInfo();
         Set<String> associatedSubjects = new HashSet<String>(); // no dupes with a Set
@@ -383,6 +383,34 @@ public class DataONEAuthHelper {
                 }
 
             }
+        }
+        return associatedSubjects;
+    }
+
+    /**
+     * For a given customer, return all associated subjects
+     *
+     * This method expands the subjects found in the customer subjectInfo list
+     * @param customer  the calling customer
+     * @return subjects the list of all subjects they are associated with
+     */
+    public Set<String> getAssociatedSubjects(Customer customer) {
+
+        SubjectInfo subjectInfo = customer.getSubjectInfo();
+        Set<String> associatedSubjects = new HashSet<String>(); // no dupes with a Set
+
+        if ( subjectInfo != null ) {
+            List<Group> groups = subjectInfo.getGroupList();
+            List<Person> persons = subjectInfo.getPersonList();
+
+                // Add all associated groups
+                for (Group group : groups) {
+                    associatedSubjects.add(group.getSubject().getValue());
+                }
+                // Add all equivalent identities
+                for ( Person person : persons) {
+                    associatedSubjects.add(person.getSubject().getValue());
+                }
         }
         return associatedSubjects;
     }

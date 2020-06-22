@@ -117,7 +117,7 @@ public class UsagesResource {
             if (subscribers != null && subscribers.size() > 0) {
                 // Filter out non-associated subscribers if not an admin, or if the admin user has requested a proxy requestor
                 if (! isAdmin || isProxy) {
-                    associatedSubjects = this.dataoneAuthHelper.getAssociatedSubjects(caller, subscribers);
+                    associatedSubjects = this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
                     if ( associatedSubjects.size() > 0 ) {
                         subjects.addAll(associatedSubjects);
                     }
@@ -131,12 +131,13 @@ public class UsagesResource {
                     subjects.addAll(subscribers);
                 }
             } else {
-                /* No subscribers specified and caller is not admin, so caller is only allowed to
-                   view their own quotas. If the caller is admin, then don't set subject, as
-                   they will be able to view all subjects. */
+                /** No subscribers specified and caller is not admin, so caller is allowed to
+                   view any quota for subjects with which they are associated.
+                   If the caller is admin, then don't set subject, as they will be able to view all subjects.
+                */
                 if (! isAdmin || isProxy) {
                     if (subjects.size() == 0) {
-                        subjects.add(caller.getSubject());
+                        subjects = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                     }
                 }
             }
@@ -265,7 +266,7 @@ public class UsagesResource {
             subjects.add(quota.getSubject());
 
             Set<String> associatedSubjects =
-                this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
+                this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subjects);
 
             if ( associatedSubjects.size() > 0 ) {
                 return usage;
