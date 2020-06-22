@@ -29,7 +29,7 @@
         <client.artifact.id>bookkeeper-client</client.artifact.id>
         <unshaded.jar.file>target/original-bookkeeper-${project.version}.jar</unshaded.jar.file>
         <io.fabric8.version>0.30.0</io.fabric8.version>
-        <docker.registry>docker.io</docker.registry>
+        <!-- <docker.registry>docker.io</docker.registry> -->
         <docker.repo>d1bookkeeper</docker.repo>
         <docker.tag>0.1.0dev</docker.tag>
     </properties>
