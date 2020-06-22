@@ -28,6 +28,10 @@
         <nimbus.version>7.9</nimbus.version>
         <client.artifact.id>bookkeeper-client</client.artifact.id>
         <unshaded.jar.file>target/original-bookkeeper-${project.version}.jar</unshaded.jar.file>
+        <io.fabric8.version>0.30.0</io.fabric8.version>
+        <docker.registry>docker.io</docker.registry>
+        <docker.repo>d1bookkeeper</docker.repo>
+        <docker.tag>0.1.0dev</docker.tag>
     </properties>
     <distributionManagement>
         <repository>
@@ -278,6 +282,21 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${io.fabric8.version}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${docker.repo}/bookkeeper:${docker.tag}</name>
+                            <build>
+                                <dockerFileDir>${project.basedir}</dockerFileDir>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
             </plugin>
         </plugins>
     </build>
