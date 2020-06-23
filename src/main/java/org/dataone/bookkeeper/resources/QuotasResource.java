@@ -114,15 +114,17 @@ public class QuotasResource extends BaseResource {
         /* Admin user is making this request as another subject */
         Boolean isProxy = isAdmin && requestor != null;
 
-        if(requestor != null) {
-            if(isAdmin) {
-                caller.setSubject(requestor);
-            } else {
-                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
-            }
-        }
-
         try {
+            // Admin users can make request as another user
+            if(requestor != null) {
+                if(isAdmin) {
+                    // Create a new Customer based on the 'requestor' parameter - don't update the subject directly in the
+                    // context, which is cached.
+                    caller = this.dataoneAuthHelper.createCustomerFromSubject(requestor);
+                } else {
+                    throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+                }
+            }
             /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
             if ( subscribers != null && subscribers.size() > 0 ) {
                 // Filter out non-associated subscribers if not an admin
@@ -170,6 +172,10 @@ public class QuotasResource extends BaseResource {
         } catch (Exception e) {
             String message = "Couldn't list quotas: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+        }
+
+        if (quotas == null || quotas.size() == 0) {
+            throw new WebApplicationException("The requested quotas were not found or requestor does not have privilege to retrieve them.", Response.Status.NOT_FOUND);
         }
 
         // TODO: Incorporate paging params - new QuotaList(start, count, total, quotas)
