@@ -305,6 +305,29 @@ public class DataONEAuthHelper {
 
     /**
      * Return a customer instance with included subjectInfo, if available
+     * @param subject
+     * @return customer  A customer instance for the input subject
+     * @throws AuthenticationException  a token parsing exception
+     */
+    public Customer createCustomerFromSubject(String subject) throws AuthenticationException {
+
+        Customer customer = null;
+        String errorMessage = "Couldn't get subject information from the Coordinating Node: ";
+        customer = new Customer();
+        customer.setSubject(subject);
+
+        SubjectInfo subjectInfo = null;
+        try {
+            subjectInfo = getSubjectInfo(null, customer.getSubject());
+        } catch (BaseException e) {
+            log.warn(errorMessage + e.getMessage());
+        }
+        customer.setSubjectInfo(subjectInfo);
+        return customer;
+    }
+
+    /**
+     * Return a customer instance with included subjectInfo, if available
      * @param token  the token representing the customer
      * @return customer  the customer represented by the token
      * @throws AuthenticationException  a token parsing exception

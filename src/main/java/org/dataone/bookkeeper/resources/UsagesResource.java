@@ -107,16 +107,18 @@ public class UsagesResource {
         List<String> subjects = new ArrayList<>();
         Boolean isProxy = isAdmin && requestor != null;
 
-        // Admin users can make request as another user
-        if(requestor != null) {
-            if(isAdmin) {
-                caller.setSubject(requestor);
-            } else {
-                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
-            }
-        }
-
         try {
+            // Admin users can make request as another user
+            if(requestor != null) {
+                if(isAdmin) {
+                    // Create a new Customer based on the 'requestor' parameter - don't update the subject directly in the
+                    // context, which is cached.
+                    caller = this.dataoneAuthHelper.createCustomerFromSubject(requestor);
+                } else {
+                    // Note: this exception will be caught by the outer block.
+                    throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+                }
+            }
             if (subscribers != null && subscribers.size() > 0) {
                 // Filter out non-associated subscribers if not an admin, or if the admin user has requested a proxy requestor
                 if (! isAdmin || isProxy) {
