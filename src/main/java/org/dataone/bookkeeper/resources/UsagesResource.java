@@ -155,10 +155,8 @@ public class UsagesResource {
              */
             /* The "instanceid + quotaId" combination is unique among all usages, so only one usage should be returned. */
             if (instanceId != null && quotaId != null) {
-                usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
                 if(subjects.size() == 0) {
-                    usages = new ArrayList<>();
-                    usages.add(usage);
+                    usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
                 } else {
                     /* Non-admin users can only retrieve instanceIds+quotaId for a subject that they are associated with,
                      * so constrain results by subjects, i.e. if the instanceId+quotaId they are trying to access must
@@ -168,9 +166,10 @@ public class UsagesResource {
                      * filtering by subject.
                      */
                     usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
-                    if(usage == null) {
-                        throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
-                    }
+                }
+                if(usage == null) {
+                    throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
+                } else {
                     usages = new ArrayList<>();
                     usages.add(usage);
                 }
@@ -178,13 +177,7 @@ public class UsagesResource {
                 if(subjects.size() == 0) {
                     usages = usageStore.findUsagesByInstanceId(instanceId);
                 } else {
-                    /* Non-admin users can only retrieve instanceIds for a subject that they are associated with,
-                     * so constrain results by subjects, i.e. if the instanceId they are trying to access must
-                     * belong to a subject they can access. */
                     usages = usageStore.findUsagesByInstanceIdAndSubjects(instanceId, subjects);
-                    if(usages == null) {
-                        throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
-                    }
                 }
             } else if (quotaId != null) {
                 if(subjects.size() == 0) {
@@ -194,9 +187,6 @@ public class UsagesResource {
                      * so constrain results by subjects, i.e. if the instanceId they are trying to access must
                       * belong to a subject they can access. */
                     usages = usageStore.findUsagesByQuotaIdAndSubjects(quotaId, subjects);
-                    if(usages == null) {
-                        throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
-                    }
                 }
             } else if (quotaType != null) {
                 if(subjects.size() == 0) {
@@ -206,16 +196,17 @@ public class UsagesResource {
                     usages = usageStore.findUsagesByQuotaTypeAndSubjects(quotaType, subjects);
                 }
             } else if (subjects.size() > 0) {
-                /* quotaType is null, subscriber is not */
+                // quotaId, quotaType, instanceId not set
                 usages = usageStore.findUsagesByQuotaSubjects(subjects);
             } else {
                 /* Must be admin user, so list all usages */
                 usages = usageStore.listUsages();
             }
 
-            if (usages.size() == 0) {
-                throw new WebApplicationException("The requested usages were not found.", Response.Status.NOT_FOUND);
+            if (usages == null || usages.size() == 0) {
+                throw new WebApplicationException("The requested usages were not found or requestor does not have privilege to retrieve them.", Response.Status.NOT_FOUND);
             } else {
+                // Filter by status, if requested.
                 if(status != null) {
                     List<Usage> filteredUsages = usages
                             .stream()
