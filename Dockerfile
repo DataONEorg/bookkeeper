@@ -2,7 +2,7 @@ FROM openjdk:8-jre
 
 LABEL maintainer="DataONE support@dataone.org"
 
-RUN mkdir -p /apt/bookkeeper
+RUN mkdir -p /app/bookkeeper
 
 WORKDIR /app/bookkeeper
 
