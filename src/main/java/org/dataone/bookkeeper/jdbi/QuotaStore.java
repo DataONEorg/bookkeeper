@@ -44,7 +44,7 @@ public interface QuotaStore {
         "SELECT " +
             "q.id, " +
             "q.object, " +
-            "q.name, " +
+            "q.quotaType, " +
             "q.softLimit, " +
             "q.hardLimit, " +
             "q.usage, " +
@@ -63,7 +63,7 @@ public interface QuotaStore {
     String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
 
     /** The query used to find quotas by name */
-    String SELECT_BY_TYPE = SELECT_CLAUSE + "WHERE q.name = :quotaType";
+    String SELECT_BY_TYPE = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType";
 
     /** The query used to find a quota by subscription identifier */
     String SELECT_SUBSCRIPTION = SELECT_CLAUSE + "WHERE q.subscriptionId = :subscriptionId ";
@@ -75,7 +75,7 @@ public interface QuotaStore {
     String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
 
     /** The query used to find quotas by type and multiple subject identifiers */
-    String SELECT_BY_NAME_AND_SUBJECTS = SELECT_CLAUSE + "WHERE q.name = :quotaType AND q.subject IN (<subjects>) ";
+    String SELECT_BY_NAME_AND_SUBJECTS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.subject IN (<subjects>) ";
 
     /**
      * List all quotas
@@ -152,7 +152,7 @@ public interface QuotaStore {
      */
     @SqlUpdate("INSERT INTO quotas " +
         "(object, " +
-        "name, " +
+        "quotaType, " +
         "softLimit, " +
         "hardLimit, " +
         "unit, " +
@@ -160,7 +160,7 @@ public interface QuotaStore {
         "subject) " +
         "VALUES " +
         "(:object, " +
-        ":name, " +
+        ":quotaType, " +
         ":softLimit, " +
         ":hardLimit, " +
         ":unit, " +
@@ -176,7 +176,7 @@ public interface QuotaStore {
      */
    @SqlUpdate("UPDATE quotas " +
        "SET object = :object, " +
-       "name = :name, " +
+       "quotaType = :quotaType, " +
        "softLimit = :softLimit, " +
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
