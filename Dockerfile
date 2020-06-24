@@ -2,14 +2,15 @@ FROM openjdk:8-jre
 
 LABEL maintainer="DataONE support@dataone.org"
 
-RUN mkdir -p /opt/bookkeeper
+RUN mkdir -p /app/bookkeeper
 
-COPY bookkeeper.yml /opt/bookkeeper/
+WORKDIR /app/bookkeeper
 
-COPY target/bookkeeper-1.0-SNAPSHOT.jar /opt/bookkeeper/
+# The bookkeeper configuration is obtained from a persistent volume mounted at /opt/local/
+
+COPY target/bookkeeper-0.1.0-SNAPSHOT.jar bookkeeper.jar
 
 EXPOSE 8080 8081
 
-WORKDIR /opt/bookkeeper
-
-ENTRYPOINT ["java", "-jar", "-Done-jar.silent=true", "bookkeeper-1.0-SNAPSHOT.jar", "server", "bookkeeper.yml"]
+# The bookkeeper configuration is obtained from a persistent volume mounted at /opt/local/
+CMD ["java", "-jar", "-Done-jar.silent=true", "bookkeeper.jar", "server", "/opt/local/bookkeeper/bookkeeper.yml"]

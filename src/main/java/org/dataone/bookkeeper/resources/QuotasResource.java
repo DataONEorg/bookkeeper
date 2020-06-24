@@ -114,21 +114,23 @@ public class QuotasResource extends BaseResource {
         /* Admin user is making this request as another subject */
         Boolean isProxy = isAdmin && requestor != null;
 
-        if(requestor != null) {
-            if(isAdmin) {
-                caller.setSubject(requestor);
-            } else {
-                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
-            }
-        }
-
         try {
+            // Admin users can make request as another user
+            if(requestor != null) {
+                if(isAdmin) {
+                    // Create a new Customer based on the 'requestor' parameter - don't update the subject directly in the
+                    // context, which is cached.
+                    caller = this.dataoneAuthHelper.createCustomerFromSubject(requestor);
+                } else {
+                    throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+                }
+            }
             /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
             if ( subscribers != null && subscribers.size() > 0 ) {
                 // Filter out non-associated subscribers if not an admin
                 if ( ! isAdmin || isProxy) {
                     associatedSubjects =
-                        this.dataoneAuthHelper.getAssociatedSubjects(caller, subscribers);
+                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
                     if (associatedSubjects.size() > 0) {
                         subjects.addAll(associatedSubjects);
                     }
@@ -142,12 +144,13 @@ public class QuotasResource extends BaseResource {
                     subjects.addAll(subscribers);
                 }
             } else {
-                /* No subscribers specified and caller is not admin, so caller is only allowed to
-                   view their own quotas. If the caller is admin, then don't set subject, as
-                   they will be able to view all subjects. */
+                /** No subscribers specified and caller is not admin, so caller is allowed to
+                 view any quota for subjects with which they are associated.
+                 If the caller is admin, then don't set subject, as they will be able to view all subjects.
+                 */
                 if (! isAdmin || isProxy) {
                     if (subjects.size() == 0) {
-                        subjects.add(caller.getSubject());
+                        subjects = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                     }
                 }
             }
@@ -169,6 +172,10 @@ public class QuotasResource extends BaseResource {
         } catch (Exception e) {
             String message = "Couldn't list quotas: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+        }
+
+        if (quotas == null || quotas.size() == 0) {
+            throw new WebApplicationException("The requested quotas were not found or requestor does not have privilege to retrieve them.", Response.Status.NOT_FOUND);
         }
 
         // TODO: Incorporate paging params - new QuotaList(start, count, total, quotas)
@@ -228,7 +235,7 @@ public class QuotasResource extends BaseResource {
             Set<String> subjects = new HashSet<String>();
             subjects.add(quotaSubject);
             Set<String> associatedSubjects =
-                this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
+                this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subjects);
             if ( associatedSubjects.size() > 0 ) {
                 return quota;
             } else {

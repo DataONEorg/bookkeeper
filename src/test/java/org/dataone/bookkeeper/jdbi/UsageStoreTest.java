@@ -194,7 +194,7 @@ public class UsageStoreTest extends BaseTestCase {
             Integer usageId = UsageHelper.insertTestUsageInstanceId(StoreHelper.getRandomId(), quotaId, instanceId);
             this.usageIds.add(usageId);
 
-            Usage usage = usageStore.findUsageByInstanceId(instanceId);
+            Usage usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
             assertEquals(usage.getInstanceId(), instanceId);
 
             assertEquals(usage.getQuotaId(), quota.getId());
@@ -231,7 +231,7 @@ public class UsageStoreTest extends BaseTestCase {
             this.usageIds.add(usageId);
 
             subjects.add(quota.getSubject());
-            Usage usage = usageStore.findUsageByInstanceIdAndSubjects(instanceId, subjects);
+            Usage usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
 
             assertEquals(quota.getId(), usage.getQuotaId());
             assertEquals(usage.getInstanceId(), instanceId);

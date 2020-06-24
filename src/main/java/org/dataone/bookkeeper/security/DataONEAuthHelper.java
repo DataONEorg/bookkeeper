@@ -305,6 +305,29 @@ public class DataONEAuthHelper {
 
     /**
      * Return a customer instance with included subjectInfo, if available
+     * @param subject
+     * @return customer  A customer instance for the input subject
+     * @throws AuthenticationException  a token parsing exception
+     */
+    public Customer createCustomerFromSubject(String subject) throws AuthenticationException {
+
+        Customer customer = null;
+        String errorMessage = "Couldn't get subject information from the Coordinating Node: ";
+        customer = new Customer();
+        customer.setSubject(subject);
+
+        SubjectInfo subjectInfo = null;
+        try {
+            subjectInfo = getSubjectInfo(null, customer.getSubject());
+        } catch (BaseException e) {
+            log.warn(errorMessage + e.getMessage());
+        }
+        customer.setSubjectInfo(subjectInfo);
+        return customer;
+    }
+
+    /**
+     * Return a customer instance with included subjectInfo, if available
      * @param token  the token representing the customer
      * @return customer  the customer represented by the token
      * @throws AuthenticationException  a token parsing exception
@@ -357,7 +380,7 @@ public class DataONEAuthHelper {
      * @param subjects  the list of subjects they want to get information about
      * @return subjects the list of subjects they are associated with
      */
-    public Set<String> getAssociatedSubjects(Customer customer, Set<String> subjects) {
+    public Set<String> filterByAssociatedSubjects(Customer customer, Set<String> subjects) {
 
         SubjectInfo subjectInfo = customer.getSubjectInfo();
         Set<String> associatedSubjects = new HashSet<String>(); // no dupes with a Set
@@ -383,6 +406,34 @@ public class DataONEAuthHelper {
                 }
 
             }
+        }
+        return associatedSubjects;
+    }
+
+    /**
+     * For a given customer, return all associated subjects
+     *
+     * This method expands the subjects found in the customer subjectInfo list
+     * @param customer  the calling customer
+     * @return subjects the list of all subjects they are associated with
+     */
+    public Set<String> getAssociatedSubjects(Customer customer) {
+
+        SubjectInfo subjectInfo = customer.getSubjectInfo();
+        Set<String> associatedSubjects = new HashSet<String>(); // no dupes with a Set
+
+        if ( subjectInfo != null ) {
+            List<Group> groups = subjectInfo.getGroupList();
+            List<Person> persons = subjectInfo.getPersonList();
+
+                // Add all associated groups
+                for (Group group : groups) {
+                    associatedSubjects.add(group.getSubject().getValue());
+                }
+                // Add all equivalent identities
+                for ( Person person : persons) {
+                    associatedSubjects.add(person.getSubject().getValue());
+                }
         }
         return associatedSubjects;
     }

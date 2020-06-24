@@ -43,6 +43,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -90,8 +91,10 @@ public class UsagesResource {
     public List<Usage> listUsages(@Context SecurityContext context,
                                  @QueryParam("start") @DefaultValue("0") Integer start,
                                  @QueryParam("count") @DefaultValue("1000") Integer count,
+                                 @QueryParam("quotaId") Integer quotaId,
                                  @QueryParam("quotaType") String quotaType,
                                  @QueryParam("instanceId") String instanceId,
+                                 @QueryParam("status") String status,
                                  @QueryParam("subscribers") Set<String> subscribers,
                                  @QueryParam("requestor") String requestor) {
 
@@ -104,20 +107,22 @@ public class UsagesResource {
         List<String> subjects = new ArrayList<>();
         Boolean isProxy = isAdmin && requestor != null;
 
-        // Admin users can make request as another user
-        if(requestor != null) {
-            if(isAdmin) {
-                caller.setSubject(requestor);
-            } else {
-                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
-            }
-        }
-
         try {
+            // Admin users can make request as another user
+            if(requestor != null) {
+                if(isAdmin) {
+                    // Create a new Customer based on the 'requestor' parameter - don't update the subject directly in the
+                    // context, which is cached.
+                    caller = this.dataoneAuthHelper.createCustomerFromSubject(requestor);
+                } else {
+                    // Note: this exception will be caught by the outer block.
+                    throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+                }
+            }
             if (subscribers != null && subscribers.size() > 0) {
                 // Filter out non-associated subscribers if not an admin, or if the admin user has requested a proxy requestor
                 if (! isAdmin || isProxy) {
-                    associatedSubjects = this.dataoneAuthHelper.getAssociatedSubjects(caller, subscribers);
+                    associatedSubjects = this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
                     if ( associatedSubjects.size() > 0 ) {
                         subjects.addAll(associatedSubjects);
                     }
@@ -131,12 +136,13 @@ public class UsagesResource {
                     subjects.addAll(subscribers);
                 }
             } else {
-                /* No subscribers specified and caller is not admin, so caller is only allowed to
-                   view their own quotas. If the caller is admin, then don't set subject, as
-                   they will be able to view all subjects. */
+                /** No subscribers specified and caller is not admin, so caller is allowed to
+                   view any quota for subjects with which they are associated.
+                   If the caller is admin, then don't set subject, as they will be able to view all subjects.
+                */
                 if (! isAdmin || isProxy) {
                     if (subjects.size() == 0) {
-                        subjects.add(caller.getSubject());
+                        subjects = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                     }
                 }
             }
@@ -147,22 +153,40 @@ public class UsagesResource {
                 Non-admin users will always have at least one subject set (their own).
                 At this point, the subject list for non-admin users is vetted.
              */
-            /* The instanceid is unique amoung all usages, so only one usage should be returned. */
-            if (instanceId != null) {
+            /* The "instanceid + quotaId" combination is unique among all usages, so only one usage should be returned. */
+            if (instanceId != null && quotaId != null) {
                 if(subjects.size() == 0) {
-                    usage = usageStore.findUsageByInstanceId(instanceId);
+                    usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
+                } else {
+                    /* Non-admin users can only retrieve instanceIds+quotaId for a subject that they are associated with,
+                     * so constrain results by subjects, i.e. if the instanceId+quotaId they are trying to access must
+                     * belong to a subject they can access.
+                     * Note: it's not possible to filter usage entries by subject after they are retrieved, as the
+                     * usage object doesn't contain the quota subject, therefor, the UsageStore has to do the
+                     * filtering by subject.
+                     */
+                    usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
+                }
+                if(usage == null) {
+                    throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
+                } else {
                     usages = new ArrayList<>();
                     usages.add(usage);
+                }
+            } else if (instanceId != null) {
+                if(subjects.size() == 0) {
+                    usages = usageStore.findUsagesByInstanceId(instanceId);
+                } else {
+                    usages = usageStore.findUsagesByInstanceIdAndSubjects(instanceId, subjects);
+                }
+            } else if (quotaId != null) {
+                if(subjects.size() == 0) {
+                    usages = usageStore.findUsagesByQuotaId(quotaId);
                 } else {
                     /* Non-admin users can only retrieve instanceIds for a subject that they are associated with,
                      * so constrain results by subjects, i.e. if the instanceId they are trying to access must
                       * belong to a subject they can access. */
-                    usage = usageStore.findUsageByInstanceIdAndSubjects(instanceId, subjects);
-                    if(usage == null) {
-                        throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
-                    }
-                    usages = new ArrayList<>();
-                    usages.add(usage);
+                    usages = usageStore.findUsagesByQuotaIdAndSubjects(quotaId, subjects);
                 }
             } else if (quotaType != null) {
                 if(subjects.size() == 0) {
@@ -172,15 +196,28 @@ public class UsagesResource {
                     usages = usageStore.findUsagesByQuotaTypeAndSubjects(quotaType, subjects);
                 }
             } else if (subjects.size() > 0) {
-                /* quotaType is null, subscriber is not */
+                // quotaId, quotaType, instanceId not set
                 usages = usageStore.findUsagesByQuotaSubjects(subjects);
             } else {
                 /* Must be admin user, so list all usages */
                 usages = usageStore.listUsages();
             }
 
-            if (usages.size() == 0) {
-                throw new WebApplicationException("The requested usages were not found.", Response.Status.NOT_FOUND);
+            if (usages == null || usages.size() == 0) {
+                throw new WebApplicationException("The requested usages were not found or requestor does not have privilege to retrieve them.", Response.Status.NOT_FOUND);
+            } else {
+                // Filter by status, if requested.
+                if(status != null) {
+                    List<Usage> filteredUsages = usages
+                            .stream()
+                            .filter(u -> u.getStatus().compareToIgnoreCase(status) == 0)
+                            .collect(Collectors.toList());
+                    if (filteredUsages.size() > 0) {
+                        usages = filteredUsages;
+                    } else {
+                        throw new WebApplicationException("No requested usages found with status = " + status, Response.Status.NOT_FOUND);
+                    }
+                }
             }
         } catch (Exception e) {
             String message = "The requested usages could not be listed: " + e.getMessage();
@@ -265,7 +302,7 @@ public class UsagesResource {
             subjects.add(quota.getSubject());
 
             Set<String> associatedSubjects =
-                this.dataoneAuthHelper.getAssociatedSubjects(caller, subjects);
+                this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subjects);
 
             if ( associatedSubjects.size() > 0 ) {
                 return usage;
