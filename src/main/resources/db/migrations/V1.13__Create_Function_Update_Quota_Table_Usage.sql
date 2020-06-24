@@ -12,9 +12,9 @@ CREATE OR REPLACE FUNCTION update_quota_usage_on_insert_or_update()
         END IF;
 
         -- Update the quotas.usage column
-        UPDATE quotas
-            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE quotas.id = NEW.quotaId)
-            WHERE quotas.id = NEW.quotaId;
+        UPDATE quotas q
+            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE u.quotaId = NEW.quotaId)
+                WHERE q.id = NEW.quotaId;
         RETURN NEW;
     END;
     $update_quota_usage_on_insert_or_update$
@@ -37,9 +37,9 @@ CREATE OR REPLACE FUNCTION update_quota_usage_on_delete()
         END IF;
 
         -- Update the quotas.usage column
-        UPDATE quotas
-            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE quotas.id = OLD.quotaId)
-            WHERE quotas.id = OLD.quotaId;
+        UPDATE quotas q
+            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE u.quotaId = OLD.quotaId)
+                WHERE q.id = OLD.quotaId;
         RETURN OLD;
     END;
     $update_quota_usage_on_delete$
