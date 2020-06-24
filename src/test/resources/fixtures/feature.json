@@ -4,7 +4,7 @@
     "description": "Showcase your research, data, results, and usage metrics by building a custom web portal.",
     "quota": {
         "object":"quota",
-        "name":"portal",
+        "quotaType":"portal",
         "softLimit": 3.0,
         "hardLimit": 3.0,
         "unit": "portal"

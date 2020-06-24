@@ -85,7 +85,7 @@ public interface UsageStore {
     /** Select by quota type */
     String SELECT_BY_QUOTA_TYPE = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
-            "WHERE q.name = :quotaType";
+            "WHERE q.quotaType = :quotaType";
 
     /** Select by quota subjects */
     String SELECT_BY_QUOTA_SUBJECTS = SELECT_CLAUSE +
@@ -95,7 +95,7 @@ public interface UsageStore {
     /** Select by quota type and subject */
     String SELECT_BY_QUOTA_TYPE_AND_SUBJECTS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
-            "WHERE q.name = :quotaType " +
+            "WHERE q.quotaType = :quotaType " +
             "AND q.subject IN (<subscribers>)";
 
     /**

@@ -247,6 +247,8 @@ public class UsageStoreTest extends BaseTestCase {
 
         Customer customer;
         Integer subscriptionId;
+        Customer customerTwo;
+        Integer subscriptionIdTwo;
         try {
             // Insert a customer
             customer = CustomerHelper.insertTestCustomer(
@@ -259,14 +261,27 @@ public class UsageStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customer.getId());
             this.subscriptionIds.add(subscriptionId); // To be deleted
 
-            // Insert two quotas with separate subjects
+
+            // Insert a customer
+            customerTwo = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customerTwo.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionIdTwo =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customerTwo.getId());
+            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+
+
+            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
                     StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
             Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
-                    StoreHelper.getRandomId(), subscriptionId, groupSubject);
+                    StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
             List<String> subjects = new ArrayList<String>();
@@ -363,8 +378,8 @@ public class UsageStoreTest extends BaseTestCase {
             List<String> subscribers = new ArrayList<>();
             subscribers.add(quotas.get(portalQuotaId).getSubject());
 
-            String quotaTypePortal = quotas.get(portalQuotaId).getName();
-            String quotaTypeStorage =  quotas.get(storageQuotaId).getName();
+            String quotaTypePortal = quotas.get(portalQuotaId).getQuotaType();
+            String quotaTypeStorage =  quotas.get(storageQuotaId).getQuotaType();
 
             List<Usage> usages = usageStore.findUsagesByQuotaTypeAndSubjects(quotaTypePortal, subscribers);
             assertEquals(usages.size(), 1);
@@ -459,8 +474,7 @@ public class UsageStoreTest extends BaseTestCase {
 
             // Now attempt to insert a usage for the existing quotaId + instanceId
             Integer newUsageId = StoreHelper.getRandomId();
-            Usage newUsage = UsageHelper.createTestStorageUsage(newUsageId, storageQuotaId, instanceId);
-            this.usageIds.add(newUsageId);
+            Usage newUsage = UsageHelper.createTestStorageUsage(newUsageId, portalQuotaId, instanceId);
 
             Exception exception = assertThrows(org.jdbi.v3.core.statement.UnableToExecuteStatementException.class, () -> {
                 usageStore.insert(usage);

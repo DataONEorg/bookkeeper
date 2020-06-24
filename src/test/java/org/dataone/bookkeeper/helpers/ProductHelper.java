@@ -100,8 +100,8 @@ public class ProductHelper {
 
         // Build a quota for feature 1
         Integer quota_id = 1;
-        String quota_type = "quota";
-        String quota_name = "portal";
+        String quota_object = "quota";
+        String quota_type = "portal";
         @javax.validation.constraints.NotNull Double quota_soft_limit = 3.0;
         @javax.validation.constraints.NotNull Double quota_hard_limit = 3.0;
         Double quota_usage = null;
@@ -109,7 +109,7 @@ public class ProductHelper {
         Integer quota_customer_id = null;
         String quota_subject = null;
 
-        Quota quota = new Quota(quota_id, quota_type, quota_name,
+        Quota quota = new Quota(quota_id, quota_object, quota_type,
             quota_soft_limit, quota_hard_limit, quota_usage, quota_unit, quota_customer_id, quota_subject);
 
         feature1.setName("custom_portal");

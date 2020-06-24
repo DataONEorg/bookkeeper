@@ -161,7 +161,7 @@ public class SubscriptionStoreTest extends BaseTestCase {
                             Quota expectedQuota = quotas.get(quota.getId());
                             assertTrue(quota.getId().equals(expectedQuota.getId()));
                             assertTrue(quota.getObject().equals(expectedQuota.getObject()));
-                            assertTrue(quota.getName().equals(expectedQuota.getName()));
+                            assertTrue(quota.getQuotaType().equals(expectedQuota.getQuotaType()));
                             assertTrue(quota.getSoftLimit().equals(expectedQuota.getSoftLimit()));
                             assertTrue(quota.getHardLimit().equals(expectedQuota.getHardLimit()));
                             assertTrue(quota.getUnit().equals(expectedQuota.getUnit()));

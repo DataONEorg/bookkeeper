@@ -47,11 +47,11 @@ public class Quota {
     @Pattern(regexp = "quota")
     private String object;
 
-    /* The quota name */
+    /* The quota type */
     @NotEmpty
     @Pattern(regexp = "portal|storage|repository_storage")
     @NotNull
-    private String name;
+    private String quotaType;
 
     /* The quota soft limit */
     private @NotNull Double softLimit;
@@ -95,7 +95,7 @@ public class Quota {
             Quota quota = Jackson.newObjectMapper().readValue(json, Quota.class);
             this.id = quota.id;
             this.object = quota.object;
-            this.name = quota.name;
+            this.quotaType = quota.quotaType;
             this.softLimit = quota.softLimit;
             this.hardLimit = quota.hardLimit;
             this.usage = quota.usage;
@@ -109,7 +109,7 @@ public class Quota {
      * Construct a quota
      * @param id              the quota identifier
      * @param object          the quota object type
-     * @param name            the quota name
+     * @param quotaType        the quota type
      * @param softLimit       the quota soft limit
      * @param hardLimit       the quota hard limit
      * @param unit            the quota unit
@@ -119,7 +119,7 @@ public class Quota {
      */
     public Quota(Integer id,
                  @NotNull @NotEmpty String object,
-                 @NotNull @NotEmpty String name,
+                 @NotNull @NotEmpty String quotaType,
                  @NotNull Double softLimit,
                  @NotNull Double hardLimit,
                  Double usage,
@@ -132,7 +132,7 @@ public class Quota {
             }
         }
         this.object = object;
-        this.name = name;
+        this.quotaType = quotaType;
         this.softLimit = softLimit;
         this.hardLimit = hardLimit;
         this.unit = unit;
@@ -178,21 +178,21 @@ public class Quota {
     }
 
     /**
-     * Get the quota name
-     * @return name  the quota name
+     * Get the quota type
+     * @return quotaType the quota type
      */
     @JsonProperty
-    public String getName() {
-        return name;
+    public String getQuotaType() {
+        return quotaType;
     }
 
     /**
-     * Set the quota name
-     * @param name  the quota name
+     * Set the quota type
+     * @param quotaType the quota type
      */
     @JsonProperty
-    public void setName(String name) {
-        this.name = name;
+    public void setQuotaType(String quotaType) {
+        this.quotaType = quotaType;
     }
 
     /**
@@ -316,7 +316,7 @@ public class Quota {
         Quota quota = (Quota) o;
         return Objects.equals(getId(), quota.getId()) &&
             Objects.equals(getObject(), quota.getObject()) &&
-            Objects.equals(getName(), quota.getName()) &&
+            Objects.equals(getQuotaType(), quota.getQuotaType()) &&
             Objects.equals(getSoftLimit(), quota.getSoftLimit()) &&
             Objects.equals(getHardLimit(), quota.getHardLimit()) &&
             Objects.equals(getUsage(), quota.getUsage()) &&
@@ -331,7 +331,7 @@ public class Quota {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getObject(), getName(), getSoftLimit(),
+        return Objects.hash(getId(), getObject(), getQuotaType(), getSoftLimit(),
             getHardLimit(), getUsage(), getUnit(), getSubscriptionId(), getSubject());
     }
 }

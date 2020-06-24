@@ -401,17 +401,17 @@ public class OrdersResource extends BaseResource {
                             if ( quota != null ) {
                                 quota.setUsage(0.0);
                                 quota.setSubject(customer.getSubject());
-                                if ( ! quotas.containsKey(quota.getName()) ) {
+                                if ( ! quotas.containsKey(quota.getQuotaType()) ) {
                                     // Add new quotas
-                                    quotas.put(quota.getName(), quota);
+                                    quotas.put(quota.getQuotaType(), quota);
                                 } else {
                                     // Combine quotas of the same name
-                                    existingQuota = quotas.get(quota.getName());
+                                    existingQuota = quotas.get(quota.getQuotaType());
                                     newSoftLimit = existingQuota.getSoftLimit() + quota.getSoftLimit();
                                     quota.setSoftLimit(newSoftLimit);
                                     newHardLimit = existingQuota.getHardLimit() + quota.getHardLimit();
                                     quota.setHardLimit(newHardLimit);
-                                    quotas.put(quota.getName(), quota);
+                                    quotas.put(quota.getQuotaType(), quota);
                                 }
                             }
                         }
