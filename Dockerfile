@@ -4,7 +4,7 @@ LABEL maintainer="DataONE support@dataone.org"
 
 RUN mkdir -p /apt/bookkeeper
 
-WORKDIR /apt/bookkeeper
+WORKDIR /app/bookkeeper
 
 # The bookkeeper configuration is obtained from a persistent volume mounted at /opt/local/
 
