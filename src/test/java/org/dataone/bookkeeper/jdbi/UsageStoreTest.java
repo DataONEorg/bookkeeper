@@ -288,10 +288,10 @@ public class UsageStoreTest extends BaseTestCase {
             subjects.add(customer.getSubject());
             subjects.add(groupSubject);
 
-            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaOneId, StoreHelper.getRandomId().toString(), 1.0,"active");
+            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaOneId, StoreHelper.getRandomId().toString(), 1.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
 
-            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaTwoId, StoreHelper.getRandomId().toString(), 1.0,"active");
+            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaTwoId, StoreHelper.getRandomId().toString(), 1.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
             assertEquals(2, usageStore.findUsagesByQuotaSubjects(subjects).size());
@@ -328,10 +328,10 @@ public class UsageStoreTest extends BaseTestCase {
             this.quotaIds.add(storageQuotaId);
             this.quotaIds.add(portalQuotaId);
 
-            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
 
-            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
             assertEquals(usageStore.findUsagesByQuotaType("storage").size(), 1);
@@ -369,10 +369,10 @@ public class UsageStoreTest extends BaseTestCase {
             this.quotaIds.add(storageQuotaId);
             this.quotaIds.add(portalQuotaId);
 
-            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
 
-            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
             List<String> subscribers = new ArrayList<>();

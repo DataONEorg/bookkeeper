@@ -43,7 +43,8 @@ public interface UsageStore {
             "u.quotaid, " +
             "u.instanceid, " +
             "u.quantity, " +
-            "u.status " +
+            "u.status, " +
+            "u.nodeid " +
         "FROM usages u ";
 
     /** The full query */
@@ -200,13 +201,15 @@ public interface UsageStore {
             "quotaId, " +
             "instanceId, " +
             "quantity, " +
-            "status) " +
+            "status, " +
+            "nodeId) " +
             "VALUES " +
             "(:object, " +
             ":quotaId, " +
             ":instanceId, " +
             ":quantity, " +
-            ":status) " +
+            ":status, " +
+            ":nodeId) " +
             "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Usage usage);
@@ -220,7 +223,8 @@ public interface UsageStore {
             "quotaId = :quotaId, " +
             "instanceId = :instanceId, " +
             "quantity = :quantity, " +
-            "status = :status " +
+            "status = :status, " +
+            "nodeId = :nodeId " +
             "RETURNING id")
     @GetGeneratedKeys
     Usage update(@BindBean Usage usage);

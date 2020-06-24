@@ -49,6 +49,7 @@ class UsageTest {
     private static final String INSTANCE_ID = "urn:uuid:56925d4b-9e46-49ec-96ea-38dc9ed0a64c";
     private static final @NotNull Double QUANTITY = 1.0;
     private static final String STATUS = "active";
+    private static final String NODE_ID = "urn:node:testNode";
 
 
     /**
@@ -58,7 +59,7 @@ class UsageTest {
     @DisplayName("Test Usage model serialization")
     public void serializesToJSON() throws Exception {
         // Build the Usage instance
-        final Usage usage = new Usage(ID, OBJECT, QUOTA_ID, INSTANCE_ID, QUANTITY, STATUS);
+        final Usage usage = new Usage(ID, OBJECT, QUOTA_ID, INSTANCE_ID, QUANTITY, STATUS, NODE_ID);
         // Test the Usage instance
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture("fixtures/usage.json"), Usage.class));
@@ -73,7 +74,7 @@ class UsageTest {
     @DisplayName("Test Usage model deserialization")
     public void deserializesFromJSON() throws Exception {
         // Build the Usage instance
-        final Usage usage = new Usage(ID, OBJECT, QUOTA_ID, INSTANCE_ID, QUANTITY, STATUS);
+        final Usage usage = new Usage(ID, OBJECT, QUOTA_ID, INSTANCE_ID, QUANTITY, STATUS, NODE_ID);
         // Test the Usage instance
         final Usage deserializedUsage =
             MAPPER.readValue(fixture("fixtures/usage.json"), Usage.class);
