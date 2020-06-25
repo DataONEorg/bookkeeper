@@ -4,5 +4,6 @@
   "quotaId": 1,
   "instanceId": "urn:uuid:56925d4b-9e46-49ec-96ea-38dc9ed0a64c",
   "quantity": 1.0,
-  "status": "active"
+  "status": "active",
+  "nodeId": "urn:node:testNode"
 }

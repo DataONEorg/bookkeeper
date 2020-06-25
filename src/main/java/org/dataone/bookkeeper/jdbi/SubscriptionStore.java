@@ -81,7 +81,7 @@ public interface SubscriptionStore {
             "date_part('epoch', s.trialStart)::int  AS s_trialStart, " +
             "q.id AS q_id, " +
             "q.object AS q_object, " +
-            "q.name AS q_name, " +
+            "q.quotaType AS q_quotaType, " +
             "q.softLimit AS q_softLimit, " +
             "q.hardLimit AS q_hardLimit, " +
             "q.usage AS q_usage, " +

@@ -36,9 +36,10 @@ public class UsageHelper {
      * @param instanceId
      * @param quantity
      * @param status
+     * @param nodeId
      * @return
      */
-    public static Integer insertTestUsage(Integer usageId, Integer quotaId, String instanceId, Double quantity, String status)  throws SQLException {
+    public static Integer insertTestUsage(Integer usageId, Integer quotaId, String instanceId, Double quantity, String status, String nodeId)  throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
                 handle.execute(
                         "INSERT INTO usages " +
@@ -47,15 +48,17 @@ public class UsageHelper {
                                 "quotaid, " +
                                 "instanceid, " +
                                 "quantity, " +
-                                "status) " +
+                                "status, " +
+                                "nodeid) " +
                                 "VALUES " +
-                                "(?, ?, ?, ?, ?, ?)",
+                                "(?, ?, ?, ?, ?, ?, ?)",
                         usageId,
                         "usage",
                         quotaId,
                         instanceId,
                         quantity,
-                        status)
+                        status,
+                        nodeId)
         );
         return usageId;
     }
@@ -75,15 +78,17 @@ public class UsageHelper {
                                 "quotaid, " +
                                 "instanceid, " +
                                 "quantity, " +
-                                "status) " +
+                                "status, " +
+                                "nodeid) " +
                                 "VALUES " +
-                                "(?, ?, ?, ?, ?, ?)",
+                                "(?, ?, ?, ?, ?, ?, ?)",
                         usageId,
                         "usage",
                         quotaId,
                         instanceId,
                         1.0,
-                        "active")
+                        "active",
+                        "urn:node:testNode")
         );
         return usageId;
     }
@@ -113,6 +118,7 @@ public class UsageHelper {
         usage.setInstanceId(instanceId);
         usage.setQuantity(300000.0);
         usage.setStatus("active");
+        usage.setNodeId("urn:node:testNode");
         return usage;
     }
 
@@ -125,6 +131,7 @@ public class UsageHelper {
     public static Integer getUsageCountById(Integer usageId) {
         Integer count = BaseTestCase.dbi.withHandle(handle ->
                 handle.createQuery("SELECT count(*) FROM usages WHERE id = :id")
+
                         .bind("id", usageId)
                         .mapTo(Integer.class)
                         .one()
@@ -139,7 +146,7 @@ public class UsageHelper {
      */
     public static Usage getUsageById(Integer usageId) {
         Usage usage = BaseTestCase.dbi.withHandle(handle ->
-                handle.createQuery("SELECT id, object, quotaid, instanceid, quantity, status " +
+                handle.createQuery("SELECT id, object, quotaid, instanceid, quantity, status, nodeid " +
                         "FROM usages WHERE id = :id")
                         .bind("id", usageId)
                         .mapToBean(Usage.class)

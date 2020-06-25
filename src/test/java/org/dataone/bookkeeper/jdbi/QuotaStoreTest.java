@@ -174,11 +174,24 @@ public class QuotaStoreTest extends BaseTestCase {
                     StoreHelper.getRandomId(), customer.getId());
             this.subscriptionIds.add(subscriptionId); // To be deleted
 
+
+            // Insert another customer
+            Customer customerTwo = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customerTwo.getId()); // To be deleted
+
+            // Insert a subscription
+            Integer subscriptionIdTwo =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customerTwo.getId());
+            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+
+            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
                 StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
             Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
-                StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
+                StoreHelper.getRandomId(), subscriptionIdTwo, customer.getSubject());
             this.quotaIds.add(quotaTwoId);
             assertEquals(2, quotaStore.findQuotasBySubject(customer.getSubject()).size());
         } catch (SQLException e) {
@@ -194,6 +207,8 @@ public class QuotaStoreTest extends BaseTestCase {
 
         Customer customer;
         Integer subscriptionId;
+        Customer customerTwo;
+        Integer subscriptionIdTwo;
         try {
             // Insert a customer
             customer = CustomerHelper.insertTestCustomer(
@@ -206,14 +221,25 @@ public class QuotaStoreTest extends BaseTestCase {
                     StoreHelper.getRandomId(), customer.getId());
             this.subscriptionIds.add(subscriptionId); // To be deleted
 
-            // Insert two quotas with separate subjects
+            // Insert a customer
+            customerTwo = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customerTwo.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionIdTwo =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customerTwo.getId());
+            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+
+            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
                 StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
             Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
-                StoreHelper.getRandomId(), subscriptionId, groupSubject);
+                StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
             List<String> subjects = new ArrayList<String>();
@@ -234,6 +260,8 @@ public class QuotaStoreTest extends BaseTestCase {
 
         Customer customer;
         Integer subscriptionId;
+        Customer customerTwo;
+        Integer subscriptionIdTwo;
         try {
             // Insert a customer
             customer = CustomerHelper.insertTestCustomer(
@@ -246,14 +274,26 @@ public class QuotaStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customer.getId());
             this.subscriptionIds.add(subscriptionId); // To be deleted
 
-            // Insert two quotas with separate subjects
+
+            // Insert a customer
+            customerTwo = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customerTwo.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionIdTwo =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customerTwo.getId());
+            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+
+            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
                     StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
             Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
-                    StoreHelper.getRandomId(), subscriptionId, groupSubject);
+                    StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
             List<String> subjects = new ArrayList<String>();
@@ -317,13 +357,13 @@ public class QuotaStoreTest extends BaseTestCase {
             Quota quota = new Quota();
             quota.setId(quotaId);
             quota.setObject("quota");
-            quota.setName("portal");
+            quota.setQuotaType("portal");
             quota.setSoftLimit(10.0);
             quota.setHardLimit(15.0);
             quota.setUnit("portal");
             quota.setSubscriptionId(subscriptionId);
             quotaStore.update(quota);
-            assertEquals(QuotaHelper.getQuotaById(quotaId).getName(), quota.getName());
+            assertEquals(QuotaHelper.getQuotaById(quotaId).getQuotaType(), quota.getQuotaType());
             assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 10.0);
             assertThat(QuotaHelper.getQuotaById(quotaId).getHardLimit() == 15.0);
         } catch (SQLException e) {

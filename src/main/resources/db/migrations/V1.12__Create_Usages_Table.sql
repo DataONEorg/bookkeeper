@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS usages (
     quotaId integer NOT NULL,
     instanceId text NOT NULL,
     quantity double precision NOT NULL,
-    status text
+    status text,
+    nodeId text NOT NULL
 );
 ALTER SEQUENCE usages_id_seq OWNED BY usages.id;
 
@@ -28,3 +29,4 @@ COMMENT ON COLUMN usages.quotaId IS 'The quota identifier.';
 COMMENT ON COLUMN usages.instanceId IS 'The instance identifier using a portion of the quota.';
 COMMENT ON COLUMN usages.quantity IS 'The quantity used by the instance, in the quota units.';
 COMMENT ON COLUMN usages.status IS 'The status of the usage, active or archived.';
+COMMENT ON COLUMN usages.nodeId IS 'The quota node identifier".';

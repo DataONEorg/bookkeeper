@@ -43,7 +43,8 @@ public interface UsageStore {
             "u.quotaid, " +
             "u.instanceid, " +
             "u.quantity, " +
-            "u.status " +
+            "u.status, " +
+            "u.nodeid " +
         "FROM usages u ";
 
     /** The full query */
@@ -85,7 +86,7 @@ public interface UsageStore {
     /** Select by quota type */
     String SELECT_BY_QUOTA_TYPE = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
-            "WHERE q.name = :quotaType";
+            "WHERE q.quotaType = :quotaType";
 
     /** Select by quota subjects */
     String SELECT_BY_QUOTA_SUBJECTS = SELECT_CLAUSE +
@@ -95,7 +96,7 @@ public interface UsageStore {
     /** Select by quota type and subject */
     String SELECT_BY_QUOTA_TYPE_AND_SUBJECTS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
-            "WHERE q.name = :quotaType " +
+            "WHERE q.quotaType = :quotaType " +
             "AND q.subject IN (<subscribers>)";
 
     /**
@@ -200,13 +201,15 @@ public interface UsageStore {
             "quotaId, " +
             "instanceId, " +
             "quantity, " +
-            "status) " +
+            "status, " +
+            "nodeId) " +
             "VALUES " +
             "(:object, " +
             ":quotaId, " +
             ":instanceId, " +
             ":quantity, " +
-            ":status) " +
+            ":status, " +
+            ":nodeId) " +
             "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Usage usage);
@@ -220,7 +223,8 @@ public interface UsageStore {
             "quotaId = :quotaId, " +
             "instanceId = :instanceId, " +
             "quantity = :quantity, " +
-            "status = :status " +
+            "status = :status, " +
+            "nodeId = :nodeId " +
             "RETURNING id")
     @GetGeneratedKeys
     Usage update(@BindBean Usage usage);

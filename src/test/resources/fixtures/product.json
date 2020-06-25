@@ -22,7 +22,7 @@
                 "quota": {
                         "id": 1,
                         "object":"quota",
-                        "name":"portal",
+                        "quotaType":"portal",
                         "softLimit": 3.0,
                         "hardLimit": 3.0,
                         "unit": "portal"

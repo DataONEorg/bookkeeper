@@ -47,7 +47,7 @@ public class QuotaHelper {
                 "INSERT INTO quotas " +
                     "(id, " +
                     "object, " +
-                    "name, " +
+                    "quotaType, " +
                     "softLimit, " +
                     "hardLimit, " +
                     "usage, " +
@@ -81,7 +81,7 @@ public class QuotaHelper {
         Integer quotaId, Integer subscriptionId, String subject) throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
             handle.execute("INSERT INTO quotas " +
-                "(id, object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
+                "(id, object, quotaType, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
                 "VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
@@ -114,14 +114,14 @@ public class QuotaHelper {
         quotas.put(portalQuotaId, QuotaHelper.createTestPortalQuota(portalQuotaId, subscriptionId));
 
         String insertStatement = "INSERT INTO quotas " +
-            "(id, object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
+            "(id, object, quotaType, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Insert them into the database for the given subscription id
         BaseTestCase.dbi.useHandle(handle -> {
             handle.execute(insertStatement,
                 storageQuotaId,
                 quotas.get(storageQuotaId).getObject(),
-                quotas.get(storageQuotaId).getName(),
+                quotas.get(storageQuotaId).getQuotaType(),
                 quotas.get(storageQuotaId).getSoftLimit(),
                 quotas.get(storageQuotaId).getHardLimit(),
                 quotas.get(storageQuotaId).getUsage(),
@@ -132,7 +132,7 @@ public class QuotaHelper {
             handle.execute(insertStatement,
                 portalQuotaId,
                 quotas.get(portalQuotaId).getObject(),
-                quotas.get(portalQuotaId).getName(),
+                quotas.get(portalQuotaId).getQuotaType(),
                 quotas.get(portalQuotaId).getSoftLimit(),
                 quotas.get(portalQuotaId).getHardLimit(),
                 quotas.get(portalQuotaId).getUsage(),
@@ -165,7 +165,7 @@ public class QuotaHelper {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
-        quota.setName("storage");
+        quota.setQuotaType("storage");
         quota.setSoftLimit(4000000.0);
         quota.setHardLimit(5000000.0);
         quota.setUsage(null);
@@ -179,7 +179,7 @@ public class QuotaHelper {
         Quota quota = new Quota();
         quota.setId(quotaId);
         quota.setObject("quota");
-        quota.setName("portal");
+        quota.setQuotaType("portal");
         quota.setSoftLimit(3.0);
         quota.setHardLimit(3.0);
         quota.setUsage(null);
@@ -189,15 +189,15 @@ public class QuotaHelper {
         return quota;
     }
     /**
-     * Return the number of quotas in the database for the given quota name
-     * @param quotaName
+     * Return the number of quotas in the database for the given quota type
+     * @param quotaType
      * @return
      */
-    public static Integer getQuotaCountByName(String quotaName) throws SQLException {
+    public static Integer getQuotaCountByType(String quotaType) throws SQLException {
 
         Integer count = BaseTestCase.dbi.withHandle(handle ->
-            handle.createQuery("SELECT count(*) FROM quotas WHERE name = :quotaName")
-                .bind("quotaName", quotaName)
+            handle.createQuery("SELECT count(*) FROM quotas WHERE quotaType = :quotaType")
+                .bind("quotaType", quotaType)
                 .mapTo(Integer.class)
                 .one()
         );
@@ -220,14 +220,14 @@ public class QuotaHelper {
         return count;
     }
     /**
-     * Return the quota id for the given quota name
-     * @param quotaName
+     * Return the quota id for the given quota type
+     * @param quotaType
      * @return
      */
-    public static Integer getQuotaIdByName(String quotaName) throws SQLException {
+    public static Integer getQuotaIdByType(String quotaType) throws SQLException {
         Integer quotaId = BaseTestCase.dbi.withHandle(handle ->
-            handle.createQuery("SELECT id FROM quotas WHERE name = :quotaName")
-                .bind("quotaName", quotaName)
+            handle.createQuery("SELECT id FROM quotas WHERE quotaType = :quotaType")
+                .bind("quotaType", quotaType)
                 .mapTo(Integer.class)
                 .one()
         );
@@ -241,7 +241,7 @@ public class QuotaHelper {
      */
     public static Quota getQuotaById(Integer quotaId) {
         Quota quota = BaseTestCase.dbi.withHandle(handle ->
-            handle.createQuery("SELECT id, object, name, softLimit, hardLimit, usage, unit, " +
+            handle.createQuery("SELECT id, object, quotaType, softLimit, hardLimit, usage, unit, " +
                 "subscriptionId, subject " +
                 "FROM quotas WHERE id = :id")
                 .bind("id", quotaId)

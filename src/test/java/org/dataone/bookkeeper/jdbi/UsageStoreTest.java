@@ -247,6 +247,8 @@ public class UsageStoreTest extends BaseTestCase {
 
         Customer customer;
         Integer subscriptionId;
+        Customer customerTwo;
+        Integer subscriptionIdTwo;
         try {
             // Insert a customer
             customer = CustomerHelper.insertTestCustomer(
@@ -259,24 +261,37 @@ public class UsageStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customer.getId());
             this.subscriptionIds.add(subscriptionId); // To be deleted
 
-            // Insert two quotas with separate subjects
+
+            // Insert a customer
+            customerTwo = CustomerHelper.insertTestCustomer(
+                    CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customerTwo.getId()); // To be deleted
+
+            // Insert a subscription
+            subscriptionIdTwo =
+                    SubscriptionHelper.insertTestSubscription(
+                            StoreHelper.getRandomId(), customerTwo.getId());
+            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+
+
+            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
                     StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
             Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
-                    StoreHelper.getRandomId(), subscriptionId, groupSubject);
+                    StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
             List<String> subjects = new ArrayList<String>();
             subjects.add(customer.getSubject());
             subjects.add(groupSubject);
 
-            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaOneId, StoreHelper.getRandomId().toString(), 1.0,"active");
+            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaOneId, StoreHelper.getRandomId().toString(), 1.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
 
-            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaTwoId, StoreHelper.getRandomId().toString(), 1.0,"active");
+            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaTwoId, StoreHelper.getRandomId().toString(), 1.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
             assertEquals(2, usageStore.findUsagesByQuotaSubjects(subjects).size());
@@ -313,10 +328,10 @@ public class UsageStoreTest extends BaseTestCase {
             this.quotaIds.add(storageQuotaId);
             this.quotaIds.add(portalQuotaId);
 
-            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
 
-            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
             assertEquals(usageStore.findUsagesByQuotaType("storage").size(), 1);
@@ -354,17 +369,17 @@ public class UsageStoreTest extends BaseTestCase {
             this.quotaIds.add(storageQuotaId);
             this.quotaIds.add(portalQuotaId);
 
-            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), storageQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
 
-            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active");
+            Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), portalQuotaId, StoreHelper.getRandomId().toString(), 3000.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
             List<String> subscribers = new ArrayList<>();
             subscribers.add(quotas.get(portalQuotaId).getSubject());
 
-            String quotaTypePortal = quotas.get(portalQuotaId).getName();
-            String quotaTypeStorage =  quotas.get(storageQuotaId).getName();
+            String quotaTypePortal = quotas.get(portalQuotaId).getQuotaType();
+            String quotaTypeStorage =  quotas.get(storageQuotaId).getQuotaType();
 
             List<Usage> usages = usageStore.findUsagesByQuotaTypeAndSubjects(quotaTypePortal, subscribers);
             assertEquals(usages.size(), 1);
@@ -459,8 +474,7 @@ public class UsageStoreTest extends BaseTestCase {
 
             // Now attempt to insert a usage for the existing quotaId + instanceId
             Integer newUsageId = StoreHelper.getRandomId();
-            Usage newUsage = UsageHelper.createTestStorageUsage(newUsageId, storageQuotaId, instanceId);
-            this.usageIds.add(newUsageId);
+            Usage newUsage = UsageHelper.createTestStorageUsage(newUsageId, portalQuotaId, instanceId);
 
             Exception exception = assertThrows(org.jdbi.v3.core.statement.UnableToExecuteStatementException.class, () -> {
                 usageStore.insert(usage);
