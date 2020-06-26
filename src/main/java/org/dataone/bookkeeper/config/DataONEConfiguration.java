@@ -37,6 +37,9 @@ public class DataONEConfiguration extends Configuration {
     /* The list of subjects will all CRUD permissions */
     private List<String> adminSubjects;
 
+    /* The list of subjects that can perform privileged CRUD operations (e.g. quota create, delete, ..) */
+    private List<String> bookkeeperAdminSubjects;
+
     /* The default trial period in days */
     private long trialDurationDays;
     /**
@@ -67,12 +70,33 @@ public class DataONEConfiguration extends Configuration {
     }
 
     /**
+     * Get the bookkeeper admin subjects list
+     * The 'bookkeeperAdmin' list contains subjects that have a higher
+     * level of privilege than subjects in the 'adminSubjects' list
+     * @return bookkeeperAdminSubjects the list of bookkeeper admin subjects
+     */
+    @JsonProperty("bookkeeperAdminSubjects")
+    public List<String> getBookkeeperAdminSubjects() {
+        return bookkeeperAdminSubjects;
+    }
+
+    /**
      * Set the admin subjects list
      * @param adminSubjects  the list of admin subjects
      */
     @JsonProperty("adminSubjects")
     public void setAdminSubjects(List<String> adminSubjects) {
         this.adminSubjects = adminSubjects;
+    }
+
+
+    /**
+     * Set the bookkeeper admin subjects list
+     * @param bookkeeperAdminSubjects the list of bookkeeper admin subjects
+     */
+    @JsonProperty("bookkeeperAdminSubjects")
+    public void setBookkeeperAdminSubjects(List<String> bookkeeperAdminSubjects) {
+        this.bookkeeperAdminSubjects = bookkeeperAdminSubjects;
     }
 
     /**
