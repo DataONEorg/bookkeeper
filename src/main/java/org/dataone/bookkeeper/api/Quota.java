@@ -68,6 +68,8 @@ public class Quota {
     private String unit;
 
     /* The quota subscription id */
+    @NotEmpty
+    @NotNull
     private Integer subscriptionId;
 
     /* The quota subject id */
@@ -112,8 +114,8 @@ public class Quota {
      * @param quotaType        the quota type
      * @param softLimit       the quota soft limit
      * @param hardLimit       the quota hard limit
-     * @param unit            the quota unit
      * @param usage      the quota usage
+     * @param unit            the quota unit
      * @param subscriptionId  the quota subscription identifier
      * @param subject         the quota subject
      */
@@ -230,7 +232,6 @@ public class Quota {
     public void setHardLimit(@NotNull Double hardLimit) {
         this.hardLimit = hardLimit;
     }
-
 
     /**
      * Get the quota total usage
