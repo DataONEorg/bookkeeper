@@ -197,9 +197,9 @@ public interface SubscriptionStore {
      * @param quota the quota to insert
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, name, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
+        "(object, quotaType, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
         "VALUES " +
-        "(:object, :name, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
+        "(:object, :quotaType, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insertQuota(@BindBean Quota quota);
