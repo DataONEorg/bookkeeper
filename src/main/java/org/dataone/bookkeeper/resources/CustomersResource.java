@@ -89,29 +89,41 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @GET
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public CustomerList listCustomers(
+        @Context SecurityContext context,
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
         @QueryParam("email") @Email String email,
         @QueryParam("subject") String subject)
         throws WebApplicationException {
 
-        // TODO: Incorporate authentication
+        Customer caller = (Customer) context.getUserPrincipal();
+        Boolean isBkAdmin = this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject());
+
         List<Customer> customers = new ArrayList<Customer>();
         Customer customer;
-        // TODO: If authenticated as an admin, list all customers
+        // List customers, checking privilege status before returning
         if ( subject != null && ! subject.isEmpty() ) {
             customer = customerStore.findCustomerBySubject(subject);
-            // TODO: Before returning, throw NotAuthorized if customer.subject != token.sub
+            // Before returning, throw NotAuthorized if customer.subject != token.sub
+            if ((customer.getSubject().compareToIgnoreCase(caller.getSubject()) != 0) && ! isBkAdmin) {
+                throw new WebApplicationException("Bookkeeper admin privilege is required list a customer other than the requestor's, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+            }
             customers.add(customer);
         } else if ( email != null && ! email.isEmpty() ) {
             customer = customerStore.findCustomerByEmail(email);
-            // TODO: Before returning, throw NotAuthorized if customer.subject != token.sub
+            // Before returning, throw NotAuthorized if customer.subject != token.sub
+            if ((customer.getSubject().compareToIgnoreCase(caller.getSubject()) != 0) && ! isBkAdmin) {
+                throw new WebApplicationException("Bookkeeper admin privilege is required list a customer other than the requestor's, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+            }
             customers.add(customer);
         } else {
-            // This should be admin access only
+            // If authenticated as an bookkeeper admin, list all customers
+            if ( ! isBkAdmin ) {
+                throw new WebApplicationException("Bookkeeper admin privilege is required list all customers, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+            }
             customers = customerStore.listCustomers();
         }
 
@@ -128,6 +140,7 @@ public class CustomersResource extends BaseResource {
     @POST
     @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Customer create(@Context SecurityContext context,
         @NotNull @Valid Customer customer) throws WebApplicationException {
 
@@ -252,9 +265,17 @@ public class CustomersResource extends BaseResource {
      */
     @Timed
     @DELETE
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Path("{customerId}")
-    public Response delete(@PathParam("customerId") @Valid Integer customerId) throws WebApplicationException {
+    public Response delete(
+            @Context SecurityContext context,
+            @PathParam("customerId") @Valid Integer customerId) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to delete a customer, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         String message = "The customerId cannot be null.";
         if (customerId == null) {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
