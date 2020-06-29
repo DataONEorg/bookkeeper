@@ -225,7 +225,7 @@ public interface UsageStore {
             "quantity = :quantity, " +
             "status = :status, " +
             "nodeId = :nodeId " +
-            "RETURNING id")
+            "WHERE id = :id")
     @GetGeneratedKeys
     Usage update(@BindBean Usage usage);
 

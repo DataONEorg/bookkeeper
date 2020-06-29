@@ -32,7 +32,6 @@ import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -189,11 +188,17 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @POST
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
     public Quota create(
         @Context SecurityContext context,
         @NotNull @Valid Quota quota) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeepr admin privilege is required to create a quota, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         // Insert the quota after it is validated
         try {
             Integer id = quotaStore.insert(quota);
@@ -255,13 +260,19 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @PUT
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{quotaId}")
     public Quota update(
         @Context SecurityContext context,
         @NotNull @Valid Quota quota) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to update a quota, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         Quota updatedQuota = null;
         // Update the quota after validation
         try {
@@ -281,11 +292,17 @@ public class QuotasResource extends BaseResource {
      */
     @Timed
     @DELETE
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Path("{quotaId}")
     public Response delete(
         @Context SecurityContext context,
         @PathParam("quotaId") @Valid Integer quotaId) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to delete a quota, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         String message = "The quotaId cannot be null.";
         if (quotaId == null) {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);

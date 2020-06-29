@@ -370,6 +370,14 @@ public class DataONEAuthHelper {
         return getConfiguration().getAdminSubjects().contains(subject);
     }
 
+
+    /**
+     * Check if the given subject is an administrator
+     * @param subject the subject to check
+     * @return true if the subject is a  DataONE admin
+     */
+    public boolean isBookkeeperAdmin(String subject) { return getConfiguration().getBookkeeperAdminSubjects().contains(subject); }
+
     /**
      * For a given customer, return a filtered subject list with only associated subjects
      *

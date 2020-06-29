@@ -24,12 +24,14 @@ package org.dataone.bookkeeper.resources;
 import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Product;
 import org.dataone.bookkeeper.api.ProductList;
 import org.dataone.bookkeeper.jdbi.ProductStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -44,8 +46,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.time.Instant;
 import java.util.List;
 
@@ -117,10 +121,18 @@ public class ProductsResource extends BaseResource {
      */
     @Timed
     @POST
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
-    public Product create(@NotNull @Valid Product product) throws WebApplicationException {
+    public Product create(
+            @Context SecurityContext context,
+            @NotNull @Valid Product product) throws WebApplicationException {
         // Insert the product after it is validated
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to create a product, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         try {
             // Set the created timestamp
             product.setCreated(new Integer((int) Instant.now().getEpochSecond()));
@@ -164,10 +176,18 @@ public class ProductsResource extends BaseResource {
      */
     @Timed
     @PUT
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{productId}")
-    public Product update(@NotNull @Valid Product product) throws WebApplicationException {
+    public Product update(
+            @Context SecurityContext context,
+            @NotNull @Valid Product product) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to update a product, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         // Update the product after validation
         try {
             // Reset the created field to keep it managed server-side
@@ -190,9 +210,17 @@ public class ProductsResource extends BaseResource {
      */
     @Timed
     @DELETE
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Path("{productId}")
-    public Response delete(@PathParam("productId") @Valid Integer productId) throws WebApplicationException {
+    public Response delete(
+            @Context SecurityContext context,
+            @PathParam("productId") @Valid Integer productId) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to delete a product, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         String message = "The productId cannot be null.";
         if (productId == null) {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);

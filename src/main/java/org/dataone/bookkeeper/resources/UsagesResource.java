@@ -33,7 +33,6 @@ import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -361,15 +360,23 @@ public class UsagesResource {
      */
     @Timed
     @DELETE
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Path("{usageId}")
     public Response delete(
             @Context SecurityContext context,
             @PathParam("usageId") @Valid Integer usageId) throws WebApplicationException {
         String message = "The usageId cannot be null.";
+
         if (usageId == null) {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
         }
+
+        // Only Admin users can delete a usage
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Admin privilege is required to delete a usage, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         try {
             usageStore.delete(usageId);
         } catch (Exception e) {

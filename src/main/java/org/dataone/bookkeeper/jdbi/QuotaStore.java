@@ -182,8 +182,7 @@ public interface QuotaStore {
        "unit = :unit, " +
        "subscriptionId = :subscriptionId, " +
        "subject = :subject " +
-       "WHERE id = :id " +
-       "RETURNING id")
+       "WHERE id = :id ")
    @GetGeneratedKeys
    Quota update(@BindBean Quota quota);
 

@@ -445,9 +445,17 @@ public class OrdersResource extends BaseResource {
      */
     @Timed
     @DELETE
-    @RolesAllowed("CN=urn:node:CN,DC=dataone,DC=org")
+    @PermitAll
     @Path("{orderId}")
-    public Response delete(@PathParam("orderId") @Valid Integer orderId) throws WebApplicationException {
+    public Response delete(
+            @Context SecurityContext context,
+            @PathParam("orderId") @Valid Integer orderId) throws WebApplicationException {
+
+        Customer caller = (Customer) context.getUserPrincipal();
+        if ( ! this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+            throw new WebApplicationException("Bookkeeper admin privilege is required to delete an order, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        }
+
         String message = "The orderId cannot be null.";
         if (orderId == null) {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
