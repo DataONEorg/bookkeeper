@@ -37,6 +37,13 @@ public class SubscriptionList extends BaseList {
     /**
      * Construct an empty subscription list
      */
+    public SubscriptionList() {
+
+    }
+
+    /**
+     * Construct a subscription list
+     */
     public SubscriptionList(List<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }

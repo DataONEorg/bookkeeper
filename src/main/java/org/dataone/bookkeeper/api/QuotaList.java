@@ -37,6 +37,13 @@ public class QuotaList extends BaseList {
     /**
      * Construct an empty quota list
      */
+    public QuotaList() {
+
+    }
+
+    /**
+     * Construct a quota list
+     */
     public QuotaList(List<Quota> quotas) {
         this.quotas = quotas;
     }

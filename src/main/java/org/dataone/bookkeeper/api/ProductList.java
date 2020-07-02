@@ -37,6 +37,13 @@ public class ProductList extends BaseList {
     /**
      * Construct an empty product list
      */
+    public ProductList() {
+
+    }
+
+    /**
+     * Construct a product list
+     */
     public ProductList(List<Product> products) {
         this.products = products;
     }

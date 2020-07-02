@@ -37,6 +37,13 @@ public class OrderList extends BaseList {
     /**
      * Construct an empty order list
      */
+    public OrderList() {
+
+    }
+
+    /**
+     * Construct an order list
+     */
     public OrderList(List<Order> orders) {
         this.orders = orders;
     }

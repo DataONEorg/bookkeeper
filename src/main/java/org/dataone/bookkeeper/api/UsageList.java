@@ -37,6 +37,13 @@ public class UsageList extends BaseList {
     /**
      * Construct an empty usage list
      */
+    public UsageList() {
+
+    }
+
+    /**
+     * Construct a usage list
+     */
     public UsageList(List<Usage> usages) {
         this.usages = usages;
     }

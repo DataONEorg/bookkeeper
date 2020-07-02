@@ -37,6 +37,13 @@ public class CustomerList extends BaseList {
     /**
      * Construct an empty customer list
      */
+    public CustomerList() {
+
+    }
+
+    /**
+     * Construct a customer list
+     */
     public CustomerList(List<Customer> customers) {
         this.customers = customers;
     }
