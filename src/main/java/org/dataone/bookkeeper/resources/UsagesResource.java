@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.Usage;
+import org.dataone.bookkeeper.api.UsageList;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
 import org.dataone.bookkeeper.jdbi.UsageStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
@@ -87,15 +88,15 @@ public class UsagesResource {
     @Timed
     @GET
     @PermitAll
-    public List<Usage> listUsages(@Context SecurityContext context,
-                                 @QueryParam("start") @DefaultValue("0") Integer start,
-                                 @QueryParam("count") @DefaultValue("1000") Integer count,
-                                 @QueryParam("quotaId") Integer quotaId,
-                                 @QueryParam("quotaType") String quotaType,
-                                 @QueryParam("instanceId") String instanceId,
-                                 @QueryParam("status") String status,
-                                 @QueryParam("subscribers") Set<String> subscribers,
-                                 @QueryParam("requestor") String requestor) {
+    public UsageList listUsages(@Context SecurityContext context,
+                                @QueryParam("start") @DefaultValue("0") Integer start,
+                                @QueryParam("count") @DefaultValue("1000") Integer count,
+                                @QueryParam("quotaId") Integer quotaId,
+                                @QueryParam("quotaType") String quotaType,
+                                @QueryParam("instanceId") String instanceId,
+                                @QueryParam("status") String status,
+                                @QueryParam("subscribers") Set<String> subscribers,
+                                @QueryParam("requestor") String requestor) {
 
         List<Usage> usages = null;
         Usage usage = null;
