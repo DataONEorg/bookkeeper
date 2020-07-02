@@ -42,6 +42,7 @@ import org.dataone.service.types.v1.Group;
 import org.dataone.service.types.v1.Person;
 import org.dataone.service.types.v1.Subject;
 import org.dataone.service.types.v1.SubjectInfo;
+import org.eclipse.jetty.server.Authentication;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -320,8 +321,12 @@ public class DataONEAuthHelper {
         try {
             subjectInfo = getSubjectInfo(null, customer.getSubject());
         } catch (BaseException e) {
-            log.warn(errorMessage + e.getMessage());
+            errorMessage = "Couldn't retrieve subject from DataONE: " + "'" + customer.getSubject() + "'.";
+            AuthenticationException ae = new AuthenticationException(errorMessage);
+            ae.initCause(e);
+            throw ae;
         }
+
         customer.setSubjectInfo(subjectInfo);
         return customer;
     }
@@ -355,7 +360,10 @@ public class DataONEAuthHelper {
         try {
             subjectInfo = getSubjectInfo(token, customer.getSubject());
         } catch (BaseException e) {
-            log.warn(errorMessage + e.getMessage());
+            errorMessage = "Couldn't retrieve subject from DataONE: " + "'" + customer.getSubject() + "'.";
+            AuthenticationException ae = new AuthenticationException(errorMessage);
+            ae.initCause(e);
+            throw ae;
         }
         customer.setSubjectInfo(subjectInfo);
         return customer;
