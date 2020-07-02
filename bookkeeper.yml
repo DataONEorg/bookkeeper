@@ -23,10 +23,12 @@ database:
   # Driver details
   driverClass: org.postgresql.Driver
   url: jdbc:postgresql://localhost:5432/bookkeeper
+  # for k8s:
+  # url: jdbc:postgresql://postgres.bookkeeper.svc.cluster.local:5432/bookkeeper
 
   # Connect with database username and password
-  user: bookkeeper
-  password: <password-goes-here>
+  user: <user goes here>
+  password: <password goes here> 
 
   # JDBC driver properties
   properties:
@@ -65,6 +67,16 @@ dataone:
   adminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"
     - "http://orcid.org/0000-0002-8121-2341"
+    - "http://orcid.org/0000-0002-2192-403X"
+
+  bookkeeperAdminSubjects:
+    - "CN=urn:node:CN,DC=dataone,DC=org"
+    - "http://orcid.org/0000-0003-0077-4738" # Matt Jones
+    - "http://orcid.org/0000-0002-6513-4996" # Dave Vieglais
+    - "http://orcid.org/0000-0002-8121-2341" # Christopher Jones
+    - "http://orcid.org/0000-0003-2192-431X" # Lauren Walker
+    - "http://orcid.org/0000-0002-1209-5268" # Jing Tao
+    - "http://orcid.org/0000-0002-2192-403X" # Peter Slaughter
 
   # The default trial period in days
   trialDurationDays: 180

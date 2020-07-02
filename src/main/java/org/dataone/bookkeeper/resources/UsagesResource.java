@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.Usage;
+import org.dataone.bookkeeper.api.UsageList;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
 import org.dataone.bookkeeper.jdbi.UsageStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
@@ -87,15 +88,15 @@ public class UsagesResource {
     @Timed
     @GET
     @PermitAll
-    public List<Usage> listUsages(@Context SecurityContext context,
-                                 @QueryParam("start") @DefaultValue("0") Integer start,
-                                 @QueryParam("count") @DefaultValue("1000") Integer count,
-                                 @QueryParam("quotaId") Integer quotaId,
-                                 @QueryParam("quotaType") String quotaType,
-                                 @QueryParam("instanceId") String instanceId,
-                                 @QueryParam("status") String status,
-                                 @QueryParam("subscribers") Set<String> subscribers,
-                                 @QueryParam("requestor") String requestor) {
+    public UsageList listUsages(@Context SecurityContext context,
+                                @QueryParam("start") @DefaultValue("0") Integer start,
+                                @QueryParam("count") @DefaultValue("1000") Integer count,
+                                @QueryParam("quotaId") Integer quotaId,
+                                @QueryParam("quotaType") String quotaType,
+                                @QueryParam("instanceId") String instanceId,
+                                @QueryParam("status") String status,
+                                @QueryParam("subscribers") Set<String> subscribers,
+                                @QueryParam("requestor") String requestor) {
 
         List<Usage> usages = null;
         Usage usage = null;
@@ -128,7 +129,7 @@ public class UsagesResource {
 
                     /* Caller is not admin and is not associated with any of the specified subscribers. */
                     if (subjects.size() == 0) {
-                        throw new WebApplicationException(caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+                        throw new WebApplicationException(caller.getSubject() + " requested subscribers don't exist or requestor doesn't have priviledge to view them.", Response.Status.FORBIDDEN);
                     }
                 } else {
                     /* Admin caller, so can see quotas for all requested subscribers */
@@ -220,10 +221,14 @@ public class UsagesResource {
             }
         } catch (Exception e) {
             String message = "The requested usages could not be listed: " + e.getMessage();
+            if(e.getCause() != null) {
+                message += " " + e.getCause();
+            }
+
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
         }
 
-        return usages;
+        return new UsageList(usages);
     }
 
     /**
