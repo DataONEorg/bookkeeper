@@ -100,7 +100,7 @@ public class QuotasResource extends BaseResource {
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
         @QueryParam("quotaType") String quotaType,
-        @QueryParam("subscribers") Set<String> subscribers,
+        @QueryParam("subscriber") Set<String> subscribers,
         @QueryParam("requestor") String requestor) throws WebApplicationException {
 
         // The calling user injected in the security context via authentication
