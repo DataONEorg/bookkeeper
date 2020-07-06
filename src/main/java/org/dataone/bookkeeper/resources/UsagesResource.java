@@ -95,7 +95,7 @@ public class UsagesResource {
                                 @QueryParam("quotaType") String quotaType,
                                 @QueryParam("instanceId") String instanceId,
                                 @QueryParam("status") String status,
-                                @QueryParam("subscribers") Set<String> subscribers,
+                                @QueryParam("subscriber") Set<String> subscribers,
                                 @QueryParam("requestor") String requestor) {
 
         List<Usage> usages = null;
