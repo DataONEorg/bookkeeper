@@ -28,5 +28,5 @@ COMMENT ON COLUMN usages.object IS 'The serialized object type, set to "usage".'
 COMMENT ON COLUMN usages.quotaId IS 'The quota identifier.';
 COMMENT ON COLUMN usages.instanceId IS 'The instance identifier using a portion of the quota.';
 COMMENT ON COLUMN usages.quantity IS 'The quantity used by the instance, in the quota units.';
-COMMENT ON COLUMN usages.status IS 'The status of the usage, active or archived.';
+COMMENT ON COLUMN usages.status IS 'The status of the usage, active or inactive.';
 COMMENT ON COLUMN usages.nodeId IS 'The quota node identifier".';

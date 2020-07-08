@@ -129,7 +129,7 @@ public class UsagesResource {
 
                     /* Caller is not admin and is not associated with any of the specified subscribers. */
                     if (subjects.size() == 0) {
-                        throw new WebApplicationException(caller.getSubject() + " requested subscribers don't exist or requestor doesn't have priviledge to view them.", Response.Status.FORBIDDEN);
+                        throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                     }
                 } else {
                     /* Admin caller, so can see quotas for all requested subscribers */
@@ -168,7 +168,7 @@ public class UsagesResource {
                     usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
                 }
                 if(usage == null) {
-                    throw new WebApplicationException("The requested usage was not found or requestor does not have privilege to retrieve it.", Response.Status.NOT_FOUND);
+                    usages = null;
                 } else {
                     usages = new ArrayList<>();
                     usages.add(usage);
@@ -204,7 +204,14 @@ public class UsagesResource {
             }
 
             if (usages == null || usages.size() == 0) {
-                throw new WebApplicationException("The requested usages were not found or requestor does not have privilege to retrieve them.", Response.Status.NOT_FOUND);
+                if (! isAdmin || isProxy) {
+                    // If not an admin user or is a proxy user, we have no way to determine if they didn't have enough
+                    // privilege or if the usage doesn't exist.
+                    throw new WebApplicationException("The requested usages were not found or requestor does not have privilege to view them.", Response.Status.NOT_FOUND);
+                } else {
+                    // Admin user can see any existing usage, so can't be a priv issue.
+                    throw new WebApplicationException("The requested usage was not found.", Response.Status.NOT_FOUND);
+                }
             } else {
                 // Filter by status, if requested.
                 if(status != null) {
@@ -260,7 +267,7 @@ public class UsagesResource {
                 usage = usageStore.getUsage(id);
             } catch (Exception e) {
                 String message = "Couldn't insert the usage: " + e.getMessage();
-                throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+                throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
             }
             return usage;
         } else {
@@ -315,7 +322,7 @@ public class UsagesResource {
             }
         } catch (Exception e) {
             String message = "The requested usage could not be retrieved: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -349,7 +356,7 @@ public class UsagesResource {
                 updatedUsage = usageStore.update(usage);
             } catch (Exception e) {
                 String message = "Couldn't update the usage: " + e.getMessage();
-                throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+                throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
             }
         } else {
             throw new WebApplicationException("Admin privilege is required to update a usage, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
