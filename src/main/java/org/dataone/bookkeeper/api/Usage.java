@@ -49,8 +49,8 @@ public class Usage {
     @NotNull
     private Double quantity;
 
-    /*  The status of the quota usage, either active or archived */
-    @Pattern(regexp = "active|archived")
+    /*  The status of the quota usage, either active or inactive */
+    @Pattern(regexp = "active|inactive")
     private String status;
 
     /*  The identifier of the node the quota usage occurred on. */
@@ -68,8 +68,8 @@ public class Usage {
      * @param quotaId  the identifier of the associated quota
      * @param instanceId  the identifier of the instance object using a portion of the quota
      * @param quantity  the quantity of the quota used
-     * @param status  the usage status, either active or archived
-     * @param nodeId the usage status, either active or archived
+     * @param status  the usage status, either active or inactive
+     * @param nodeId the member node identifier
      */
     public Usage(Integer id,
                  @NotEmpty @NotNull @Pattern(regexp = "usage") String object,
@@ -169,7 +169,7 @@ public class Usage {
 
     /**
      * Get the usage status
-     * @return status  the usage status, either active or archived
+     * @return status  the usage status, either active or inactive
      */
     public String getStatus() {
         return status;
@@ -177,7 +177,7 @@ public class Usage {
 
     /**
      * Set the usage status
-     * @param status  the usage status, either active or archived
+     * @param status  the usage status, either active or inactive
      */
     public void setStatus(String status) {
         this.status = status;
