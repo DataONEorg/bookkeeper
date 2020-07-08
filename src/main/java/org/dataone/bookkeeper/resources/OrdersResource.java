@@ -163,7 +163,7 @@ public class OrdersResource extends BaseResource {
             }
         } catch (Exception e) {
             String message = "Couldn't list orders: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         // TODO: Incorporate paging params - new OrderList(start, count, total, orders)
@@ -216,7 +216,7 @@ public class OrdersResource extends BaseResource {
             order = orderStore.getOrder(id);
         } catch (Exception e) {
             String message = "Couldn't insert the order: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return order;
     }
@@ -284,7 +284,7 @@ public class OrdersResource extends BaseResource {
         if ( ! isAdmin ) {
             if ( ! existing.getCustomer().equals(caller.getId()) ) {
                 throw new WebApplicationException(
-                    "Customer doesn't have access to this order.", Response.Status.EXPECTATION_FAILED
+                    "Customer doesn't have access to this order.", Response.Status.UNAUTHORIZED
                 );
             }
         }
@@ -322,7 +322,7 @@ public class OrdersResource extends BaseResource {
             orderStore.update(order);
         } catch (Exception e) {
             String message = "Couldn't update the order: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return order;
     }
@@ -357,7 +357,7 @@ public class OrdersResource extends BaseResource {
             if ( ! isAdmin ) {
                 if ( ! order.getCustomer().equals(caller.getId()) ) {
                     throw new WebApplicationException(
-                        "Customer doesn't have access to this order.", Response.Status.EXPECTATION_FAILED
+                        "Customer doesn't have access to this order.", Response.Status.UNAUTHORIZED
                     );
                 }
             }
@@ -431,7 +431,7 @@ public class OrdersResource extends BaseResource {
 
         } catch (Exception e) {
             String message = "Couldn't pay the order: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return order;
     }

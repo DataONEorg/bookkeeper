@@ -140,7 +140,7 @@ public class ProductsResource extends BaseResource {
             product = productStore.getProduct(id);
         } catch (Exception e) {
             String message = "Couldn't insert the product: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return product;
     }
@@ -197,7 +197,7 @@ public class ProductsResource extends BaseResource {
             productStore.update(product);
         } catch (Exception e) {
             String message = "Couldn't update the product: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return product;
     }

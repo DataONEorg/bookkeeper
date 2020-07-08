@@ -169,7 +169,7 @@ public class CustomersResource extends BaseResource {
             customer = customerStore.getCustomer(id);
         } catch (Exception e) {
             String message = "Couldn't insert the customer: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return customer;
     }
@@ -252,7 +252,7 @@ public class CustomersResource extends BaseResource {
             Integer id = customerStore.update(customer);
         } catch (Exception e) {
             String message = "Couldn't update the customer: " + e.getMessage();
-            throw new WebApplicationException(message, Response.Status.EXPECTATION_FAILED);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return customer;
     }
