@@ -99,6 +99,12 @@ public interface UsageStore {
             "WHERE q.quotaType = :quotaType " +
             "AND q.subject IN (<subscribers>)";
 
+    /** Select by instance identifier, quota identifier and subjects */
+    String SELECT_BY_INSTANCE_ID_AND_QUOTA_TYPE = SELECT_CLAUSE +
+            "INNER JOIN quotas q ON q.id = u.quotaid " +
+            "WHERE u.instanceid = :instanceId " +
+            "AND q.quotaType = :quotaType";
+
     /**
      * List all usages
      * @return usages the list of usages
@@ -191,6 +197,15 @@ public interface UsageStore {
      */
     @SqlQuery(SELECT_BY_QUOTA_TYPE_AND_SUBJECTS)
     List<Usage> findUsagesByQuotaTypeAndSubjects(@Bind("quotaType") String quotaType, @BindList("subscribers") List<String> subscribers);
+
+    /**
+     * Find usages by instance identifier and quota type.
+     * @param instanceId the usage instance id
+     * @param quotaType the quota type
+     * @return usageStatus the usage status for the instance identifier and quota type
+     */
+    @SqlQuery(SELECT_BY_INSTANCE_ID_AND_QUOTA_TYPE)
+    Usage findUsageByInstanceIdAndQuotaType(@Bind("instanceId") String instanceId, @Bind("quotaType") String quotaType);
 
     /**
      * Insert a usage with a given Usage instance
