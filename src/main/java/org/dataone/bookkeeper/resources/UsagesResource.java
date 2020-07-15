@@ -241,7 +241,7 @@ public class UsagesResource {
                 message += " " + e.getCause();
             }
 
-            throw new WebApplicationException(message, Response.Status.NOT_FOUND);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         return new UsageList(usages);
@@ -404,7 +404,7 @@ public class UsagesResource {
             message = "Deleting the usage with id " + usageId + " failed: " + e.getMessage();
             log.error(message);
             e.printStackTrace();
-            throw e;
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return Response.ok().build();
     }

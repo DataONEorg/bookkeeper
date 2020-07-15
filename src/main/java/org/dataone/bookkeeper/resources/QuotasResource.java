@@ -136,7 +136,7 @@ public class QuotasResource extends BaseResource {
 
                     /* Caller is not admin and is not associated with any of the specified subscribers. */
                     if (subjects.size() == 0) {
-                        throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have priviledge to view them.", Response.Status.FORBIDDEN);
+                        throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                     }
                 } else {
                     /* Admin caller, so can see quotas for all requested subscribers */
@@ -255,7 +255,7 @@ public class QuotasResource extends BaseResource {
             if ( associatedSubjects.size() > 0 ) {
                 return quota;
             } else {
-                throw new Exception(caller.getSubject() + " is not associated with this quota.");
+                throw new WebApplicationException(caller.getSubject() + " is not associated with this quota.", Response.Status.FORBIDDEN);
             }
         } catch (Exception e) {
             String message = "Couldn't get the quota: " + e.getMessage();
