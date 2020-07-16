@@ -50,6 +50,9 @@ public class UsageStatus {
     private String status;
 
 
+    /**
+     * A UsageStatus represents the active or inactive status of a Usage object as a light weight response
+     */
     public UsageStatus() {
         super();
     }
