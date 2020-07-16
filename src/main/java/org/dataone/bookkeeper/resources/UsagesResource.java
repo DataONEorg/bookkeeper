@@ -28,6 +28,7 @@ import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.Usage;
 import org.dataone.bookkeeper.api.UsageList;
+import org.dataone.bookkeeper.api.UsageStatus;
 import org.dataone.bookkeeper.jdbi.QuotaStore;
 import org.dataone.bookkeeper.jdbi.UsageStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
@@ -155,7 +156,7 @@ public class UsagesResource {
              */
             /* The "instanceid + quotaId" combination is unique among all usages, so only one usage should be returned. */
             if (instanceId != null && quotaId != null) {
-                if(subjects.size() == 0) {
+                if (subjects.size() == 0) {
                     usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
                 } else {
                     /* Non-admin users can only retrieve instanceIds+quotaId for a subject that they are associated with,
@@ -167,7 +168,15 @@ public class UsagesResource {
                      */
                     usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
                 }
-                if(usage == null) {
+                if (usage == null) {
+                    usages = null;
+                } else {
+                    usages = new ArrayList<>();
+                    usages.add(usage);
+                }
+            } else if (instanceId != null && quotaType != null) {
+                usage = usageStore.findUsageByInstanceIdAndQuotaType(instanceId, quotaType);
+                if (usage == null) {
                     usages = null;
                 } else {
                     usages = new ArrayList<>();
@@ -232,7 +241,7 @@ public class UsagesResource {
                 message += " " + e.getCause();
             }
 
-            throw new WebApplicationException(message, Response.Status.NOT_FOUND);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         return new UsageList(usages);
@@ -395,8 +404,54 @@ public class UsagesResource {
             message = "Deleting the usage with id " + usageId + " failed: " + e.getMessage();
             log.error(message);
             e.printStackTrace();
-            throw e;
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return Response.ok().build();
     }
+    /**
+     * Get a usage status
+     * @param quotaType the usage quota type ("portal" | "storage" | ...)
+     * @param instanceId the usage instance id type
+     * @return response 200 if deleted
+     * @throws WebApplicationException  a web app exception
+     */
+    @Timed
+    @GET
+    @Path("/status")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UsageStatus getStatus(
+            @QueryParam("quotaType") String quotaType,
+            @QueryParam("instanceId") String instanceId) throws WebApplicationException {
+
+        log.debug("Usage status");
+        Usage usage = null;
+        UsageStatus usageStatus = null;
+
+        String message = null;
+        if (quotaType == null || instanceId == null)  {
+            message = "Both quotaType and instanceId must be specified.";
+            throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
+        }
+
+        try {
+            log.debug("Usage status query");
+            usage = usageStore.findUsageByInstanceIdAndQuotaType(instanceId, quotaType);
+        } catch (Exception e) {
+            message = "Retrieving the usage with instanceId: " + instanceId + ", quotaType: " + quotaType
+                + " failed: " + e.getMessage();
+            log.error(message);
+            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        // If a usage was returned from the store, construct a UsageStatus from it and return success
+        if (usage != null) {
+            usageStatus = new UsageStatus("usagestatus", usage.getStatus());
+        } else {
+            throw new WebApplicationException("The requested usage status was not found.", Response.Status.NOT_FOUND);
+        }
+
+        return usageStatus;
+    }
+
+
 }
