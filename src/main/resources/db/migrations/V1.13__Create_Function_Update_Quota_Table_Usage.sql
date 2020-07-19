@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION update_quota_usage_on_insert_or_update()
 
         -- Update the quotas.usage column
         UPDATE quotas q
-            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE u.quotaId = NEW.quotaId)
+            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE u.status != 'inactive' AND u.quotaId = NEW.quotaId)
                 WHERE q.id = NEW.quotaId;
         RETURN NEW;
     END;
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION update_quota_usage_on_delete()
 
         -- Update the quotas.usage column
         UPDATE quotas q
-            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE u.quotaId = OLD.quotaId)
+            SET usage = (SELECT SUM(u.quantity) FROM usages u WHERE u.status != 'inactive' AND u.quotaId = OLD.quotaId)
                 WHERE q.id = OLD.quotaId;
         RETURN OLD;
     END;
