@@ -29,6 +29,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.IOException;
+import java.util.Objects;
 
 
 /**
@@ -38,7 +39,6 @@ import java.io.IOException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsageStatus {
 
-
     /* The usagestatus object type */
     @NotEmpty
     @NotNull
@@ -46,16 +46,15 @@ public class UsageStatus {
     private String object;
 
     /*  The status of the quota usage, either active or inactive */
+    @NotEmpty
+    @NotNull
     @Pattern(regexp = "active|inactive")
     private String status;
-
 
     /**
      * A UsageStatus represents the active or inactive status of a Usage object as a light weight response
      */
-    public UsageStatus() {
-        super();
-    }
+    public UsageStatus() {}
 
     /**
      * Construct a UsageStatus from a JSON string
@@ -63,7 +62,6 @@ public class UsageStatus {
      * @throws IOException when an I/O exception occurs
      */
     public UsageStatus(String json) throws IOException {
-        super();
 
         // Return an empty Quota instance when the JSON object is empty
         if ( ! json.equals("{}") ) {
@@ -79,7 +77,7 @@ public class UsageStatus {
      * Construct a Usage instance
      * @param status  the usage status, either active or inactive
      */
-    public UsageStatus(@NotNull @NotEmpty String object,
+    public UsageStatus(@NotNull @NotEmpty @Pattern(regexp = "usagestatus") String object,
                        @NotNull @NotEmpty String status ) {
         this.object = object;
         this.status = status;
@@ -93,9 +91,9 @@ public class UsageStatus {
 
     /**
      * Set the usage object type
-     * @param status the usage object type, always 'usagestatus'
+     * @param object the usage object type, always 'usagestatus'
      */
-    public void setObject(String status) { this.status = status; }
+    public void setObject(String object) { this.object = object; }
 
     /**
      * Get the usage status
@@ -111,5 +109,28 @@ public class UsageStatus {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * Determine object equality based on the equality of all fields
+     * @param o the object to be compared
+     * @return  true if the given object is equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UsageStatus usagestatus = (UsageStatus) o;
+        return Objects.equals(getObject(), usagestatus.getObject()) &&
+                Objects.equals(getStatus(), usagestatus.getStatus());
+    }
+
+    /**
+     * Calculate a hash based on all fields
+     * @return hashcode  the hashcode of the object
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(getObject(), getStatus());
     }
 }
