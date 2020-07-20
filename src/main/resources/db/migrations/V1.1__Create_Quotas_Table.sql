@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS quotas (
     quotaType text NOT NULL,
     softLimit double precision NOT NULL,
     hardLimit double precision NOT NULL,
-    usage double precision,
+    totalUsage double precision,
     unit text NOT NULL,
     subscriptionId integer,
     subject text
@@ -27,7 +27,7 @@ COMMENT ON COLUMN quotas.object IS 'The serialized object type, set to "quota"';
 COMMENT ON COLUMN quotas.quotaType IS 'The quota type';
 COMMENT ON COLUMN quotas.softLimit IS 'The soft limit of the resource.';
 COMMENT ON COLUMN quotas.hardLimit IS 'The hard limit of the resource.';
-COMMENT ON COLUMN quotas.usage IS 'The current observed usage of the quota.';
+COMMENT ON COLUMN quotas.totalUsage IS 'The current observed total usage of the quota.';
 COMMENT ON COLUMN quotas.unit IS 'The named unit of the quota.';
 COMMENT ON COLUMN quotas.subscriptionId IS 'The subscription id to which the quota is applied.';
 COMMENT ON COLUMN quotas.subject IS 'The subject id to which the quota is applied.';

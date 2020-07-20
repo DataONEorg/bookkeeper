@@ -4,5 +4,6 @@
     "quotaType":"portal",
     "softLimit": 3.0,
     "hardLimit": 3.0,
+    "totalUsage": 0.0,
     "unit": "portal"
 }

@@ -84,7 +84,7 @@ public interface SubscriptionStore {
             "q.quotaType AS q_quotaType, " +
             "q.softLimit AS q_softLimit, " +
             "q.hardLimit AS q_hardLimit, " +
-            "q.usage AS q_usage, " +
+            "q.totalUsage AS q_totalUsage, " +
             "q.unit AS q_unit, " +
             "q.subscriptionId AS q_subscriptionId, " +
             "q.subject AS q_subject " +

@@ -60,7 +60,7 @@ public class Quota {
     private @NotNull Double hardLimit;
 
     /* The total usage of the quota */
-    private Double usage;
+    private @NotNull Double totalUsage = 0.0;
 
     /* The quota unit */
     @NotEmpty
@@ -98,7 +98,7 @@ public class Quota {
             this.quotaType = quota.quotaType;
             this.softLimit = quota.softLimit;
             this.hardLimit = quota.hardLimit;
-            this.usage = quota.usage;
+            this.totalUsage = quota.totalUsage;
             this.unit = quota.unit;
             this.subscriptionId = quota.subscriptionId;
             this.subject = quota.subject;
@@ -113,7 +113,7 @@ public class Quota {
      * @param softLimit       the quota soft limit
      * @param hardLimit       the quota hard limit
      * @param unit            the quota unit
-     * @param usage      the quota usage
+     * @param totalUsage      the quota total usage
      * @param subscriptionId  the quota subscription identifier
      * @param subject         the quota subject
      */
@@ -122,7 +122,7 @@ public class Quota {
                  @NotNull @NotEmpty String quotaType,
                  @NotNull Double softLimit,
                  @NotNull Double hardLimit,
-                 Double usage,
+                 @NotNull Double totalUsage,
                  @NotNull @NotEmpty String unit,
                  Integer subscriptionId,
                  String subject) {
@@ -136,7 +136,7 @@ public class Quota {
         this.softLimit = softLimit;
         this.hardLimit = hardLimit;
         this.unit = unit;
-        this.usage = usage;
+        this.totalUsage = totalUsage;
         this.subscriptionId = subscriptionId;
         this.subject = subject;
     }
@@ -231,23 +231,25 @@ public class Quota {
         this.hardLimit = hardLimit;
     }
 
-
     /**
      * Get the quota total usage
-     * @return usage  the quota total usage
+     * @return totalUsage  the quota total usage
      */
     @JsonProperty
-    public Double getUsage() {
-        return usage;
+    public Double getTotalUsage() {
+        if (totalUsage == null) {
+            totalUsage = 0.0;
+        }
+        return totalUsage;
     }
 
     /**
-     * Set the quota usage
-     * @param usage  the quota total usage
+     * Set the quota total usage
+     * @param totalUsage the quota total usage
      */
     @JsonProperty
-    public void setUsage(Double usage) {
-        this.usage = usage;
+    public void setTotalUsage(Double totalUsage) {
+        this.totalUsage = totalUsage;
     }
 
     /**
@@ -319,7 +321,7 @@ public class Quota {
             Objects.equals(getQuotaType(), quota.getQuotaType()) &&
             Objects.equals(getSoftLimit(), quota.getSoftLimit()) &&
             Objects.equals(getHardLimit(), quota.getHardLimit()) &&
-            Objects.equals(getUsage(), quota.getUsage()) &&
+            Objects.equals(getTotalUsage(), quota.getTotalUsage()) &&
             Objects.equals(getUnit(), quota.getUnit()) &&
             Objects.equals(getSubscriptionId(), quota.getSubscriptionId()) &&
             Objects.equals(getSubject(), quota.getSubject());
@@ -332,6 +334,6 @@ public class Quota {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getObject(), getQuotaType(), getSoftLimit(),
-            getHardLimit(), getUsage(), getUnit(), getSubscriptionId(), getSubject());
+            getHardLimit(), getTotalUsage(), getUnit(), getSubscriptionId(), getSubject());
     }
 }

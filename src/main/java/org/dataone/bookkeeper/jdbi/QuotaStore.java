@@ -47,7 +47,7 @@ public interface QuotaStore {
             "q.quotaType, " +
             "q.softLimit, " +
             "q.hardLimit, " +
-            "q.usage, " +
+            "q.totalUsage, " +
             "q.unit, " +
             "q.subscriptionId, " +
             "q.subject " +
@@ -139,7 +139,7 @@ public interface QuotaStore {
     /**
      * Find quotas by a quota type and subjects
      *
-     * @param quotaType the quota name (e.g. "portal", "usage")
+     * @param quotaType the quota name (e.g. "portal", "storage")
      * @param subjects the subject identifiers (such as an ORCID identifier)
      * @return quotas the list of quotas for the subjects and names
      */
