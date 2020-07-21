@@ -50,7 +50,7 @@ public interface QuotaStore {
             "q.totalUsage, " +
             "q.unit, " +
             "q.subscriptionId, " +
-            "q.subject " +
+            "q.subscriber " +
             "FROM quotas q ";
 
     /** The full ordered query */
@@ -68,14 +68,14 @@ public interface QuotaStore {
     /** The query used to find a quota by subscription identifier */
     String SELECT_SUBSCRIPTION = SELECT_CLAUSE + "WHERE q.subscriptionId = :subscriptionId ";
 
-    /** The query used to find a quota by subject identifier */
-    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE q.subject = :subject ";
+    /** The query used to find a quota by subscriber identifier */
+    String SELECT_SUBSCRIBER = SELECT_CLAUSE + "WHERE q.subscriber = :subscriber ";
 
-    /** The query used to find quotas by multiple subject identifiers */
-    String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
+    /** The query used to find quotas by multiple subscriber identifiers */
+    String SELECT_SUBSCRIBERS = SELECT_CLAUSE + "WHERE q.subscriber IN (<subscribers>) ";
 
-    /** The query used to find quotas by type and multiple subject identifiers */
-    String SELECT_BY_NAME_AND_SUBJECTS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.subject IN (<subjects>) ";
+    /** The query used to find quotas by type and multiple subscriber identifiers */
+    String SELECT_BY_NAME_AND_SUBSCRIBERS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.subscriber IN (<subscribers>) ";
 
     /**
      * List all quotas
@@ -119,32 +119,32 @@ public interface QuotaStore {
     List<Quota> findQuotasByType(@Bind("quotaType") String quotaType);
 
     /**
-     * Find quotas by subject identifier
+     * Find quotas by subscriber identifier
      *
-     * @param subject the subject identifier (such as an ORCID identifier)
-     * @return quotas the list of quotas for the subject
+     * @param subscriber the subscriber identifier (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subscriber
      */
-    @SqlQuery(SELECT_SUBJECT)
-    List<Quota> findQuotasBySubject(@Bind("subject") String subject);
+    @SqlQuery(SELECT_SUBSCRIBER)
+    List<Quota> findQuotasBySubscriber(@Bind("subscriber") String subscriber);
 
     /**
-     * Find quotas by a list of subject identifiers
+     * Find quotas by a list of subscriber identifiers
      *
-     * @param subjects the subject identifiers list (such as an ORCID identifier)
-     * @return quotas the list of quotas for the subjects
+     * @param subscribers the subscriber identifiers list (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subscriber
      */
-    @SqlQuery(SELECT_SUBJECTS)
-    List<Quota> findQuotasBySubjects(@BindList("subjects") List<String> subjects);
+    @SqlQuery(SELECT_SUBSCRIBERS)
+    List<Quota> findQuotasBySubscribers(@BindList("subscribers") List<String> subscribers);
 
     /**
-     * Find quotas by a quota type and subjects
+     * Find quotas by a quota type and subscribers
      *
      * @param quotaType the quota name (e.g. "portal", "storage")
-     * @param subjects the subject identifiers (such as an ORCID identifier)
-     * @return quotas the list of quotas for the subjects and names
+     * @param subscribers the subscriber identifiers (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subscribers and names
      */
-    @SqlQuery(SELECT_BY_NAME_AND_SUBJECTS)
-    List<Quota> findQuotasByNameAndSubjects(@Bind("quotaType") String quotaType, @BindList("subjects") List<String> subjects);
+    @SqlQuery(SELECT_BY_NAME_AND_SUBSCRIBERS)
+    List<Quota> findQuotasByNameAndSubscribers(@Bind("quotaType") String quotaType, @BindList("subscribers") List<String> subscribers);
 
     /**
      * Insert a quota with a given Quota instance
@@ -157,7 +157,7 @@ public interface QuotaStore {
         "hardLimit, " +
         "unit, " +
         "subscriptionId, " +
-        "subject) " +
+        "subscriber) " +
         "VALUES " +
         "(:object, " +
         ":quotaType, " +
@@ -165,7 +165,7 @@ public interface QuotaStore {
         ":hardLimit, " +
         ":unit, " +
         ":subscriptionId, " +
-        ":subject) " +
+        ":subscriber) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Quota quota);
@@ -181,7 +181,7 @@ public interface QuotaStore {
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
        "subscriptionId = :subscriptionId, " +
-       "subject = :subject " +
+       "subscriber = :subscriber " +
        "WHERE id = :id ")
    @GetGeneratedKeys
    Quota update(@BindBean Quota quota);

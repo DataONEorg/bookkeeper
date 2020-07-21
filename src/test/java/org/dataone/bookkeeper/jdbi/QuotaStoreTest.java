@@ -157,11 +157,11 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test getting quotas by subject
+     * Test getting quotas by subscriber
      */
     @Test
-    @DisplayName("Test getting quotas by subject")
-    public void testGetQuotasBySubject() {
+    @DisplayName("Test getting quotas by subscriber")
+    public void testGetQuotasBySubscriber() {
         try {
             // Insert a customer
             Customer customer = CustomerHelper.insertTestCustomer(
@@ -186,14 +186,14 @@ public class QuotaStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customerTwo.getId());
             this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
 
-            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
+            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
                 StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
                 StoreHelper.getRandomId(), subscriptionIdTwo, customer.getSubject());
             this.quotaIds.add(quotaTwoId);
-            assertEquals(2, quotaStore.findQuotasBySubject(customer.getSubject()).size());
+            assertEquals(2, quotaStore.findQuotasBySubscriber(customer.getSubject()).size());
         } catch (SQLException e) {
             fail(e);
         } catch (JsonProcessingException e) {
@@ -202,8 +202,8 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test list quotas by subjects")
-    public void testListQuotasBySubjects() {
+    @DisplayName("Test list quotas by subscribers")
+    public void testListQuotasBySubscribers() {
 
         Customer customer;
         Integer subscriptionId;
@@ -232,20 +232,20 @@ public class QuotaStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customerTwo.getId());
             this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
 
-            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
+            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
                 StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
                 StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
-            List<String> subjects = new ArrayList<String>();
-            subjects.add(customer.getSubject());
-            subjects.add(groupSubject);
-            assertEquals(2, quotaStore.findQuotasBySubjects(subjects).size());
+            List<String> subscribers = new ArrayList<String>();
+            subscribers.add(customer.getSubject());
+            subscribers.add(groupSubject);
+            assertEquals(2, quotaStore.findQuotasBySubscribers(subscribers).size());
 
         } catch (SQLException e) {
             fail(e);
@@ -255,8 +255,8 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test list quotas by type and subjects")
-    public void testListQuotasByNameAndSubjects() {
+    @DisplayName("Test list quotas by type and subscribers")
+    public void testListQuotasByNameAndSubscribers() {
 
         Customer customer;
         Integer subscriptionId;
@@ -286,20 +286,20 @@ public class QuotaStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customerTwo.getId());
             this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
 
-            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
+            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
                     StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
                     StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
-            List<String> subjects = new ArrayList<String>();
-            subjects.add(customer.getSubject());
-            subjects.add(groupSubject);
-            assertEquals(2, quotaStore.findQuotasByNameAndSubjects("portal", subjects).size());
+            List<String> subscribers = new ArrayList<String>();
+            subscribers.add(customer.getSubject());
+            subscribers.add(groupSubject);
+            assertEquals(2, quotaStore.findQuotasByNameAndSubscribers("portal", subscribers).size());
 
         } catch (SQLException e) {
             fail(e);

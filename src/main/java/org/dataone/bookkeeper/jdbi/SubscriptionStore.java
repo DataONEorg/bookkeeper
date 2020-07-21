@@ -87,7 +87,7 @@ public interface SubscriptionStore {
             "q.totalUsage AS q_totalUsage, " +
             "q.unit AS q_unit, " +
             "q.subscriptionId AS q_subscriptionId, " +
-            "q.subject AS q_subject " +
+            "q.subscriber AS q_subscriber " +
         "FROM subscriptions s " +
         "LEFT JOIN quotas q ON s.id = q.subscriptionId " +
         "LEFT JOIN customers c ON s.customerId = c.id " +

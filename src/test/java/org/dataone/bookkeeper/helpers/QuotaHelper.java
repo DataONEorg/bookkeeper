@@ -53,7 +53,7 @@ public class QuotaHelper {
                     "totalUsage, " +
                     "unit, " +
                     "subscriptionId, " +
-                    "subject) " +
+                    "subscriber) " +
                 "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
@@ -70,18 +70,18 @@ public class QuotaHelper {
     }
 
     /**
-     * Insert a test quota with a given id, subscription id, and subject
+     * Insert a test quota with a given id, subscription id, and subscriber
      * @param quotaId
      * @param subscriptionId
-     * @param subject
+     * @param subscriber
      * @return
      * @throws SQLException
      */
-    public static Integer insertTestQuotaWithSubject(
-        Integer quotaId, Integer subscriptionId, String subject) throws SQLException {
+    public static Integer insertTestQuotaWithSubscriber(
+        Integer quotaId, Integer subscriptionId, String subscriber) throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
             handle.execute("INSERT INTO quotas " +
-                "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subject) " +
+                "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber) " +
                 "VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
@@ -92,7 +92,7 @@ public class QuotaHelper {
                 null,
                 "portal",
                 subscriptionId,
-                subject)
+                subscriber)
         );
         return quotaId;
     }
@@ -114,7 +114,7 @@ public class QuotaHelper {
         quotas.put(portalQuotaId, QuotaHelper.createTestPortalQuota(portalQuotaId, subscriptionId));
 
         String insertStatement = "INSERT INTO quotas " +
-            "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subject) " +
+            "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Insert them into the database for the given subscription id
         BaseTestCase.dbi.useHandle(handle -> {
@@ -127,7 +127,7 @@ public class QuotaHelper {
                 quotas.get(storageQuotaId).getTotalUsage(),
                 quotas.get(storageQuotaId).getUnit(),
                 quotas.get(storageQuotaId).getSubscriptionId(),
-                quotas.get(storageQuotaId).getSubject()
+                quotas.get(storageQuotaId).getSubscriber()
             );
             handle.execute(insertStatement,
                 portalQuotaId,
@@ -138,7 +138,7 @@ public class QuotaHelper {
                 quotas.get(portalQuotaId).getTotalUsage(),
                 quotas.get(portalQuotaId).getUnit(),
                 quotas.get(portalQuotaId).getSubscriptionId(),
-                quotas.get(portalQuotaId).getSubject()
+                quotas.get(portalQuotaId).getSubscriber()
             );
         });
         return quotas;
@@ -171,7 +171,7 @@ public class QuotaHelper {
         quota.setTotalUsage(null);
         quota.setUnit("megabyte");
         quota.setSubscriptionId(subscriptionId);
-        quota.setSubject("http://orcid.org/0000-0000-0000-0000");
+        quota.setSubscriber("http://orcid.org/0000-0000-0000-0000");
         return quota;
     }
 
@@ -185,7 +185,7 @@ public class QuotaHelper {
         quota.setTotalUsage(null);
         quota.setUnit("portal");
         quota.setSubscriptionId(subscriptionId);
-        quota.setSubject("http://orcid.org/0000-0000-0000-0000");
+        quota.setSubscriber("http://orcid.org/0000-0000-0000-0000");
         return quota;
     }
     /**
@@ -242,7 +242,7 @@ public class QuotaHelper {
     public static Quota getQuotaById(Integer quotaId) {
         Quota quota = BaseTestCase.dbi.withHandle(handle ->
             handle.createQuery("SELECT id, object, quotaType, softLimit, hardLimit, totalUsage, unit, " +
-                "subscriptionId, subject " +
+                "subscriptionId, subscriber " +
                 "FROM quotas WHERE id = :id")
                 .bind("id", quotaId)
                 .mapToBean(Quota.class)

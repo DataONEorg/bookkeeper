@@ -1,14 +1,14 @@
 -- Insert quotas for portal and storage quotas;
 
 -- 1GB base storage limit
-INSERT INTO quotas (object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subject)
+INSERT INTO quotas (object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber)
     VALUES ('quota', 'storage', 1073741824.0, 1181116006.4, NULL, 'byte', NULL, NULL);
 
 -- 1TB base hosted repository storage limit
-INSERT INTO quotas (object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subject)
+INSERT INTO quotas (object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber)
     VALUES ('quota', 'repository_storage', 1099511627776.0, 1209462790553.6, NULL, 'byte', NULL,
     NULL);
 
 -- Single base branded portal limit
-INSERT INTO quotas (object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subject)
+INSERT INTO quotas (object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber)
     VALUES ('quota', 'portal', 1.0, 1.0, NULL, 'portal', NULL, NULL);

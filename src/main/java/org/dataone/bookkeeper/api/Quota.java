@@ -70,8 +70,8 @@ public class Quota {
     /* The quota subscription id */
     private Integer subscriptionId;
 
-    /* The quota subject id */
-    private String subject;
+    /* The quota subscriber id */
+    private String subscriber;
 
     /**
      * Construct an empty Quota
@@ -101,7 +101,7 @@ public class Quota {
             this.totalUsage = quota.totalUsage;
             this.unit = quota.unit;
             this.subscriptionId = quota.subscriptionId;
-            this.subject = quota.subject;
+            this.subscriber = quota.subscriber;
         }
     }
 
@@ -115,7 +115,7 @@ public class Quota {
      * @param unit            the quota unit
      * @param totalUsage      the quota total usage
      * @param subscriptionId  the quota subscription identifier
-     * @param subject         the quota subject
+     * @param subscriber         the quota subscriber
      */
     public Quota(Integer id,
                  @NotNull @NotEmpty String object,
@@ -125,7 +125,7 @@ public class Quota {
                  @NotNull Double totalUsage,
                  @NotNull @NotEmpty String unit,
                  Integer subscriptionId,
-                 String subject) {
+                 String subscriber) {
         if ( id != null ) {
             if ( ! id.toString().equals("") ) {
                 this.id = id;
@@ -138,7 +138,7 @@ public class Quota {
         this.unit = unit;
         this.totalUsage = totalUsage;
         this.subscriptionId = subscriptionId;
-        this.subject = subject;
+        this.subscriber = subscriber;
     }
 
     /**
@@ -289,21 +289,21 @@ public class Quota {
     }
 
     /**
-     * Get the subject
-     * @return subject  the quota subject
+     * Get the subscriber
+     * @return subscriber  the quota subscriber
      */
     @JsonProperty
-    public String getSubject() {
-        return subject;
+    public String getSubscriber() {
+        return subscriber;
     }
 
     /**
-     * Set the subject
-     * @param subject  the quota subject
+     * Set the subscriber
+     * @param subscriber  the quota subscriber
      */
     @JsonProperty
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setSubscriber(String subscriber) {
+        this.subscriber = subscriber;
     }
 
     /**
@@ -324,7 +324,7 @@ public class Quota {
             Objects.equals(getTotalUsage(), quota.getTotalUsage()) &&
             Objects.equals(getUnit(), quota.getUnit()) &&
             Objects.equals(getSubscriptionId(), quota.getSubscriptionId()) &&
-            Objects.equals(getSubject(), quota.getSubject());
+            Objects.equals(getSubscriber(), quota.getSubscriber());
     }
 
     /**
@@ -334,6 +334,6 @@ public class Quota {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getObject(), getQuotaType(), getSoftLimit(),
-            getHardLimit(), getTotalUsage(), getUnit(), getSubscriptionId(), getSubject());
+            getHardLimit(), getTotalUsage(), getUnit(), getSubscriptionId(), getSubscriber());
     }
 }
