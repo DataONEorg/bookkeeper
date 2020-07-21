@@ -205,14 +205,14 @@ public class UsageStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test getting usages by instance ID and subjects list
+     * Test getting usages by instance ID and subscribers list
      */
     @Test
-    @DisplayName("Test getting usages by instance ID and subjects")
-    public void testFindUsagesByInstanceIdAndSubjects() {
+    @DisplayName("Test getting usages by instance ID and subscribers")
+    public void testFindUsagesByInstanceIdAndSubscribers() {
 
         try {
-            List<String> subjects = new ArrayList<>();
+            List<String> subscribers = new ArrayList<>();
             // Insert a customer
             Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId); // To be deleted
@@ -222,16 +222,16 @@ public class UsageStoreTest extends BaseTestCase {
                     SubscriptionHelper.insertTestSubscription(StoreHelper.getRandomId(), customerId);
             this.subscriptionIds.add(subscriptionId); // To be deleted
             Integer quotaId = StoreHelper.getRandomId();
-            QuotaHelper.insertTestQuotaWithSubject(quotaId, subscriptionId,"http://orcid.org/0000-0002-2192-403X");
+            QuotaHelper.insertTestQuotaWithSubscriber(quotaId, subscriptionId,"http://orcid.org/0000-0002-2192-403X");
             this.quotaIds.add(quotaId); // To be deleted
 
             Quota quota = quotaStore.getQuota(quotaId);
-            String instanceId = quota.getSubject() + StoreHelper.getRandomId().toString();
+            String instanceId = quota.getSubscriber() + StoreHelper.getRandomId().toString();
             Integer usageId = UsageHelper.insertTestUsageInstanceId(StoreHelper.getRandomId(), quotaId, instanceId);
             this.usageIds.add(usageId);
 
-            subjects.add(quota.getSubject());
-            Usage usage = usageStore.findUsageByInstanceIdQuotaIdAndSubjects(instanceId, quotaId, subjects);
+            subscribers.add(quota.getSubscriber());
+            Usage usage = usageStore.findUsageByInstanceIdQuotaIdAndSubscribers(instanceId, quotaId, subscribers);
 
             assertEquals(quota.getId(), usage.getQuotaId());
             assertEquals(usage.getInstanceId(), instanceId);
@@ -242,8 +242,8 @@ public class UsageStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test list quotas by subjects")
-    public void testFindUsagesByQuotaSubjects() {
+    @DisplayName("Test list quotas by subscribers")
+    public void testFindUsagesByQuotaSubscriber() {
 
         Customer customer;
         Integer subscriptionId;
@@ -274,19 +274,19 @@ public class UsageStoreTest extends BaseTestCase {
             this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
 
 
-            // Insert two quotas with separate subjects, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubject(
+            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
                     StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubject(
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
                     StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
-            List<String> subjects = new ArrayList<String>();
-            subjects.add(customer.getSubject());
-            subjects.add(groupSubject);
+            List<String> subscribers = new ArrayList<String>();
+            subscribers.add(customer.getSubject());
+            subscribers.add(groupSubject);
 
             Integer usageOneId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaOneId, StoreHelper.getRandomId().toString(), 1.0,"active", "urn:node:testNode");
             this.usageIds.add(usageOneId);
@@ -294,7 +294,7 @@ public class UsageStoreTest extends BaseTestCase {
             Integer usageTwoId = UsageHelper.insertTestUsage(StoreHelper.getRandomId(), quotaTwoId, StoreHelper.getRandomId().toString(), 1.0,"active", "urn:node:testNode");
             this.usageIds.add(usageTwoId);
 
-            assertEquals(2, usageStore.findUsagesByQuotaSubjects(subjects).size());
+            assertEquals(2, usageStore.findUsagesByQuotaSubscribers(subscribers).size());
 
         } catch (SQLException e) {
             fail(e);
@@ -345,7 +345,7 @@ public class UsageStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test find usages by quota type and subjects")
+    @DisplayName("Test find usages by quota type and subscribers")
     public void testFindUsagesByQuotaTypeAndSubjects() {
 
         Customer customer;
@@ -376,15 +376,15 @@ public class UsageStoreTest extends BaseTestCase {
             this.usageIds.add(usageTwoId);
 
             List<String> subscribers = new ArrayList<>();
-            subscribers.add(quotas.get(portalQuotaId).getSubject());
+            subscribers.add(quotas.get(portalQuotaId).getSubscriber());
 
             String quotaTypePortal = quotas.get(portalQuotaId).getQuotaType();
             String quotaTypeStorage =  quotas.get(storageQuotaId).getQuotaType();
 
-            List<Usage> usages = usageStore.findUsagesByQuotaTypeAndSubjects(quotaTypePortal, subscribers);
+            List<Usage> usages = usageStore.findUsagesByQuotaTypeAndSubscribers(quotaTypePortal, subscribers);
             assertEquals(usages.size(), 1);
 
-            usages = usageStore.findUsagesByQuotaTypeAndSubjects(quotaTypeStorage, subscribers);
+            usages = usageStore.findUsagesByQuotaTypeAndSubscribers(quotaTypeStorage, subscribers);
             assertEquals(usages.size(), 1);
 
         } catch (SQLException e) {
@@ -561,7 +561,7 @@ public class UsageStoreTest extends BaseTestCase {
             this.quotaIds.add(quotaId);
             Quota quota = QuotaHelper.getQuotaById(quotaId);
 
-            String instanceId = quota.getSubject() + quotaId.toString();
+            String instanceId = quota.getSubscriber() + quotaId.toString();
             // Add a usage for the quota
             usageId = StoreHelper.getRandomId();
             UsageHelper.insertTestUsageInstanceId(usageId, quotaId, instanceId);
