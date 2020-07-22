@@ -113,68 +113,65 @@ public class QuotasResource extends BaseResource {
         /* Admin user is making this request as another subject */
         Boolean isProxy = isAdmin && requestor != null;
 
-        try {
-            // Admin users can make request as another user
-            if(requestor != null) {
-                if(isAdmin) {
-                    // Create a new Customer based on the 'requestor' parameter - don't update the subject directly in the
-                    // context, which is cached.
+        // Admin users can make request as another user
+        if (requestor != null) {
+            if (isAdmin) {
+                // Create a new Customer based on the 'requestor' parameter - don't update the subject directly in the
+                // context, which is cached.
+                try {
                     caller = this.dataoneAuthHelper.createCustomerFromSubject(requestor);
-                } else {
-                    throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+                } catch (io.dropwizard.auth.AuthenticationException dae) {
+                    String message = "The requested quotas couldn't be listed: " + dae.getMessage();
+                    throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
                 }
+            } else {
+                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
             }
-            /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
-            if ( subscribers != null && subscribers.size() > 0 ) {
-                // Filter out non-associated subscribers if not an admin
-                if ( ! isAdmin || isProxy) {
-                    associatedSubscribers =
+        }
+
+        /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
+        if (subscribers != null && subscribers.size() > 0) {
+            // Filter out non-associated subscribers if not an admin
+            if (!isAdmin || isProxy) {
+                associatedSubscribers =
                         this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
-                    if (associatedSubscribers.size() > 0) {
-                        approvedSubscribers.addAll(associatedSubscribers);
-                    }
+                if (associatedSubscribers.size() > 0) {
+                    approvedSubscribers.addAll(associatedSubscribers);
+                }
 
-                    /* Caller is not admin and is not associated with any of the specified subscribers. */
-                    if (approvedSubscribers.size() == 0) {
-                        throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
-                    }
-                } else {
-                    /* Admin caller, so can see quotas for all requested subscribers */
-                    approvedSubscribers.addAll(subscribers);
+                /* Caller is not admin and is not associated with any of the specified subscribers. */
+                if (approvedSubscribers.size() == 0) {
+                    throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                 }
             } else {
-                /** No subscribers specified and caller is not admin, so caller is allowed to
-                 view any quota for subscribers with which they are associated.
-                 If the caller is admin, then don't set subject, as they will be able to view all subscribers.
-                 */
-                if (! isAdmin || isProxy) {
-                    if (approvedSubscribers.size() == 0) {
-                        approvedSubscribers = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
-                    }
+                /* Admin caller, so can see quotas for all requested subscribers */
+                approvedSubscribers.addAll(subscribers);
+            }
+        } else {
+            /** No subscribers specified and caller is not admin, so caller is allowed to
+             view any quota for subscribers with which they are associated.
+             If the caller is admin, then don't set subject, as they will be able to view all subscribers.
+             */
+            if (!isAdmin || isProxy) {
+                if (approvedSubscribers.size() == 0) {
+                    approvedSubscribers = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                 }
             }
+        }
 
-            if (quotaType != null) {
-                if(approvedSubscribers.size() > 0) {
-                    quotas = quotaStore.findQuotasByNameAndSubscribers(quotaType, approvedSubscribers);
-                } else {
-                    /* Not sure if this is useful or practical, i.e. admin user can view all quotas for a quota type. */
-                    quotas = quotaStore.findQuotasByType(quotaType);
-                }
+        if (quotaType != null) {
+            if (approvedSubscribers.size() > 0) {
+                quotas = quotaStore.findQuotasByNameAndSubscribers(quotaType, approvedSubscribers);
             } else {
-                if(approvedSubscribers.size() > 0) {
-                    quotas = quotaStore.findQuotasBySubscribers(approvedSubscribers);
-                } else {
-                    quotas = quotaStore.listQuotas();
-                }
+                /* Not sure if this is useful or practical, i.e. admin user can view all quotas for a quota type. */
+                quotas = quotaStore.findQuotasByType(quotaType);
             }
-        } catch (Exception e) {
-            String message = "The requested quotas couldn't be listed: " + e.getMessage();
-            if(e.getCause() != null) {
-                message += " " + e.getCause();
+        } else {
+            if (approvedSubscribers.size() > 0) {
+                quotas = quotaStore.findQuotasBySubscribers(approvedSubscribers);
+            } else {
+                quotas = quotaStore.listQuotas();
             }
-
-            throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         if (quotas == null || quotas.size() == 0) {
