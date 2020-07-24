@@ -184,8 +184,8 @@ public class SubscriptionHelper {
             Quota quota = feature.getQuota();
             if ( quota != null ) {
                 quota.setSubscriptionId(subscriptionId);
-                quota.setSubject(customer.getSubject());
-                quota.setUsage(0.0);
+                quota.setSubscriber(customer.getSubject());
+                quota.setTotalUsage(0.0);
             }
             quotas.add(quota);
         }
@@ -262,10 +262,10 @@ public class SubscriptionHelper {
                     "q.quotaType AS q_quotaType, " +
                     "q.softLimit AS q_softLimit, " +
                     "q.hardLimit AS q_hardLimit, " +
-                    "q.usage AS q_usage, " +
+                    "q.totalUsage AS q_totalUsage, " +
                     "q.unit AS q_unit, " +
                     "q.subscriptionId AS q_subscriptionId, " +
-                    "q.subject AS q_subject " +
+                    "q.subscriber AS q_subscriber " +
                 "FROM subscriptions s " +
                 "LEFT JOIN quotas q ON s.id = q.subscriptionId " +
                 "LEFT JOIN products p ON s.productId = p.id " +

@@ -104,13 +104,13 @@ public class ProductHelper {
         String quota_type = "portal";
         @javax.validation.constraints.NotNull Double quota_soft_limit = 3.0;
         @javax.validation.constraints.NotNull Double quota_hard_limit = 3.0;
-        Double quota_usage = null;
+        @javax.validation.constraints.NotNull Double quota_total_usage = 0.0;
         String quota_unit = "portal";
         Integer quota_customer_id = null;
-        String quota_subject = null;
+        String quota_subscriber = null;
 
         Quota quota = new Quota(quota_id, quota_object, quota_type,
-            quota_soft_limit, quota_hard_limit, quota_usage, quota_unit, quota_customer_id, quota_subject);
+            quota_soft_limit, quota_hard_limit, quota_total_usage, quota_unit, quota_customer_id, quota_subscriber);
 
         feature1.setName("custom_portal");
         feature1.setLabel("Branded Portals");

@@ -84,10 +84,10 @@ public interface SubscriptionStore {
             "q.quotaType AS q_quotaType, " +
             "q.softLimit AS q_softLimit, " +
             "q.hardLimit AS q_hardLimit, " +
-            "q.usage AS q_usage, " +
+            "q.totalUsage AS q_totalUsage, " +
             "q.unit AS q_unit, " +
             "q.subscriptionId AS q_subscriptionId, " +
-            "q.subject AS q_subject " +
+            "q.subscriber AS q_subscriber " +
         "FROM subscriptions s " +
         "LEFT JOIN quotas q ON s.id = q.subscriptionId " +
         "LEFT JOIN customers c ON s.customerId = c.id " +
@@ -197,9 +197,9 @@ public interface SubscriptionStore {
      * @param quota the quota to insert
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, quotaType, softLimit, hardLimit, usage, unit, subscriptionId, subject) " +
+        "(object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber) " +
         "VALUES " +
-        "(:object, :quotaType, :softLimit, :hardLimit, :usage, :unit, :subscriptionId, :subject) " +
+        "(:object, :quotaType, :softLimit, :hardLimit, :totalUsage, :unit, :subscriptionId, :subscriber) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insertQuota(@BindBean Quota quota);

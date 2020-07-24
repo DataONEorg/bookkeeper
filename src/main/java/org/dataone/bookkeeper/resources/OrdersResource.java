@@ -399,8 +399,8 @@ public class OrdersResource extends BaseResource {
                             Feature feature = mapper.readValue(featureNode.toString(), Feature.class);
                             quota = feature.getQuota();
                             if ( quota != null ) {
-                                quota.setUsage(0.0);
-                                quota.setSubject(customer.getSubject());
+                                quota.setTotalUsage(0.0);
+                                quota.setSubscriber(customer.getSubject());
                                 if ( ! quotas.containsKey(quota.getQuotaType()) ) {
                                     // Add new quotas
                                     quotas.put(quota.getQuotaType(), quota);
