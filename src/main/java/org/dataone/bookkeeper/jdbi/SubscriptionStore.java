@@ -104,7 +104,7 @@ public interface SubscriptionStore {
     String SELECT_ONE = SELECT_CLAUSE + "WHERE s.id = :id";
 
     /** The query used to find a subscription by subject identifier */
-    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE c.subject = :subject";
+    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE c.subject = :subscriber";
 
     /** The query used to find a subscription by subject identifier */
     String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE c.subject IN (<subscribers>)";
