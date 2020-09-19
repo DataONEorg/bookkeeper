@@ -240,22 +240,27 @@ public class QuotasResource extends BaseResource {
         try {
             quota = quotaStore.getQuota(quotaId);
 
-            if ( this.dataoneAuthHelper.isAdmin(caller.getSubject()) ) {
-                return quota;
-            }
-            // Ensure the caller is asssociated with the quota subscriber
-            String quotaSubscriber = quota.getSubscriber();
-            Set<String> subscribers  = new HashSet<String>();
-            subscribers.add(quotaSubscriber);
-            Set<String> associatedSubscribers =
-                this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers );
-            if ( associatedSubscribers.size() > 0 ) {
-                return quota;
+            if (quota == null) {
+                throw new WebApplicationException("The quota was not found.", Response.Status.NOT_FOUND);
             } else {
-                throw new WebApplicationException(caller.getSubject() + " is not associated with this quota.", Response.Status.FORBIDDEN);
+                if (this.dataoneAuthHelper.isAdmin(caller.getSubject())) {
+                    return quota;
+                } else {
+                    // Ensure the caller is asssociated with the quota subscriber
+                    String quotaSubscriber = quota.getSubscriber();
+                    Set<String> subscribers = new HashSet<String>();
+                    subscribers.add(quotaSubscriber);
+                    Set<String> associatedSubscribers =
+                            this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
+                    if (associatedSubscribers.size() > 0) {
+                        return quota;
+                    } else {
+                        throw new WebApplicationException(caller.getSubject() + " is not associated with this quota.", Response.Status.FORBIDDEN);
+                    }
+                }
             }
         } catch (Exception e) {
-            String message = "Couldn't get the quota: " + e.getMessage();
+            String message = "The requested quota could not be retrieved: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
         }
     }
