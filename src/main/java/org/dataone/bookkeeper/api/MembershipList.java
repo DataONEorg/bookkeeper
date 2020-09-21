@@ -27,42 +27,42 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 /**
- * A list of subscriptions used as a representation response
+ * A list of memberships used as a representation response
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SubscriptionList extends BaseList {
+public class MembershipList extends BaseList {
 
-    private List<Subscription> subscriptions;
+    private List<Membership> memberships;
 
     /**
-     * Construct an empty subscription list
+     * Construct an empty membership list
      */
-    public SubscriptionList() {
+    public MembershipList() {
 
     }
 
     /**
-     * Construct a subscription list
+     * Construct a membership list
      */
-    public SubscriptionList(List<Subscription> subscriptions) {
-        this.subscriptions = subscriptions;
+    public MembershipList(List<Membership> memberships) {
+        this.memberships = memberships;
     }
 
     /**
-     * Get the subscriptions list
-     * @return subscriptions  the subscriptions list
+     * Get the memberships list
+     * @return memberships  the memberships list
      */
     @JsonProperty
-    public List<Subscription> getSubscriptions() {
-        return subscriptions;
+    public List<Membership> getMemberships() {
+        return memberships;
     }
 
     /**
-     * Set the subscriptions list
-     * @param subscriptions  the subscriptions list
+     * Set the memberships list
+     * @param memberships  the memberships list
      */
     @JsonProperty
-    public void setSubscriptions(List<Subscription> subscriptions) {
-        this.subscriptions = subscriptions;
+    public void setMemberships(List<Membership> memberships) {
+        this.memberships = memberships;
     }
 }

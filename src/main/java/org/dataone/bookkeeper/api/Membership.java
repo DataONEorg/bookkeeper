@@ -41,20 +41,20 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties({"metadataJSON"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Subscription {
+public class Membership {
 
-    /* The subscription unique identifier */
+    /* The membership unique identifier */
     @NotNull
     @NotEmpty
     private Integer id;
 
-    /* The subscription object type */
+    /* The membership object type */
     @NotNull
     @NotEmpty
-    @Pattern(regexp = "subscription")
+    @Pattern(regexp = "membership")
     private String object;
 
-    /* The subscription billing cycle anchor timestamp (seconds since the epoch)
+    /* The membership billing cycle anchor timestamp (seconds since the epoch)
      * Determines the date of the first full invoice.
      * For products with month or year intervals,
      * the day of the month for subsequent invoices
@@ -63,65 +63,65 @@ public class Subscription {
     private Integer billingCycleAnchor;
     */
 
-    /* The subscription cancellation timestamp (seconds since the epoch) */
+    /* The membership cancellation timestamp (seconds since the epoch) */
     private Integer canceledAt;
 
-    /* The subscription collection method */
+    /* The membership collection method */
     @NotNull
     @NotEmpty
     @Pattern(regexp = "charge_automatically|send_invoice")
     private String collectionMethod;
 
-    /* The subscription creation timestamp (seconds since the epoch) */
+    /* The membership creation timestamp (seconds since the epoch) */
     private Integer created;
 
-    /* The subscription current period end timestamp (seconds since the epoch)
+    /* The membership current period end timestamp (seconds since the epoch)
     private Integer currentPeriodEnd;
     */
 
-    /* The subscription current period start timestamp (seconds since the epoch)
+    /* The membership current period start timestamp (seconds since the epoch)
     private Integer currentPeriodStart;
     */
 
-    /* The subscription customer identifier */
+    /* The membership customer identifier */
     @NotNull
     @NotEmpty
     private Integer customerId;
 
-    /* The subscription days until due
+    /* The membership days until due
     private Integer daysUntilDue;
     */
 
-    /* The subscription discount
+    /* The membership discount
     private ObjectNode discount;
     */
 
-    /* The subscription end timestamp (seconds since the epoch)
+    /* The membership end timestamp (seconds since the epoch)
     private Integer endedAt;
     */
 
-    /* The subscription latest invoice identifier
+    /* The membership latest invoice identifier
     private Integer latestInvoice;
     */
 
-    /* The subscription metadata object */
+    /* The membership metadata object */
     private ObjectNode metadata;
 
-    /* The subscribed product */
+    /* The purchased product */
     @NotNull
     @NotEmpty
     private Product product;
 
-    /* The subscription quantity of the product */
+    /* The membership quantity of the product */
     @NotNull
     @NotEmpty
     @Min(1)
     private Integer quantity;
 
-    /* The subscription start date timestamp (seconds since the epoch) */
+    /* The membership start date timestamp (seconds since the epoch) */
     private Integer startDate;
 
-    /* The subscription status
+    /* The membership status
     * incomplete - attempt to collect automatically fails
     * incomplete_expired - first invoice is not paid in X days
     * trialing - in trial period
@@ -135,24 +135,24 @@ public class Subscription {
     @Pattern(regexp = "incomplete|incomplete_expired|trialing|active|past_due|canceled|unpaid")
     private String status;
 
-    /* The subscription trial end timestamp (seconds since the epoch) */
+    /* The membership trial end timestamp (seconds since the epoch) */
     private Integer trialEnd;
 
-    /* The subscription trial start timestamp (seconds since the epoch) */
+    /* The membership trial start timestamp (seconds since the epoch) */
     private Integer trialStart;
 
     /* The quotas associated with the product, if any */
     private List<Quota> quotas;
 
     /**
-     * Construct an empty subscription.
+     * Construct an empty membership.
      */
-    public Subscription() {
+    public Membership() {
         super();
     }
 
     /**
-     * Construct a subscription
+     * Construct a membership
      * @param object
      * @param canceledAt
      * @param collectionMethod
@@ -167,9 +167,9 @@ public class Subscription {
      * @param trialStart
      * @param quotas
      */
-    public Subscription(
+    public Membership(
         Integer id,
-        @NotNull @NotEmpty @Pattern(regexp = "subscription") String object,
+        @NotNull @NotEmpty @Pattern(regexp = "membership") String object,
         Integer canceledAt,
         @NotNull @NotEmpty @Pattern(regexp = "charge_automatically|send_invoice") String collectionMethod,
         Integer created,
@@ -199,7 +199,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription identifier
+     * Get the membership identifier
      * @return
      */
     @JsonProperty
@@ -208,7 +208,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription identifier
+     * Get the membership identifier
      * @param id
      */
     @JsonProperty
@@ -217,7 +217,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription object type
+     * Get the membership object type
      * @return
      */
     @JsonProperty
@@ -226,7 +226,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription object type
+     * Set the membership object type
      * @param object
      */
     @JsonProperty
@@ -235,7 +235,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription canceled timestamp (seconds since the epoch)
+     * Get the membership canceled timestamp (seconds since the epoch)
      * @return
      */
     @JsonProperty
@@ -244,7 +244,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription canceled timestamp (seconds since the epoch)
+     * Set the membership canceled timestamp (seconds since the epoch)
      * @param canceledAt
      */
     @JsonProperty
@@ -263,7 +263,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription collection method
+     * Get the membership collection method
      * @return
      */
     @JsonProperty
@@ -272,7 +272,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription collection method
+     * Set the membership collection method
      * @param collectionMethod
      */
     @JsonProperty
@@ -281,7 +281,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription creation timestamp (seconds since the epoch)
+     * Get the membership creation timestamp (seconds since the epoch)
      * @return
      */
     @JsonProperty
@@ -290,7 +290,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription creation timestamp (seconds since the epoch)
+     * Set the membership creation timestamp (seconds since the epoch)
      * @param created
      */
     @JsonProperty
@@ -309,7 +309,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription customer identifier
+     * Get the membership customer identifier
      * @return
      */
     @JsonProperty
@@ -318,7 +318,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription customer identifier
+     * Set the membership customer identifier
      * @param customerId
      */
     @JsonProperty
@@ -327,7 +327,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription metadata
+     * Get the membership metadata
      * @return
      */
     @JsonProperty
@@ -336,7 +336,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription metadata
+     * Set the membership metadata
      * @param metadata
      */
     @JsonProperty
@@ -359,7 +359,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription product
+     * Get the membership product
      * @return
      */
     @JsonProperty
@@ -368,7 +368,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription product
+     * Set the membership product
      * @param product
      */
     @JsonProperty
@@ -389,7 +389,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription quantity of the product
+     * Get the membership quantity of the product
      * @return
      */
     @JsonProperty
@@ -398,7 +398,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription quantity of the product
+     * Set the membership quantity of the product
      * @param quantity
      */
     @JsonProperty
@@ -407,7 +407,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription start timestamp (seconds since the epoch)
+     * Get the membership start timestamp (seconds since the epoch)
      * @return
      */
     @JsonProperty
@@ -416,7 +416,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription start timestamp (seconds since the epoch)
+     * Set the membership start timestamp (seconds since the epoch)
      * @param startDate
      */
     @JsonProperty
@@ -435,7 +435,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription status
+     * Get the membership status
      * @return
      */
     @JsonProperty
@@ -444,7 +444,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription status
+     * Set the membership status
      * @param status
      */
     @JsonProperty
@@ -453,7 +453,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription trial end timestamp (seconds since the epoch)
+     * Get the membership trial end timestamp (seconds since the epoch)
      * @return
      */
     @JsonProperty
@@ -462,7 +462,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription trial end timestamp (seconds since the epoch)
+     * Set the membership trial end timestamp (seconds since the epoch)
      * @param trialEnd
      */
     @JsonProperty
@@ -481,7 +481,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription trial start timestamp (seconds since the epoch)
+     * Get the membership trial start timestamp (seconds since the epoch)
      * @return
      */
     @JsonProperty
@@ -490,7 +490,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription trial start timestamp (seconds since the epoch)
+     * Set the membership trial start timestamp (seconds since the epoch)
      * @param trialStart
      */
     @JsonProperty
@@ -509,7 +509,7 @@ public class Subscription {
     }
 
     /**
-     * Get the subscription quotas
+     * Get the membership quotas
      * @return
      */
     @JsonProperty
@@ -518,7 +518,7 @@ public class Subscription {
     }
 
     /**
-     * Set the subscription quotas
+     * Set the membership quotas
      * @param quotas
      */
     @JsonProperty
@@ -535,7 +535,7 @@ public class Subscription {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Subscription that = (Subscription) o;
+        Membership that = (Membership) o;
         return Objects.equals(getId(), that.getId()) &&
             Objects.equals(getObject(), that.getObject()) &&
             Objects.equals(getCanceledAt(), that.getCanceledAt()) &&
