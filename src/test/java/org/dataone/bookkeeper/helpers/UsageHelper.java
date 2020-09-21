@@ -30,7 +30,7 @@ import java.sql.SQLException;
 public class UsageHelper {
 
     /**
-     * Insert a test quota with a given id and subscription id
+     * Insert a test quota with a given id and membership id
      * @param usageId
      * @param quotaId
      * @param instanceId

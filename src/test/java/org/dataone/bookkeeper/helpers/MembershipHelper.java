@@ -27,9 +27,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.*;
-import org.dataone.bookkeeper.jdbi.SubscriptionQuotasReducer;
+import org.dataone.bookkeeper.jdbi.MembershipQuotasReducer;
 import org.dataone.bookkeeper.jdbi.mappers.ProductMapper;
-import org.dataone.bookkeeper.jdbi.mappers.SubscriptionMapper;
+import org.dataone.bookkeeper.jdbi.mappers.MembershipMapper;
 import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 
 import java.sql.SQLException;
@@ -37,19 +37,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A delegate class with helper methods for manipulating the subscriptions table for testing
+ * A delegate class with helper methods for manipulating the memberships table for testing
  */
-public class SubscriptionHelper {
+public class MembershipHelper {
 
     /**
-     * Insert a test subscription with the given subscription id
-     * @param subscriptionId
-     * @return
+     * Insert a test membership with the given membership id
+     * @param membershipId the membership id
+     * @param customerId the customer id
+     * @return membershipId the membership id
      */
-    public static Integer insertTestSubscription(Integer subscriptionId, Integer customerId) throws SQLException {
+    public static Integer insertTestMembership(Integer membershipId, Integer customerId) throws SQLException {
 
         BaseTestCase.dbi.useHandle(handle -> {
-            handle.execute("INSERT INTO subscriptions (" +
+            handle.execute("INSERT INTO memberships (" +
                 "id, " +
                 "object, " +
                 "canceledAt, " +
@@ -78,8 +79,8 @@ public class SubscriptionHelper {
                     "to_timestamp(?), " +
                     "to_timestamp(?) " +
                 ")",
-                subscriptionId,
-                "subscription",
+                membershipId,
+                "membership",
                 null,
                 "send_invoice",
                 1570486366,
@@ -94,24 +95,24 @@ public class SubscriptionHelper {
             );
         });
 
-        return subscriptionId;
+        return membershipId;
     }
 
     /**
-     * Insert a test subscription given the Subscription instance
-     * @param subscription
-     * @return subscription the inserted subscription
+     * Insert a test membership given the Membership instance
+     * @param membership
+     * @return membership the inserted membership
      * @throws SQLException
      * @throws JsonProcessingException
      */
-    public static Subscription insertTestSubscription(Subscription subscription)
+    public static Membership insertTestMembership(Membership membership)
         throws SQLException, JsonProcessingException {
 
-        if (subscription.getProduct() != null &&
-            subscription.getProduct().getId() != null &&
-            subscription.getCustomerId() != null) {
+        if (membership.getProduct() != null &&
+            membership.getProduct().getId() != null &&
+            membership.getCustomerId() != null) {
             BaseTestCase.dbi.useHandle(handle ->
-                handle.execute("INSERT INTO subscriptions (" +
+                handle.execute("INSERT INTO memberships (" +
                     "id, " +
                     "object, " +
                     "canceledAt, " +
@@ -140,39 +141,39 @@ public class SubscriptionHelper {
                         "to_timestamp(?), " +
                         "to_timestamp(?) " +
                     ")",
-                    subscription.getId(),
-                    subscription.getObject(),
-                    subscription.getCanceledAt(),
-                    subscription.getCollectionMethod(),
-                    subscription.getCreated(),
-                    subscription.getCustomerId(),
-                    Jackson.newObjectMapper().writeValueAsString(subscription.getMetadata()),
-                    subscription.getProduct().getId(),
-                    subscription.getQuantity(),
-                    subscription.getStartDate(),
-                    subscription.getStatus(),
-                    subscription.getTrialEnd(),
-                    subscription.getTrialStart()
+                    membership.getId(),
+                    membership.getObject(),
+                    membership.getCanceledAt(),
+                    membership.getCollectionMethod(),
+                    membership.getCreated(),
+                    membership.getCustomerId(),
+                    Jackson.newObjectMapper().writeValueAsString(membership.getMetadata()),
+                    membership.getProduct().getId(),
+                    membership.getQuantity(),
+                    membership.getStartDate(),
+                    membership.getStatus(),
+                    membership.getTrialEnd(),
+                    membership.getTrialStart()
                 )
             );
         } else {
-            throw new SQLException("Subscriptions must include a valid product and customer id.");
+            throw new SQLException("Memberships must include a valid product and customer id.");
         }
-        return subscription;
+        return membership;
     }
 
     /**
-     * Create a subscription for unit tests
-     * @param subscriptionId the subscription id
-     * @return subscription the Subscription instance
+     * Create a membership for unit tests
+     * @param membershipId the membership id
+     * @return membership the Membership instance
      */
-    public static Subscription createSubscription(Integer subscriptionId, Integer customerId, Integer productId) {
+    public static Membership createMembership(Integer membershipId, Integer customerId, Integer productId) {
 
-        // Create and insert a product to subscribe to
+        // Create and insert a product to include in the membership
         Product product = ProductHelper.createTestProduct(productId);
         ProductHelper.insertTestProduct(product);
 
-        // Create a customer to subscribe
+        // Create a customer for the membership
         Customer customer = CustomerHelper.createCustomer(customerId);
 
         // Extract quotas from the product features
@@ -183,17 +184,17 @@ public class SubscriptionHelper {
             feature = Jackson.newObjectMapper().convertValue(jsonNode, Feature.class);
             Quota quota = feature.getQuota();
             if ( quota != null ) {
-                quota.setSubscriptionId(subscriptionId);
-                quota.setSubscriber(customer.getSubject());
+                quota.setMembershipId(membershipId);
+                quota.setOwner(customer.getSubject());
                 quota.setTotalUsage(0.0);
             }
             quotas.add(quota);
         }
 
-        // Build the subscription
-        Subscription subscription = new Subscription(
-            subscriptionId,
-            "subscription",
+        // Build the membership
+        Membership membership = new Membership(
+            membershipId,
+            "membership",
             null,
             "send_invoice",
             new Integer(1570486366),
@@ -207,29 +208,29 @@ public class SubscriptionHelper {
             new Integer(1570486366),
             quotas
         );
-        return subscription;
+        return membership;
     }
 
     /**
-     * Remove a test subscription given its id
-     * @param subscriptionId
+     * Remove a test membership given its id
+     * @param membershipId
      */
-    public static void removeTestSubscription(Integer subscriptionId) throws SQLException {
+    public static void removeTestMembership(Integer membershipId) throws SQLException {
 
         BaseTestCase.dbi.useHandle(handle ->
-            handle.execute("DELETE FROM subscriptions WHERE id = ?", subscriptionId)
+            handle.execute("DELETE FROM memberships WHERE id = ?", membershipId)
         );
     }
 
     /**
-     * Get a subscription given its id
-     * @param subscriptionId
-     * @return subscription the subscription of the given id
+     * Get a membership given its id
+     * @param membershipId
+     * @return membership the membership of the given id
      */
-    public static Subscription getSubscriptionById(Integer subscriptionId) {
-        Subscription subscription = null;
+    public static Membership getMembershipById(Integer membershipId) {
+        Membership membership = null;
         Product product = null;
-        subscription = BaseTestCase.dbi.withHandle(handle ->
+        membership = BaseTestCase.dbi.withHandle(handle ->
             handle.createQuery(
                 "SELECT " +
                     "s.id AS s_id, " +
@@ -264,34 +265,34 @@ public class SubscriptionHelper {
                     "q.hardLimit AS q_hardLimit, " +
                     "q.totalUsage AS q_totalUsage, " +
                     "q.unit AS q_unit, " +
-                    "q.subscriptionId AS q_subscriptionId, " +
-                    "q.subscriber AS q_subscriber " +
-                "FROM subscriptions s " +
-                "LEFT JOIN quotas q ON s.id = q.subscriptionId " +
+                    "q.membershipId AS q_membershipId, " +
+                    "q.owner AS q_owner " +
+                "FROM memberships s " +
+                "LEFT JOIN quotas q ON s.id = q.membershipId " +
                 "LEFT JOIN products p ON s.productId = p.id " +
                 "WHERE s.id = :id")
-                .bind("id", subscriptionId)
-                .registerRowMapper(new SubscriptionMapper())
+                .bind("id", membershipId)
+                .registerRowMapper(new MembershipMapper())
                 .registerRowMapper(new ProductMapper())
                 .registerRowMapper(BeanMapper.factory(Quota.class, "q"))
-                .reduceRows(new SubscriptionQuotasReducer())
+                .reduceRows(new MembershipQuotasReducer())
                 .findFirst()
                 .get()
-                //.map(new SubscriptionMapper()).
+                //.map(new MembershipMapper()).
                 //.one()
         );
-        return subscription;
+        return membership;
     }
 
     /**
-     * Return the number of subscriptions given the customer id
-     * @param subscriptionId the id of the customer
-     * @return count the number of subscriptions
+     * Return the number of memberships given the customer id
+     * @param membershipId the id of the customer
+     * @return count the number of memberships
      */
-    public static Integer getSubscriptionCountById(Integer subscriptionId) {
+    public static Integer getMembershipCountById(Integer membershipId) {
         Integer count = BaseTestCase.dbi.withHandle(handle ->
-            handle.createQuery("SELECT count(*) FROM subscriptions WHERE id = :id")
-                .bind("id", subscriptionId)
+            handle.createQuery("SELECT count(*) FROM memberships WHERE id = :id")
+                .bind("id", membershipId)
                 .mapTo(Integer.class)
                 .one()
         );
