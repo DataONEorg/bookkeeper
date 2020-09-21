@@ -56,8 +56,8 @@ public class QuotaStoreTest extends BaseTestCase {
     // A list of product ids used in testing
     private List<Integer> productIds = new ArrayList<Integer>();
 
-    // A list of subscription ids used in testing
-    private List<Integer> subscriptionIds = new ArrayList<Integer>();
+    // A list of membership ids used in testing
+    private List<Integer> membershipIds = new ArrayList<Integer>();
 
     /**
      * Set up the Store for testing
@@ -99,10 +99,10 @@ public class QuotaStoreTest extends BaseTestCase {
             }
         }
 
-        // Remove test subscription entries
-        for (Integer subscriptionId : this.subscriptionIds) {
+        // Remove test membership entries
+        for (Integer membershipId : this.membershipIds) {
             try {
-                SubscriptionHelper.removeTestSubscription(subscriptionId);
+                MembershipHelper.removeTestMembership(membershipId);
             } catch (SQLException e) {
                 fail();
             }
@@ -131,25 +131,25 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test getting quotas by subscription ID
+     * Test getting quotas by membership ID
      */
     @Test
-    @DisplayName("Test getting quotas by subscription ID")
-    public void testGetQuotasBySubscriptionId() {
+    @DisplayName("Test getting quotas by membership ID")
+    public void testGetQuotasByMemberId() {
 
         try {
             // Insert a customer
             Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId); // To be deleted
 
-            // Insert a subscription
-            Integer subscriptionId =
-                SubscriptionHelper.insertTestSubscription(StoreHelper.getRandomId(), customerId);
-            this.subscriptionIds.add(subscriptionId); // To be deleted
-            Integer quotaId = QuotaHelper.insertTestQuotaWithSubscription(StoreHelper.getRandomId(), subscriptionId);
+            // Insert a membership
+            Integer membershipId =
+                MembershipHelper.insertTestMembership(StoreHelper.getRandomId(), customerId);
+            this.membershipIds.add(membershipId); // To be deleted
+            Integer quotaId = QuotaHelper.insertTestQuotaWithMembership(StoreHelper.getRandomId(), membershipId);
             this.quotaIds.add(quotaId); // To be deleted
-            assertEquals(1, quotaStore.findQuotasBySubscriptionId(subscriptionId).size());
-            assertThat(quotaStore.findQuotasBySubscriptionId(0).isEmpty());
+            assertEquals(1, quotaStore.findQuotasByMembershipId(membershipId).size());
+            assertThat(quotaStore.findQuotasByMembershipId(0).isEmpty());
 
         } catch (SQLException e) {
             fail();
@@ -157,22 +157,22 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test getting quotas by subscriber
+     * Test getting quotas by owner
      */
     @Test
     @DisplayName("Test getting quotas by subscriber")
-    public void testGetQuotasBySubscriber() {
+    public void testGetQuotasByOwner() {
         try {
             // Insert a customer
             Customer customer = CustomerHelper.insertTestCustomer(
                 CustomerHelper.createCustomer(StoreHelper.getRandomId()));
             this.customerIds.add(customer.getId()); // To be deleted
 
-            // Insert a subscription
-            Integer subscriptionId =
-                SubscriptionHelper.insertTestSubscription(
+            // Insert a membership
+            Integer membershipId =
+                MembershipHelper.insertTestMembership(
                     StoreHelper.getRandomId(), customer.getId());
-            this.subscriptionIds.add(subscriptionId); // To be deleted
+            this.membershipIds.add(membershipId); // To be deleted
 
 
             // Insert another customer
@@ -180,20 +180,20 @@ public class QuotaStoreTest extends BaseTestCase {
                     CustomerHelper.createCustomer(StoreHelper.getRandomId()));
             this.customerIds.add(customerTwo.getId()); // To be deleted
 
-            // Insert a subscription
-            Integer subscriptionIdTwo =
-                    SubscriptionHelper.insertTestSubscription(
+            // Insert a membership
+            Integer membershipIdTwo =
+                    MembershipHelper.insertTestMembership(
                             StoreHelper.getRandomId(), customerTwo.getId());
-            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+            this.membershipIds.add(membershipIdTwo); // To be deleted
 
-            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
-                StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
+            // Insert two quotas with separate owners, maintaining unique membershipId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithOwner(
+                StoreHelper.getRandomId(), membershipId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
-                StoreHelper.getRandomId(), subscriptionIdTwo, customer.getSubject());
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithOwner(
+                StoreHelper.getRandomId(), membershipIdTwo, customer.getSubject());
             this.quotaIds.add(quotaTwoId);
-            assertEquals(2, quotaStore.findQuotasBySubscriber(customer.getSubject()).size());
+            assertEquals(2, quotaStore.findQuotasByOwner(customer.getSubject()).size());
         } catch (SQLException e) {
             fail(e);
         } catch (JsonProcessingException e) {
@@ -202,50 +202,50 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test list quotas by subscribers")
-    public void testListQuotasBySubscribers() {
+    @DisplayName("Test list quotas by owners")
+    public void testListQuotasByOwners() {
 
         Customer customer;
-        Integer subscriptionId;
+        Integer membershipId;
         Customer customerTwo;
-        Integer subscriptionIdTwo;
+        Integer membershipIdTwo;
         try {
             // Insert a customer
             customer = CustomerHelper.insertTestCustomer(
                 CustomerHelper.createCustomer(StoreHelper.getRandomId()));
             this.customerIds.add(customer.getId()); // To be deleted
 
-            // Insert a subscription
-            subscriptionId =
-                SubscriptionHelper.insertTestSubscription(
+            // Insert a membership
+            membershipId =
+                MembershipHelper.insertTestMembership(
                     StoreHelper.getRandomId(), customer.getId());
-            this.subscriptionIds.add(subscriptionId); // To be deleted
+            this.membershipIds.add(membershipId); // To be deleted
 
             // Insert a customer
             customerTwo = CustomerHelper.insertTestCustomer(
                     CustomerHelper.createCustomer(StoreHelper.getRandomId()));
             this.customerIds.add(customerTwo.getId()); // To be deleted
 
-            // Insert a subscription
-            subscriptionIdTwo =
-                    SubscriptionHelper.insertTestSubscription(
+            // Insert a membership
+            membershipIdTwo =
+                    MembershipHelper.insertTestMembership(
                             StoreHelper.getRandomId(), customerTwo.getId());
-            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+            this.membershipIds.add(membershipIdTwo); // To be deleted
 
-            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
-                StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
+            // Insert two quotas with separate owners, maintaining unique membershipId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithOwner(
+                StoreHelper.getRandomId(), membershipId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
-                StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithOwner(
+                StoreHelper.getRandomId(), membershipIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
-            List<String> subscribers = new ArrayList<String>();
-            subscribers.add(customer.getSubject());
-            subscribers.add(groupSubject);
-            assertEquals(2, quotaStore.findQuotasBySubscribers(subscribers).size());
+            List<String> owners = new ArrayList<String>();
+            owners.add(customer.getSubject());
+            owners.add(groupSubject);
+            assertEquals(2, quotaStore.findQuotasByOwners(owners).size());
 
         } catch (SQLException e) {
             fail(e);
@@ -255,24 +255,24 @@ public class QuotaStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test list quotas by type and subscribers")
-    public void testListQuotasByNameAndSubscribers() {
+    @DisplayName("Test list quotas by type and owners")
+    public void testListQuotasByNameAndOwners() {
 
         Customer customer;
-        Integer subscriptionId;
+        Integer membershipId;
         Customer customerTwo;
-        Integer subscriptionIdTwo;
+        Integer membershipIdTwo;
         try {
             // Insert a customer
             customer = CustomerHelper.insertTestCustomer(
                     CustomerHelper.createCustomer(StoreHelper.getRandomId()));
             this.customerIds.add(customer.getId()); // To be deleted
 
-            // Insert a subscription
-            subscriptionId =
-                    SubscriptionHelper.insertTestSubscription(
+            // Insert a membership
+            membershipId =
+                    MembershipHelper.insertTestMembership(
                             StoreHelper.getRandomId(), customer.getId());
-            this.subscriptionIds.add(subscriptionId); // To be deleted
+            this.membershipIds.add(membershipId); // To be deleted
 
 
             // Insert a customer
@@ -280,26 +280,26 @@ public class QuotaStoreTest extends BaseTestCase {
                     CustomerHelper.createCustomer(StoreHelper.getRandomId()));
             this.customerIds.add(customerTwo.getId()); // To be deleted
 
-            // Insert a subscription
-            subscriptionIdTwo =
-                    SubscriptionHelper.insertTestSubscription(
+            // Insert a membership
+            membershipIdTwo =
+                    MembershipHelper.insertTestMembership(
                             StoreHelper.getRandomId(), customerTwo.getId());
-            this.subscriptionIds.add(subscriptionIdTwo); // To be deleted
+            this.membershipIds.add(membershipIdTwo); // To be deleted
 
-            // Insert two quotas with separate subscribers, maintaining unique subscriptionId + quotaType
-            Integer quotaOneId = QuotaHelper.insertTestQuotaWithSubscriber(
-                    StoreHelper.getRandomId(), subscriptionId, customer.getSubject());
+            // Insert two quotas with separate owners, maintaining unique subscriptionId + quotaType
+            Integer quotaOneId = QuotaHelper.insertTestQuotaWithOwner(
+                    StoreHelper.getRandomId(), membershipId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
 
             String groupSubject = "CN=some-group,DC=dataone,DC=org";
-            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithSubscriber(
-                    StoreHelper.getRandomId(), subscriptionIdTwo, groupSubject);
+            Integer quotaTwoId = QuotaHelper.insertTestQuotaWithOwner(
+                    StoreHelper.getRandomId(), membershipIdTwo, groupSubject);
             this.quotaIds.add(quotaTwoId);
 
-            List<String> subscribers = new ArrayList<String>();
-            subscribers.add(customer.getSubject());
-            subscribers.add(groupSubject);
-            assertEquals(2, quotaStore.findQuotasByNameAndSubscribers("portal", subscribers).size());
+            List<String> owners = new ArrayList<String>();
+            owners.add(customer.getSubject());
+            owners.add(groupSubject);
+            assertEquals(2, quotaStore.findQuotasByNameAndOwners("portal", owners).size());
 
         } catch (SQLException e) {
             fail(e);
@@ -343,14 +343,14 @@ public class QuotaStoreTest extends BaseTestCase {
             Integer productId = StoreHelper.getRandomId();
             this.productIds.add(productId);
 
-            Integer subscriptionId = SubscriptionHelper.insertTestSubscription(
-                SubscriptionHelper.createSubscription(
+            Integer membershipId = MembershipHelper.insertTestMembership(
+                MembershipHelper.createMembership(
                     StoreHelper.getRandomId(), customerId, productId
                 )
             ).getId();
-            this.subscriptionIds.add(subscriptionId); // Clean up
-            Integer quotaId = QuotaHelper.insertTestQuotaWithSubscription(
-                StoreHelper.getRandomId(), subscriptionId
+            this.membershipIds.add(membershipId); // Clean up
+            Integer quotaId = QuotaHelper.insertTestQuotaWithMembership(
+                StoreHelper.getRandomId(), membershipId
             );
             this.quotaIds.add(quotaId); // Clean up
 
@@ -361,7 +361,7 @@ public class QuotaStoreTest extends BaseTestCase {
             quota.setSoftLimit(10.0);
             quota.setHardLimit(15.0);
             quota.setUnit("portal");
-            quota.setSubscriptionId(subscriptionId);
+            quota.setMembershipId(membershipId);
             quotaStore.update(quota);
             assertEquals(QuotaHelper.getQuotaById(quotaId).getQuotaType(), quota.getQuotaType());
             assertThat(QuotaHelper.getQuotaById(quotaId).getSoftLimit() == 10.0);
@@ -390,16 +390,16 @@ public class QuotaStoreTest extends BaseTestCase {
             // Mint a productId
             productId = StoreHelper.getRandomId();
 
-            // Add a test subscription
-            Integer subscriptionId = SubscriptionHelper.insertTestSubscription(
-                SubscriptionHelper.createSubscription(
+            // Add a test membership
+            Integer membershipId = MembershipHelper.insertTestMembership(
+                MembershipHelper.createMembership(
                     StoreHelper.getRandomId(), customerId, productId)
             ).getId();
-            this.subscriptionIds.add(subscriptionId); // Clean up
+            this.membershipIds.add(membershipId); // Clean up
 
             // Add a test quota
-            quotaId = QuotaHelper.insertTestQuotaWithSubscription(
-                StoreHelper.getRandomId(), subscriptionId
+            quotaId = QuotaHelper.insertTestQuotaWithMembership(
+                StoreHelper.getRandomId(), membershipId
             );
             this.quotaIds.add(quotaId);
 

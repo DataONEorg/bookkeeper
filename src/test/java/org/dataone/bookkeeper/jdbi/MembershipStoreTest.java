@@ -24,7 +24,7 @@ package org.dataone.bookkeeper.jdbi;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Customer;
-import org.dataone.bookkeeper.api.Subscription;
+import org.dataone.bookkeeper.api.Membership;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.helpers.*;
 import org.junit.jupiter.api.AfterEach;
@@ -44,13 +44,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test the product data access object
  */
-public class SubscriptionStoreTest extends BaseTestCase {
+public class MembershipStoreTest extends BaseTestCase {
 
-    /* The SubscriptionStore to test */
-    private SubscriptionStore subscriptionStore;
+    /* The MembershipStore to test */
+    private MembershipStore membershipStore;
 
-    // A list of subscription ids used in testing
-    private List<Integer> subscriptionIds = new ArrayList<Integer>();
+    // A list of membership ids used in testing
+    private List<Integer> membershipIds = new ArrayList<Integer>();
 
     // A list of customer ids used in testing
     private List<Integer> customerIds = new ArrayList<Integer>();
@@ -63,7 +63,7 @@ public class SubscriptionStoreTest extends BaseTestCase {
      */
     @BeforeEach
     public void init() {
-        subscriptionStore = dbi.onDemand(SubscriptionStore.class);
+        membershipStore = dbi.onDemand(MembershipStore.class);
     }
 
     /**
@@ -71,10 +71,10 @@ public class SubscriptionStoreTest extends BaseTestCase {
      */
     @AfterEach
     public void tearDown() {
-        // Remove test subscription entries
-        for (Integer subscriptionId : this.subscriptionIds) {
+        // Remove test membership entries
+        for (Integer membershipId : this.membershipIds) {
             try {
-                SubscriptionHelper.removeTestSubscription(subscriptionId);
+                MembershipHelper.removeTestMembership(membershipId);
             } catch (SQLException e) {
                 fail(e);
             }
@@ -100,32 +100,32 @@ public class SubscriptionStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test listing subscriptions with empty quotas
+     * Test listing memberships with empty quotas
      */
     @Test
-    @DisplayName("Test listing the subscriptions")
-    public void testListSubscriptions() {
-        Integer subscriptionId = null;
+    @DisplayName("Test listing the memberships")
+    public void testListMemberships() {
+        Integer membershipId;
         try {
             // Insert a new customer
             Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
             this.customerIds.add(customerId);
-            // Insert a new subscription
-            subscriptionId = SubscriptionHelper.insertTestSubscription(StoreHelper.getRandomId(), customerId);
-            this.subscriptionIds.add(subscriptionId);
+            // Insert a new membership
+            membershipId = MembershipHelper.insertTestMembership(StoreHelper.getRandomId(), customerId);
+            this.membershipIds.add(membershipId);
 
         } catch (SQLException e) {
             fail(e);
         }
-        assertTrue(subscriptionStore.listSubscriptions().size() >= 1);
+        assertTrue(membershipStore.listMemberships().size() >= 1);
     }
 
     /**
-     * Test listing a subscription with storage and portal quotas
+     * Test listing a membership with storage and portal quotas
      */
     @Test
-    @DisplayName("Test listing subscriptions with associated storage and portal quotas")
-    public void testListSubscriptionsWithStorageAndPortalQuotas() {
+    @DisplayName("Test listing memberships with associated storage and portal quotas")
+    public void testListMembershipsWithStorageAndPortalQuotas() {
 
         try {
             // Insert a new customer
@@ -136,27 +136,27 @@ public class SubscriptionStoreTest extends BaseTestCase {
             Integer productId = StoreHelper.getRandomId();
             this.productIds.add(productId);
 
-            // Insert a subscription
-            Subscription subscription = SubscriptionHelper.insertTestSubscription(
-                SubscriptionHelper.createSubscription(StoreHelper.getRandomId(), customerId, productId)
+            // Insert a membership
+            Membership membership = MembershipHelper.insertTestMembership(
+                MembershipHelper.createMembership(StoreHelper.getRandomId(), customerId, productId)
             );
-            this.subscriptionIds.add(subscription.getId());
+            this.membershipIds.add(membership.getId());
 
-            // Insert a storage and portal quotas for the subscription
+            // Insert a storage and portal quotas for the membership
             final Map<Integer, Quota> quotas =
-                QuotaHelper.insertTestStorageAndPortalQuotasWithSubscription(
-                    StoreHelper.getRandomId(), StoreHelper.getRandomId(), subscription.getId());
-            List<Subscription> subscriptions = subscriptionStore.listSubscriptions();
+                QuotaHelper.insertTestStorageAndPortalQuotasWithMembership(
+                    StoreHelper.getRandomId(), StoreHelper.getRandomId(), membership.getId());
+            List<Membership> memberships = membershipStore.listMemberships();
 
-            // Ensure we get a subscription returned
-            assertTrue(subscriptions.size() >= 1);
-                subscriptions.forEach(subscription2 -> {
+            // Ensure we get a membership returned
+            assertTrue(memberships.size() >= 1);
+                memberships.forEach(membership2 -> {
 
                     // Ensure the quota count matches
-                    assertTrue(subscription2.getQuotas().size() == quotas.size());
+                    assertTrue(membership2.getQuotas().size() == quotas.size());
 
                     // Ensure the quota content matches
-                    subscription2.getQuotas()
+                    membership2.getQuotas()
                         .forEach(quota -> {
                             Quota expectedQuota = quotas.get(quota.getId());
                             assertTrue(quota.getId().equals(expectedQuota.getId()));
@@ -165,7 +165,7 @@ public class SubscriptionStoreTest extends BaseTestCase {
                             assertTrue(quota.getSoftLimit().equals(expectedQuota.getSoftLimit()));
                             assertTrue(quota.getHardLimit().equals(expectedQuota.getHardLimit()));
                             assertTrue(quota.getUnit().equals(expectedQuota.getUnit()));
-                            assertTrue(quota.getSubscriptionId().equals(expectedQuota.getSubscriptionId()));
+                            assertTrue(quota.getMembershipId().equals(expectedQuota.getMembershipId()));
                         });
                 });
         } catch (SQLException e) {
@@ -176,34 +176,34 @@ public class SubscriptionStoreTest extends BaseTestCase {
     }
 
     /**
-     * Test getting a subscription by id
+     * Test getting a membership by id
      * @throws SQLException
      */
     @Test
-    @DisplayName("Test getting a subscription by id")
-    public void testGetSubscriptionById() throws SQLException {
+    @DisplayName("Test getting a membership by id")
+    public void testGetMembershipById() throws SQLException {
         // Insert a new customer
         Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
         this.customerIds.add(customerId);
 
-        // Insert a subscription
-        final Integer subscriptionId = SubscriptionHelper.insertTestSubscription(
+        // Insert a membership
+        final Integer membershipId = MembershipHelper.insertTestMembership(
             StoreHelper.getRandomId(), customerId
         );
-        this.subscriptionIds.add(subscriptionId);
+        this.membershipIds.add(membershipId);
 
-        // Get the subscription
-        Subscription subscription = subscriptionStore.getSubscription(subscriptionId);
-        assertTrue(subscription.getId().equals(subscriptionId));
+        // Get the membership
+        Membership membership = membershipStore.getMembership(membershipId);
+        assertTrue(membership.getId().equals(membershipId));
     }
 
     /**
-     * Test getting a subscription by subject identifier
+     * Test getting a membership by subject identifier
      * @throws SQLException
      */
     @Test
-    @DisplayName("Test finding a subscription by subject identifier")
-    public void testFindSubscriptionBySubject() throws SQLException, JsonProcessingException {
+    @DisplayName("Test finding a membership by subject identifier")
+    public void testFindMembershipBySubject() throws SQLException, JsonProcessingException {
         // Insert a new customer
         Customer customer = CustomerHelper.insertTestCustomer(
             CustomerHelper.createCustomer(StoreHelper.getRandomId())
@@ -214,25 +214,25 @@ public class SubscriptionStoreTest extends BaseTestCase {
         Integer productId = StoreHelper.getRandomId();
         this.productIds.add(productId);
 
-        // Insert a subscription
-        final Subscription expectedSubscription = SubscriptionHelper.insertTestSubscription(
-            SubscriptionHelper.createSubscription(
+        // Insert a membership
+        final Membership expectedMembership = MembershipHelper.insertTestMembership(
+            MembershipHelper.createMembership(
                 StoreHelper.getRandomId(), customer.getId(), productId)
         );
-        this.subscriptionIds.add(expectedSubscription.getId());
+        this.membershipIds.add(expectedMembership.getId());
 
         // Get the subscription
-        Subscription subscription = subscriptionStore.findSubscriptionBySubscriber(customer.getSubject());
-        assertTrue(subscription.getId().equals(expectedSubscription.getId()));
+        Membership membership = membershipStore.findMembershipByOwner(customer.getSubject());
+        assertTrue(membership.getId().equals(expectedMembership.getId()));
     }
 
     /**
-     * Test inserting a subscription
+     * Test inserting a membership
      */
     @Test
-    @DisplayName("Test inserting a subscription")
+    @DisplayName("Test inserting a membership")
     public void testInsert() {
-        Customer customer = null;
+        Customer customer;
         try {
             // Insert a new customer
             customer = CustomerHelper.insertTestCustomer(
@@ -244,20 +244,20 @@ public class SubscriptionStoreTest extends BaseTestCase {
             Integer productId = StoreHelper.getRandomId();
             this.productIds.add(productId);
 
-            // Create a Subscription to insert
-            Subscription expectedSubscription = SubscriptionHelper.createSubscription(
+            // Create a Membership to insert
+            Membership expectedMembership = MembershipHelper.createMembership(
                 StoreHelper.getRandomId(), customer.getId(), productId
             );
-            this.subscriptionIds.add(expectedSubscription.getId());
+            this.membershipIds.add(expectedMembership.getId());
 
-            // Insert the subscription
-            Integer id = subscriptionStore.insert(expectedSubscription);
-            expectedSubscription.setId(id);
+            // Insert the membership
+            Integer id = membershipStore.insert(expectedMembership);
+            expectedMembership.setId(id);
 
-            // Then get the subscription to ensure it was inserted
-            Subscription subscription = SubscriptionHelper.getSubscriptionById(expectedSubscription.getId());
+            // Then get the membership to ensure it was inserted
+            Membership membership = MembershipHelper.getMembershipById(expectedMembership.getId());
 
-            assertTrue(subscription.getId().equals(expectedSubscription.getId()));
+            assertTrue(membership.getId().equals(expectedMembership.getId()));
         } catch (SQLException e) {
             fail(e);
         } catch (JsonProcessingException jpe) {
@@ -266,7 +266,7 @@ public class SubscriptionStoreTest extends BaseTestCase {
     }
 
     @Test
-    @DisplayName("Test updating a subscription")
+    @DisplayName("Test updating a membership")
     public void testUpdate() throws SQLException, JsonProcessingException {
         // Insert a new customer
         Customer customer = CustomerHelper.insertTestCustomer(
@@ -278,31 +278,31 @@ public class SubscriptionStoreTest extends BaseTestCase {
         Integer productId = StoreHelper.getRandomId();
         this.productIds.add(productId);
 
-        // Insert a new test subscription
-        Subscription expectedSubscription = SubscriptionHelper.insertTestSubscription(
-            SubscriptionHelper.createSubscription(
+        // Insert a new test membership
+        Membership expectedMembership = MembershipHelper.insertTestMembership(
+            MembershipHelper.createMembership(
                 StoreHelper.getRandomId(), customer.getId(), productId));
-        this.subscriptionIds.add(expectedSubscription.getId());
+        this.membershipIds.add(expectedMembership.getId());
 
-        // Now update the subscription locally
-        expectedSubscription.setCanceledAt(new Integer(1570912264));
-        expectedSubscription.setStatus("canceled");
+        // Now update the membership locally
+        expectedMembership.setCanceledAt(new Integer(1570912264));
+        expectedMembership.setStatus("canceled");
 
 
         // Push the changes to the database
-        subscriptionStore.update(expectedSubscription);
+        membershipStore.update(expectedMembership);
 
-        // Get the updated subscription from the database
-        Subscription updatedSubscription = SubscriptionHelper.getSubscriptionById(expectedSubscription.getId());
+        // Get the updated membership from the database
+        Membership updatedMembership = MembershipHelper.getMembershipById(expectedMembership.getId());
 
-        assertTrue(updatedSubscription.getCanceledAt().intValue() ==
-            expectedSubscription.getCanceledAt().intValue());
-        assertTrue(updatedSubscription.getStatus().equals(expectedSubscription.getStatus()));
+        assertTrue(updatedMembership.getCanceledAt().intValue() ==
+            expectedMembership.getCanceledAt().intValue());
+        assertTrue(updatedMembership.getStatus().equals(expectedMembership.getStatus()));
 
     }
 
     @Test
-    @DisplayName("Test deleting a subscription")
+    @DisplayName("Test deleting a membership")
     public void testDelete() throws SQLException, JsonProcessingException {
         // Insert a new customer
         Integer customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
@@ -312,16 +312,16 @@ public class SubscriptionStoreTest extends BaseTestCase {
         Integer productId = StoreHelper.getRandomId();
         this.productIds.add(productId);
 
-        // Insert a new subscription
-        Subscription subscription = SubscriptionHelper.insertTestSubscription(
-            SubscriptionHelper.createSubscription(
+        // Insert a new membership
+        Membership membership = MembershipHelper.insertTestMembership(
+            MembershipHelper.createMembership(
                 StoreHelper.getRandomId(), customerId, productId));
-        this.subscriptionIds.add(subscription.getId());
+        this.membershipIds.add(membership.getId());
 
         // Delete it
-        subscriptionStore.delete(subscription.getId());
+        membershipStore.delete(membership.getId());
 
         // It's gone, right?
-        assertThat(SubscriptionHelper.getSubscriptionCountById(subscription.getId()) == 0);
+        assertThat(MembershipHelper.getMembershipCountById(membership.getId()) == 0);
     }
 }

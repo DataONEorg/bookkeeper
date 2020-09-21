@@ -186,7 +186,7 @@ public class ProductStoreTest extends BaseTestCase {
         String productDescription = "My updated product description";
         String productStatementDescriptor = "My updated statement descriptor";
         String productType = "service";
-        String productUnitLabel = "subscription";
+        String productUnitLabel = "membership";
         String productURL = "https://dataone.org/products/membership/organization";
 
         // Build the new product

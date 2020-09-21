@@ -78,7 +78,7 @@ public class EmbeddedPostgresqlTest extends BaseTestCase {
             assertFalse(resultSet.next());
 
             // Check for
-            resultSet = statement.executeQuery("SELECT count(*) FROM quotas WHERE subscriptionId IS NULL;");
+            resultSet = statement.executeQuery("SELECT count(*) FROM quotas WHERE membershipId IS NULL;");
             assertTrue(resultSet.next());
             assertEquals(3, resultSet.getInt(1));
 
