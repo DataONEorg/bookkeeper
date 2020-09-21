@@ -24,9 +24,8 @@ package org.dataone.bookkeeper.jdbi.mappers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
+import org.dataone.bookkeeper.api.Membership;
 import org.dataone.bookkeeper.api.Product;
-import org.dataone.bookkeeper.api.Quota;
-import org.dataone.bookkeeper.api.Subscription;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.postgresql.util.PSQLException;
@@ -34,19 +33,17 @@ import org.postgresql.util.PSQLException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
- * Maps subscription rows to Subscription instances. We use this since the JSON
+ * Maps membership rows to Subscription instances. We use this since the JSON
  * fields within a Subscription instance are not handled by BeanMapper
  */
-public class SubscriptionMapper implements RowMapper<Subscription> {
+public class MembershipMapper implements RowMapper<Membership> {
 
     /**
      * Construct a SubscriptionMapper
      */
-    public SubscriptionMapper() {
+    public MembershipMapper() {
     }
 
     /**
@@ -59,8 +56,8 @@ public class SubscriptionMapper implements RowMapper<Subscription> {
      * @throws SQLException if anything goes wrong go ahead and let this percolate; Jdbi will handle it
      */
     @Override
-    public Subscription map(ResultSet rs, StatementContext ctx) throws SQLException {
-        Subscription subscription = null;
+    public Membership map(ResultSet rs, StatementContext ctx) throws SQLException {
+        Membership membership = null;
         Product product = null;
         ObjectMapper mapper = Jackson.newObjectMapper();
 
@@ -94,8 +91,8 @@ public class SubscriptionMapper implements RowMapper<Subscription> {
         }
 
         try {
-            // Create a subscription instance from the resultset
-            subscription = new Subscription(
+            // Create a membership instance from the resultset
+            membership = new Membership(
                 new Integer(rs.getInt("s_id")),
                 rs.getString("s_object"),
                 new Integer(rs.getInt("s_canceledAt")),
@@ -115,6 +112,6 @@ public class SubscriptionMapper implements RowMapper<Subscription> {
         } catch (IOException e) {
             throw new SQLException(e);
         }
-        return subscription;
+        return membership;
     }
 }
