@@ -2,7 +2,7 @@ DataONE Bookkeeper Service
 ==========================
 
 Bookkeeper is a RESTful service that is part of the DataONE_ Coordinating Node
-infrastructure. It is used to manage products, customers, orders, subscriptions,
+infrastructure. It is used to manage products, customers, orders, memberships,
 and quotas related to the DataONE Plus and Hosted Repositories services.  See the ``docs`` for more details.
 
 .. _DataONE: https://dataone.org/
@@ -92,7 +92,7 @@ This returns a ``ProductList``:
                 "name": "Individual",
                 "statementDescriptor": "DataONE Subscription Plan - Individual",
                 "type": "service",
-                "unitLabel": "subscription",
+                "unitLabel": "membership",
                 "url": "https://products.dataone.org/plus",
                 "metadata": {
                     "features": [
@@ -273,7 +273,7 @@ This returns:
         }
     }
     
-#. View your quotas.  Once the order is paid, a subscription to the product(s) is created, and your quotas are set.
+#. View your quotas.  Once the order is paid, a membership to the product(s) is created, and your quotas are set.
 
 .. code:: bash
 
@@ -295,7 +295,7 @@ This returns a ``QuotaList``:
             "hardLimit": 1.0,
             "usage": 0.0,
             "unit": "portal",
-            "subscriptionId": 1,
+            "membershipId": 1,
             "subject": "http://orcid.org/0000-0002-8121-2341"
         }]
     }
@@ -303,7 +303,7 @@ This returns a ``QuotaList``:
 Creating an object
 ------------------
 
-Once quotas are established through an order and a subsequent subscription, the quotas are
+Once quotas are established through an order and a subsequent membership, the quotas are
 enforced by participating repositories.  The following diagram shows the sequence of calls made
 when a portal document is uploaded to a repository.
 
