@@ -81,7 +81,7 @@ public class CustomersResource extends BaseResource {
     }
 
     /**
-     * List customers, optionally by subscriptionId or subject.
+     * List customers, optionally by membershipId or subject.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
