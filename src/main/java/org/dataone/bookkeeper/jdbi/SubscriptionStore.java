@@ -29,6 +29,7 @@ import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
+import org.jdbi.v3.sqlobject.customizer.BindList;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -103,7 +104,10 @@ public interface SubscriptionStore {
     String SELECT_ONE = SELECT_CLAUSE + "WHERE s.id = :id";
 
     /** The query used to find a subscription by subject identifier */
-    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE c.subject = :subject";
+    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE c.subject = :subscriber";
+
+    /** The query used to find a subscription by subject identifier */
+    String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE c.subject IN (<subscribers>)";
 
     /**
      * List all subscriptions with their quotas
@@ -129,8 +133,8 @@ public interface SubscriptionStore {
     Subscription getSubscription(@Bind("id") Integer id);
 
     /**
-     * Get a subscription by subject identifier
-     * @param subject the customer subject identifier
+     * Get a subscription by subscriber identifier
+     * @param subscriber the customer subscriber identifier
      * @return subscription the subscription with the given subject identifier
      */
     @SqlQuery(SELECT_SUBJECT)
@@ -138,7 +142,19 @@ public interface SubscriptionStore {
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = SubscriptionMapper.class)
     @UseRowReducer(SubscriptionQuotasReducer.class)
-    Subscription findSubscriptionBySubject(@Bind("subject") String subject);
+    Subscription findSubscriptionBySubscriber(@Bind("subscriber") String subscriber);
+
+    /**
+     * Get subscriptions by subscriber identifiers
+     * @param subscribers the subscribe identifiers
+     * @return subscriptions the subscriptions matching the requested identifiers
+     */
+    @SqlQuery(SELECT_SUBJECTS)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Product.class, prefix = "p")
+    @RegisterRowMapper(value = SubscriptionMapper.class)
+    @UseRowReducer(SubscriptionQuotasReducer.class)
+    List<Subscription> findSubscriptionsBySubscribers(@BindList("subscribers") List<String> subscribers);
 
     /**
      * Insert a subscription

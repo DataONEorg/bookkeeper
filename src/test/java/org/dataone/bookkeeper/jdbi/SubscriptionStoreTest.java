@@ -222,7 +222,7 @@ public class SubscriptionStoreTest extends BaseTestCase {
         this.subscriptionIds.add(expectedSubscription.getId());
 
         // Get the subscription
-        Subscription subscription = subscriptionStore.findSubscriptionBySubject(customer.getSubject());
+        Subscription subscription = subscriptionStore.findSubscriptionBySubscriber(customer.getSubject());
         assertTrue(subscription.getId().equals(expectedSubscription.getId()));
     }
 
