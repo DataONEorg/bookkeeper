@@ -49,15 +49,15 @@ public interface QuotaStore {
             "q.hardLimit, " +
             "q.totalUsage, " +
             "q.unit, " +
-            "q.subscriptionId, " +
-            "q.subscriber " +
+            "q.membershipId, " +
+            "q.owner " +
             "FROM quotas q ";
 
     /** The full ordered query */
     String SELECT_ALL = SELECT_CLAUSE;
 
     /** The query used to find unassigned quotas (i.e. generic product quotas */
-    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE subscriptionId IS NULL ";
+    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE membershipId IS NULL ";
 
     /** The query used to find an individual quota */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
@@ -65,17 +65,17 @@ public interface QuotaStore {
     /** The query used to find quotas by name */
     String SELECT_BY_TYPE = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType";
 
-    /** The query used to find a quota by subscription identifier */
-    String SELECT_SUBSCRIPTION = SELECT_CLAUSE + "WHERE q.subscriptionId = :subscriptionId ";
+    /** The query used to find a quota by membership identifier */
+    String SELECT_MEMBERSHIP = SELECT_CLAUSE + "WHERE q.membershipId = :membershipId ";
 
-    /** The query used to find a quota by subscriber identifier */
-    String SELECT_SUBSCRIBER = SELECT_CLAUSE + "WHERE q.subscriber = :subscriber ";
+    /** The query used to find a quota by owner identifier */
+    String SELECT_OWNER = SELECT_CLAUSE + "WHERE q.owner = :owner ";
 
-    /** The query used to find quotas by multiple subscriber identifiers */
-    String SELECT_SUBSCRIBERS = SELECT_CLAUSE + "WHERE q.subscriber IN (<subscribers>) ";
+    /** The query used to find quotas by multiple owner identifiers */
+    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE q.owner IN (<owners>) ";
 
-    /** The query used to find quotas by type and multiple subscriber identifiers */
-    String SELECT_BY_NAME_AND_SUBSCRIBERS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.subscriber IN (<subscribers>) ";
+    /** The query used to find quotas by type and multiple owner identifiers */
+    String SELECT_BY_NAME_AND_OWNERS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.owner IN (<owners>) ";
 
     /**
      * List all quotas
@@ -85,7 +85,7 @@ public interface QuotaStore {
     List<Quota> listQuotas();
 
     /**
-     * List all unassigned quotas (no subscriptionId)
+     * List all unassigned quotas (no membershipId)
      * @return quotas the list of unassigned quotas
      */
     @SqlQuery(SELECT_UNASSIGNED)
@@ -100,14 +100,14 @@ public interface QuotaStore {
     Quota getQuota(@Bind("id") Integer id);
 
     /**
-     * Find quotas by subscription identifier.
+     * Find quotas by membership identifier.
      *
-     * Pass a null subscriptionId to list all product-associated quotas (i.e. not bound to a subscription).
-     * @param subscriptionId the subscription identifier
-     * @return quotas the quotas for the subscriptionId
+     * Pass a null membershipId to list all product-associated quotas (i.e. not bound to a membership).
+     * @param membershipId the membership identifier
+     * @return quotas the quotas for the membershipId
      */
-    @SqlQuery(SELECT_SUBSCRIPTION)
-    List<Quota> findQuotasBySubscriptionId(@Bind("subscriptionId") Integer subscriptionId);
+    @SqlQuery(SELECT_MEMBERSHIP)
+    List<Quota> findQuotasByMembershipId(@Bind("membershipId") Integer membershipId);
 
     /**
      * Find quotas by quota type
@@ -119,32 +119,32 @@ public interface QuotaStore {
     List<Quota> findQuotasByType(@Bind("quotaType") String quotaType);
 
     /**
-     * Find quotas by subscriber identifier
+     * Find quotas by owner identifier
      *
-     * @param subscriber the subscriber identifier (such as an ORCID identifier)
-     * @return quotas the list of quotas for the subscriber
+     * @param owner the owner identifier (such as an ORCID identifier)
+     * @return quotas the list of quotas for the owner
      */
-    @SqlQuery(SELECT_SUBSCRIBER)
-    List<Quota> findQuotasBySubscriber(@Bind("subscriber") String subscriber);
+    @SqlQuery(SELECT_OWNER)
+    List<Quota> findQuotasByOwner(@Bind("owner") String owner);
 
     /**
-     * Find quotas by a list of subscriber identifiers
+     * Find quotas by a list of owner identifiers
      *
-     * @param subscribers the subscriber identifiers list (such as an ORCID identifier)
-     * @return quotas the list of quotas for the subscriber
+     * @param owners the owner identifiers list (such as an ORCID identifier)
+     * @return quotas the list of quotas for the owner
      */
-    @SqlQuery(SELECT_SUBSCRIBERS)
-    List<Quota> findQuotasBySubscribers(@BindList("subscribers") List<String> subscribers);
+    @SqlQuery(SELECT_OWNERS)
+    List<Quota> findQuotasByOwners(@BindList("owners") List<String> owners);
 
     /**
-     * Find quotas by a quota type and subscribers
+     * Find quotas by a quota type and owners
      *
      * @param quotaType the quota name (e.g. "portal", "storage")
-     * @param subscribers the subscriber identifiers (such as an ORCID identifier)
-     * @return quotas the list of quotas for the subscribers and names
+     * @param owners the owner identifiers (such as an ORCID identifier)
+     * @return quotas the list of quotas for the owners and names
      */
-    @SqlQuery(SELECT_BY_NAME_AND_SUBSCRIBERS)
-    List<Quota> findQuotasByNameAndSubscribers(@Bind("quotaType") String quotaType, @BindList("subscribers") List<String> subscribers);
+    @SqlQuery(SELECT_BY_NAME_AND_OWNERS)
+    List<Quota> findQuotasByNameAndOwners(@Bind("quotaType") String quotaType, @BindList("owners") List<String> owners);
 
     /**
      * Insert a quota with a given Quota instance
@@ -156,16 +156,16 @@ public interface QuotaStore {
         "softLimit, " +
         "hardLimit, " +
         "unit, " +
-        "subscriptionId, " +
-        "subscriber) " +
+        "membershipId, " +
+        "owner) " +
         "VALUES " +
         "(:object, " +
         ":quotaType, " +
         ":softLimit, " +
         ":hardLimit, " +
         ":unit, " +
-        ":subscriptionId, " +
-        ":subscriber) " +
+        ":membershipId, " +
+        ":owner) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Quota quota);
@@ -180,8 +180,8 @@ public interface QuotaStore {
        "softLimit = :softLimit, " +
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
-       "subscriptionId = :subscriptionId, " +
-       "subscriber = :subscriber " +
+       "subscriptionId = :membershipId, " +
+       "subscriber = :owner " +
        "WHERE id = :id ")
    @GetGeneratedKeys
    Quota update(@BindBean Quota quota);

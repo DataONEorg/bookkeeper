@@ -23,8 +23,8 @@ package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.api.Product;
 import org.dataone.bookkeeper.api.Quota;
-import org.dataone.bookkeeper.api.Subscription;
-import org.dataone.bookkeeper.jdbi.mappers.SubscriptionMapper;
+import org.dataone.bookkeeper.api.Membership;
+import org.dataone.bookkeeper.jdbi.mappers.MembershipMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -43,12 +43,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * The subscription data access interfaces used to create, read, update, and delete
- * subscriptions from the database
+ * The membership data access interfaces used to create, read, update, and delete
+ * memberships from the database
  */
-public interface SubscriptionStore {
+public interface MembershipStore {
 
-    /** The query used to find all subscriptions with their quotas */
+    /** The query used to find all memberships with their quotas */
     String SELECT_CLAUSE =
         "SELECT " +
             "s.id AS s_id, " +
@@ -87,10 +87,10 @@ public interface SubscriptionStore {
             "q.hardLimit AS q_hardLimit, " +
             "q.totalUsage AS q_totalUsage, " +
             "q.unit AS q_unit, " +
-            "q.subscriptionId AS q_subscriptionId, " +
-            "q.subscriber AS q_subscriber " +
-        "FROM subscriptions s " +
-        "LEFT JOIN quotas q ON s.id = q.subscriptionId " +
+            "q.membershipId AS q_membershipId, " +
+            "q.owner AS q_owner " +
+        "FROM memberships s " +
+        "LEFT JOIN quotas q ON s.id = q.membershipId " +
         "LEFT JOIN customers c ON s.customerId = c.id " +
         "LEFT JOIN products p ON s.productId = p.id ";
 
@@ -100,68 +100,68 @@ public interface SubscriptionStore {
     /** The full ordered query */
     String SELECT_ALL = SELECT_CLAUSE + ORDER_CLAUSE;
 
-    /** The query used to find an individual subscription */
+    /** The query used to find an individual membership */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE s.id = :id";
 
-    /** The query used to find a subscription by subject identifier */
-    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE c.subject = :subscriber";
+    /** The query used to find a membership by owner identifier */
+    String SELECT_OWNER = SELECT_CLAUSE + "WHERE c.owner = :owner";
 
-    /** The query used to find a subscription by subject identifier */
-    String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE c.subject IN (<subscribers>)";
+    /** The query used to find a membership by owner identifier */
+    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE c.owner IN (<owners>)";
 
     /**
-     * List all subscriptions with their quotas
-     * @return subscriptions The list of subscriptions
+     * List all memberships with their quotas
+     * @return memberships The list of memberships
      */
     @SqlQuery(SELECT_ALL)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
-    @RegisterRowMapper(value = SubscriptionMapper.class)
-    @UseRowReducer(SubscriptionQuotasReducer.class)
-    List<Subscription> listSubscriptions();
+    @RegisterRowMapper(value = MembershipMapper.class)
+    @UseRowReducer(MembershipQuotasReducer.class)
+    List<Membership> listMemberships();
 
     /**
-     * Get an individual subscription
-     * @param id the subscription identifier
-     * @return subscription The individual subscription
+     * Get an individual membership
+     * @param id the membership identifier
+     * @return membership The individual membership
      */
     @SqlQuery(SELECT_ONE)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
-    @RegisterRowMapper(value = SubscriptionMapper.class)
-    @UseRowReducer(SubscriptionQuotasReducer.class)
-    Subscription getSubscription(@Bind("id") Integer id);
+    @RegisterRowMapper(value = MembershipMapper.class)
+    @UseRowReducer(MembershipQuotasReducer.class)
+    Membership getMembership(@Bind("id") Integer id);
 
     /**
-     * Get a subscription by subscriber identifier
-     * @param subscriber the customer subscriber identifier
-     * @return subscription the subscription with the given subject identifier
+     * Get a membership by owner identifier
+     * @param owner the customer owner identifier
+     * @return membership the membership with the given owner identifier
      */
-    @SqlQuery(SELECT_SUBJECT)
+    @SqlQuery(SELECT_OWNER)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
-    @RegisterRowMapper(value = SubscriptionMapper.class)
-    @UseRowReducer(SubscriptionQuotasReducer.class)
-    Subscription findSubscriptionBySubscriber(@Bind("subscriber") String subscriber);
+    @RegisterRowMapper(value = MembershipMapper.class)
+    @UseRowReducer(MembershipQuotasReducer.class)
+    Membership findMembershipByOwner(@Bind("owner") String owner);
 
     /**
-     * Get subscriptions by subscriber identifiers
-     * @param subscribers the subscribe identifiers
-     * @return subscriptions the subscriptions matching the requested identifiers
+     * Get memberships by owner identifiers
+     * @param owners the owner identifiers
+     * @return memberships the memberships matching the requested identifiers
      */
-    @SqlQuery(SELECT_SUBJECTS)
+    @SqlQuery(SELECT_OWNERS)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
-    @RegisterRowMapper(value = SubscriptionMapper.class)
-    @UseRowReducer(SubscriptionQuotasReducer.class)
-    List<Subscription> findSubscriptionsBySubscribers(@BindList("subscribers") List<String> subscribers);
+    @RegisterRowMapper(value = MembershipMapper.class)
+    @UseRowReducer(MembershipQuotasReducer.class)
+    List<Membership> findMembershipsByOwners(@BindList("owners") List<String> owners);
 
     /**
-     * Insert a subscription
-     * @param subscription the subscription to insert
+     * Insert a membership
+     * @param membership the membership to insert
      */
     @SqlUpdate(
-        "INSERT INTO subscriptions (" +
+        "INSERT INTO memberships (" +
             "object, " +
             "canceledAt, " +
             "collectionMethod, " +
@@ -190,19 +190,19 @@ public interface SubscriptionStore {
         ") RETURNING id"
     )
     @GetGeneratedKeys
-    Integer insert(@BindMethods Subscription subscription);
+    Integer insert(@BindMethods Membership membership);
 
     /**
-     * Insert a subscription and its quotas in a transaction
-     * @param subscription the subscription to insert
+     * Insert a membership and its quotas in a transaction
+     * @param membership the membership to insert
      * @param quotas the quotas to insert
-     * @return id the id of the subscription
+     * @return id the id of the membership
      */
     @Transaction
-    default Integer insertWithQuotas(Subscription subscription, @NotNull @Valid Collection<Quota> quotas) {
-        Integer id = insert(subscription);
+    default Integer insertWithQuotas(Membership membership, @NotNull @Valid Collection<Quota> quotas) {
+        Integer id = insert(membership);
         for ( Quota quota : quotas) {
-            quota.setSubscriptionId(id);
+            quota.setMembershipId(id);
             Integer quotaId = insertQuota(quota);
         }
         return id;
@@ -213,19 +213,19 @@ public interface SubscriptionStore {
      * @param quota the quota to insert
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, quotaType, softLimit, hardLimit, totalUsage, unit, subscriptionId, subscriber) " +
+        "(object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, owner) " +
         "VALUES " +
-        "(:object, :quotaType, :softLimit, :hardLimit, :totalUsage, :unit, :subscriptionId, :subscriber) " +
+        "(:object, :quotaType, :softLimit, :hardLimit, :totalUsage, :unit, :membershipId, :owner) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insertQuota(@BindBean Quota quota);
 
     /**
-     * Update a subscription
-     * @param subscription the subscription to update
+     * Update a membership
+     * @param membership the membership to update
      */
     @SqlUpdate(
-        "UPDATE subscriptions SET " +
+        "UPDATE memberships SET " +
             "id = :getId, " +
             "object = :getObject, " +
             "canceledAt = to_timestamp(:getCanceledAt), " +
@@ -242,12 +242,12 @@ public interface SubscriptionStore {
             "RETURNING id"
     )
     @GetGeneratedKeys
-    Integer update(@BindMethods Subscription subscription);
+    Integer update(@BindMethods Membership membership);
 
     /**
-     * Delete a subscription
+     * Delete a membership
      * @param id
      */
-    @SqlUpdate("DELETE FROM subscriptions WHERE id = :id")
+    @SqlUpdate("DELETE FROM memberships WHERE id = :id")
     void delete(@Bind("id") Integer id);
 }

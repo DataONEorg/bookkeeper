@@ -21,9 +21,9 @@
 
 package org.dataone.bookkeeper.jdbi;
 
+import org.dataone.bookkeeper.api.Membership;
 import org.dataone.bookkeeper.api.Quota;
-import org.dataone.bookkeeper.api.Subscription;
-import org.dataone.bookkeeper.jdbi.mappers.SubscriptionMapper;
+import org.dataone.bookkeeper.jdbi.mappers.MembershipMapper;
 import org.jdbi.v3.core.result.LinkedHashMapRowReducer;
 import org.jdbi.v3.core.result.RowView;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
@@ -34,31 +34,31 @@ import java.util.Map;
 
 /**
  * Row reducer that accumulates multiple quotas associated
- * with a subscription into a list based on a SQL join between
- * the subscriptions and quotas tables.
+ * with a membership into a list based on a SQL join between
+ * the memberships and quotas tables.
  */
 @RegisterBeanMapper(value = Quota.class)
-@RegisterRowMapper(value = SubscriptionMapper.class)
-public class SubscriptionQuotasReducer implements LinkedHashMapRowReducer<Integer, Subscription> {
+@RegisterRowMapper(value = MembershipMapper.class)
+public class MembershipQuotasReducer implements LinkedHashMapRowReducer<Integer, Membership> {
 
     /**
-     * Accumulate quotas into a list in the subscription instance
-     * @param map The map of subscription id to subscription instances
+     * Accumulate quotas into a list in the membership instance
+     * @param map The map of membership id to membership instances
      * @param rowView The view of the result set row from the joined tables
      */
     @Override
-    public void accumulate(Map<Integer, Subscription> map, RowView rowView) {
-        // Build a subscription from the resultset if one isn't in the map given the id
-        Subscription subscription =
+    public void accumulate(Map<Integer, Membership> map, RowView rowView) {
+        // Build a membership from the resultset if one isn't in the map given the id
+        Membership membership =
             map.computeIfAbsent(rowView.getColumn("s_id", Integer.class),
-            id -> rowView.getRow(Subscription.class));
+            id -> rowView.getRow(Membership.class));
 
-        // Otherwise, for the same subscription id, add quotas to the quota list
+        // Otherwise, for the same membership id, add quotas to the quota list
         if ( rowView.getColumn("s_id", Integer.class) != null ) {
-            if ( subscription.getQuotas() == null ) {
-                subscription.setQuotas(new LinkedList<Quota>());
+            if ( membership.getQuotas() == null ) {
+                membership.setQuotas(new LinkedList<Quota>());
             }
-            subscription.getQuotas().add(rowView.getRow(Quota.class));
+            membership.getQuotas().add(rowView.getRow(Quota.class));
         }
     }
 }
