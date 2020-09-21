@@ -82,7 +82,7 @@ public class UsagesResource {
      * @param context  the security context of the authenticated user
      * @param instanceId the instance identifier of the usage
      * @param quotaType name of the quota being used
-     * @param subscribers the quota subscriber
+     * @param owners the quota owner
      * @param requestor the subject to make the request as, instead of caller's subject
      * @return usage the usage object for the given instance identifier
      */
@@ -96,7 +96,7 @@ public class UsagesResource {
                                 @QueryParam("quotaType") String quotaType,
                                 @QueryParam("instanceId") String instanceId,
                                 @QueryParam("status") String status,
-                                @QueryParam("subscriber") Set<String> subscribers,
+                                @QueryParam("owner") Set<String> owners,
                                 @QueryParam("requestor") String requestor) {
 
         List<Usage> usages = null;
@@ -105,7 +105,7 @@ public class UsagesResource {
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
         Set<String> associatedSubjects;
-        List<String> approvedSubscribers = new ArrayList<>();
+        List<String> approvedOwners = new ArrayList<>();
         Boolean isProxy = isAdmin && requestor != null;
 
         // Admin users can make request as another user
@@ -121,43 +121,46 @@ public class UsagesResource {
                 }
             } else {
                 // Note: this exception will be caught by the outer block.
-                throw new WebApplicationException(caller.getSubject() + " does not have admin privilege needed to set 'requestor'. ", Response.Status.FORBIDDEN);
+                throw new WebApplicationException(caller.getSubject() +
+                    " does not have admin privilege needed to set 'requestor'. ",
+                    Response.Status.FORBIDDEN);
             }
         }
 
-        /*  Check the list of requested subscribers and if not an admin user, filter them based on
-         * the subscribers the requestor has the privilege to view info for.
+        /*  Check the list of requested owners and if not an admin user, filter them based on
+         * the owners the requestor has the privilege to view info for.
          *
          */
-        if (subscribers != null && subscribers.size() > 0) {
-            // Filter out non-associated subscribers if not an admin, or if the admin user has requested a proxy requestor
+        if (owners != null && owners.size() > 0) {
+            // Filter out non-associated owners if not an admin, or if the admin user has requested a proxy requestor
             if (! isAdmin || isProxy) {
-                associatedSubjects = this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
+                associatedSubjects = this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
                 if ( associatedSubjects.size() > 0 ) {
-                    approvedSubscribers.addAll(associatedSubjects);
+                    approvedOwners.addAll(associatedSubjects);
                 }
 
-                /* Caller is not admin and is not associated with any of the specified subscribers. */
-                if (approvedSubscribers.size() == 0) {
-                    throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
+                /* Caller is not admin and is not associated with any of the specified owners. */
+                if (approvedOwners.size() == 0) {
+                    throw new WebApplicationException("The requested owners don't exist or " +
+                        "requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                 }
             } else {
-                /* Admin caller, so can see quotas for all requested subscribers */
-                approvedSubscribers.addAll(subscribers);
+                /* Admin caller, so can see quotas for all requested owners */
+                approvedOwners.addAll(owners);
             }
         } else {
-            /** No subscribers specified and caller is not admin, so caller is allowed to
-               view any quota for subscribers with which they are associated.
-               If the caller is admin, then don't set subject, as they will be able to view all subscribers.
+            /* No owners specified and caller is not admin, so caller is allowed to
+               view any quota for owners with which they are associated.
+               If the caller is admin, then don't set subject, as they will be able to view all owners.
             */
             if (! isAdmin || isProxy) {
-                if (approvedSubscribers.size() == 0) {
-                    approvedSubscribers = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
+                if (approvedOwners.size() == 0) {
+                    approvedOwners = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                 }
             }
         }
 
-        /** Test for all combinations of query params that are supported.
+        /* Test for all combinations of query params that are supported.
             Note that Admin users may not have a subject set, as they have privilege to see usages for
             any subject.
             Non-admin users will always have at least one subject set (their own).
@@ -165,17 +168,17 @@ public class UsagesResource {
          */
         /* The "instanceid + quotaId" combination is unique among all usages, so only one usage should be returned. */
         if (instanceId != null && quotaId != null) {
-            if (approvedSubscribers.size() == 0) {
+            if (approvedOwners.size() == 0) {
                 usage = usageStore.findUsageByInstanceIdAndQuotaId(instanceId, quotaId);
             } else {
-                /* Non-admin users can only retrieve instanceIds+quotaId for a subscriber that they are associated with,
-                 * so constrain results by subscribers, i.e. if the instanceId+quotaId they are trying to access must
-                 * belong to a subscriber they can access.
-                 * Note: it's not possible to filter usage entries by subscriber after they are retrieved, as the
-                 * usage object doesn't contain the quota subscriber, therefor, the UsageStore has to do the
+                /* Non-admin users can only retrieve instanceIds+quotaId for an owner that they are associated with,
+                 * so constrain results by owners, i.e. if the instanceId+quotaId they are trying to access must
+                 * belong to an owner they can access.
+                 * Note: it's not possible to filter usage entries by owner after they are retrieved, as the
+                 * usage object doesn't contain the quota owner, therefore, the UsageStore has to do the
                  * filtering by subject.
                  */
-                usage = usageStore.findUsageByInstanceIdQuotaIdAndSubscribers(instanceId, quotaId, approvedSubscribers);
+                usage = usageStore.findUsageByInstanceIdQuotaIdAndOwners(instanceId, quotaId, approvedOwners);
             }
             if (usage == null) {
                 usages = null;
@@ -192,30 +195,30 @@ public class UsagesResource {
                 usages.add(usage);
             }
         } else if (instanceId != null) {
-            if(approvedSubscribers.size() == 0) {
+            if(approvedOwners.size() == 0) {
                 usages = usageStore.findUsagesByInstanceId(instanceId);
             } else {
-                usages = usageStore.findUsagesByInstanceIdAndSubscribers(instanceId, approvedSubscribers);
+                usages = usageStore.findUsagesByInstanceIdAndOwners(instanceId, approvedOwners);
             }
         } else if (quotaId != null) {
-            if(approvedSubscribers.size() == 0) {
+            if(approvedOwners.size() == 0) {
                 usages = usageStore.findUsagesByQuotaId(quotaId);
             } else {
-                /* Non-admin users can only retrieve instanceIds for a subscriber that they are associated with,
-                 * so constrain results by subscribers, i.e. if the instanceId they are trying to access must
-                  * belong to a subscriber they can access. */
-                usages = usageStore.findUsagesByQuotaIdAndSubscribers(quotaId, approvedSubscribers);
+                /* Non-admin users can only retrieve instanceIds for an owner that they are associated with,
+                 * so constrain results by owners, i.e. if the instanceId they are trying to access must
+                  * belong to an owner they can access. */
+                usages = usageStore.findUsagesByQuotaIdAndOwners(quotaId, approvedOwners);
             }
         } else if (quotaType != null) {
-            if(approvedSubscribers.size() == 0) {
-                /* subscriber is null, quotaType is not */
+            if(approvedOwners.size() == 0) {
+                /* owner is null, quotaType is not */
                 usages = usageStore.findUsagesByQuotaType(quotaType);
             } else {
-                usages = usageStore.findUsagesByQuotaTypeAndSubscribers(quotaType, approvedSubscribers);
+                usages = usageStore.findUsagesByQuotaTypeAndOwners(quotaType, approvedOwners);
             }
-        } else if (approvedSubscribers.size() > 0) {
+        } else if (approvedOwners.size() > 0) {
             // quotaId, quotaType, instanceId not set
-            usages = usageStore.findUsagesByQuotaSubscribers(approvedSubscribers);
+            usages = usageStore.findUsagesByQuotaOwners(approvedOwners);
         } else {
             /* Must be admin user, so list all usages */
             usages = usageStore.listUsages();
@@ -232,11 +235,11 @@ public class UsagesResource {
             }
         } else {
             // Filter by status, if requested.
-            if(status != null) {
+            if (status != null) {
                 List<Usage> filteredUsages = usages
-                        .stream()
-                        .filter(u -> u.getStatus().compareToIgnoreCase(status) == 0)
-                        .collect(Collectors.toList());
+                    .stream()
+                    .filter(u -> u.getStatus().compareToIgnoreCase(status) == 0)
+                    .collect(Collectors.toList());
                 if (filteredUsages.size() > 0) {
                     usages = filteredUsages;
                 } else {
@@ -244,7 +247,6 @@ public class UsagesResource {
                 }
             }
         }
-
         return new UsageList(usages);
     }
 
@@ -314,20 +316,21 @@ public class UsagesResource {
             return usage;
         }
 
-        // Ensure the caller is asssociated with the quota subscriber
-        // The quota subscriber is not in the usages table, it must be retrieved from the quota table.
+        // Ensure the caller is asssociated with the quota owner
+        // The quota owner is not in the usages table, it must be retrieved from the quota table.
         Integer quotaId = usage.getQuotaId();
         Quota quota = quotaStore.getQuota(quotaId);
-        Set<String> subscribers = new HashSet<String>();
-        subscribers.add(quota.getSubscriber());
+        Set<String> owners = new HashSet<String>();
+        owners.add(quota.getOwner());
 
         Set<String> associatedSubjects =
-            this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
+            this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
 
         if ( associatedSubjects.size() > 0 ) {
             return usage;
         } else {
-            throw new WebApplicationException(caller.getSubject() + " is not associated with this usage.", Response.Status.FORBIDDEN);
+            throw new WebApplicationException(caller.getSubject() +
+                " is not associated with this usage.", Response.Status.FORBIDDEN);
         }
     }
 

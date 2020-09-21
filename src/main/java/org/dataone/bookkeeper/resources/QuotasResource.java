@@ -63,7 +63,7 @@ import java.util.Set;
 public class QuotasResource extends BaseResource {
 
     /* The logging facility for this class */
-    private Log log = LogFactory.getLog(QuotasResource.class);
+    private final Log log = LogFactory.getLog(QuotasResource.class);
 
     /* The quota store for database calls */
     private final QuotaStore quotaStore;
@@ -82,11 +82,11 @@ public class QuotasResource extends BaseResource {
     }
 
     /**
-     * List quotas, optionally by subscriptionId or subscriber.
+     * List quotas, optionally by membershipId or owner.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
-     * @param subscribers the quota subscribers (repeatable and treated as a list)
+     * @param owners the quota owners (repeatable and treated as a list)
      * @param quotaType the quota type (e.g. "portal", "storage", ...)
      * @param requestor the DataONE subject to make the request as
      * @return quotas  the quota list
@@ -100,7 +100,7 @@ public class QuotasResource extends BaseResource {
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
         @QueryParam("quotaType") String quotaType,
-        @QueryParam("subscriber") Set<String> subscribers,
+        @QueryParam("owner") Set<String> owners,
         @QueryParam("requestor") String requestor) throws WebApplicationException {
 
         // The calling user injected in the security context via authentication
@@ -108,8 +108,8 @@ public class QuotasResource extends BaseResource {
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         List<Quota> quotas;
-        Set<String> associatedSubscribers;
-        List<String> approvedSubscribers = new ArrayList<>();
+        Set<String> associatedOwners;
+        List<String> approvedOwners = new ArrayList<>();
         /* Admin user is making this request as another subject */
         Boolean isProxy = isAdmin && requestor != null;
 
@@ -130,45 +130,45 @@ public class QuotasResource extends BaseResource {
         }
 
         /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
-        if (subscribers != null && subscribers.size() > 0) {
+        if (owners != null && owners.size() > 0) {
             // Filter out non-associated subscribers if not an admin
             if (!isAdmin || isProxy) {
-                associatedSubscribers =
-                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
-                if (associatedSubscribers.size() > 0) {
-                    approvedSubscribers.addAll(associatedSubscribers);
+                associatedOwners =
+                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
+                if (associatedOwners.size() > 0) {
+                    approvedOwners.addAll(associatedOwners);
                 }
 
                 /* Caller is not admin and is not associated with any of the specified subscribers. */
-                if (approvedSubscribers.size() == 0) {
+                if (approvedOwners.size() == 0) {
                     throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                 }
             } else {
                 /* Admin caller, so can see quotas for all requested subscribers */
-                approvedSubscribers.addAll(subscribers);
+                approvedOwners.addAll(owners);
             }
         } else {
-            /** No subscribers specified and caller is not admin, so caller is allowed to
-             view any quota for subscribers with which they are associated.
-             If the caller is admin, then don't set subject, as they will be able to view all subscribers.
+            /* No owners specified and caller is not admin, so caller is allowed to
+             view any quota for owners with which they are associated.
+             If the caller is admin, then don't set subject, as they will be able to view all owners.
              */
             if (!isAdmin || isProxy) {
-                if (approvedSubscribers.size() == 0) {
-                    approvedSubscribers = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
+                if (approvedOwners.size() == 0) {
+                    approvedOwners = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                 }
             }
         }
 
         if (quotaType != null) {
-            if (approvedSubscribers.size() > 0) {
-                quotas = quotaStore.findQuotasByNameAndSubscribers(quotaType, approvedSubscribers);
+            if (approvedOwners.size() > 0) {
+                quotas = quotaStore.findQuotasByNameAndOwners(quotaType, approvedOwners);
             } else {
                 /* Not sure if this is useful or practical, i.e. admin user can view all quotas for a quota type. */
                 quotas = quotaStore.findQuotasByType(quotaType);
             }
         } else {
-            if (approvedSubscribers.size() > 0) {
-                quotas = quotaStore.findQuotasBySubscribers(approvedSubscribers);
+            if (approvedOwners.size() > 0) {
+                quotas = quotaStore.findQuotasByOwners(approvedOwners);
             } else {
                 quotas = quotaStore.listQuotas();
             }
@@ -235,7 +235,7 @@ public class QuotasResource extends BaseResource {
 
         Customer caller = (Customer) context.getUserPrincipal();
 
-        Quota quota = null;
+        Quota quota;
         // Get the quota from the store
         try {
             quota = quotaStore.getQuota(quotaId);
@@ -246,13 +246,13 @@ public class QuotasResource extends BaseResource {
                 if (this.dataoneAuthHelper.isAdmin(caller.getSubject())) {
                     return quota;
                 } else {
-                    // Ensure the caller is asssociated with the quota subscriber
-                    String quotaSubscriber = quota.getSubscriber();
-                    Set<String> subscribers = new HashSet<String>();
-                    subscribers.add(quotaSubscriber);
-                    Set<String> associatedSubscribers =
-                            this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
-                    if (associatedSubscribers.size() > 0) {
+                    // Ensure the caller is asssociated with the quota owner
+                    String quotaOwner = quota.getOwner();
+                    Set<String> owners = new HashSet<String>();
+                    owners.add(quotaOwner);
+                    Set<String> associatedOwners =
+                            this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
+                    if (associatedOwners.size() > 0) {
                         return quota;
                     } else {
                         throw new WebApplicationException(caller.getSubject() + " is not associated with this quota.", Response.Status.FORBIDDEN);
@@ -286,7 +286,7 @@ public class QuotasResource extends BaseResource {
             throw new WebApplicationException("Bookkeeper admin privilege is required to update a quota, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
         }
 
-        Quota updatedQuota = null;
+        Quota updatedQuota;
         // Update the quota after validation
         try {
             updatedQuota = quotaStore.update(quota);
