@@ -153,19 +153,19 @@ public class Membership {
 
     /**
      * Construct a membership
-     * @param object
-     * @param canceledAt
-     * @param collectionMethod
-     * @param created
-     * @param customer
-     * @param metadata
-     * @param product
-     * @param quantity
-     * @param startDate
-     * @param status
-     * @param trialEnd
-     * @param trialStart
-     * @param quotas
+     * @param object the type of object ("membership")
+     * @param canceledAt when the membership was canceled
+     * @param collectionMethod the payment collection method
+     * @param created when the membership was created
+     * @param customer the associated customer
+     * @param metadata the associated metadata
+     * @param product the associated product
+     * @param quantity the quantity of the associated product
+     * @param startDate when the membership started
+     * @param status the membership status
+     * @param trialEnd the membership trial end date (epoch seconds)
+     * @param trialStart the membership trial start date (epoch seconds)
+     * @param quotas the quotas associated with the membership
      */
     public Membership(
         Integer id,
@@ -200,7 +200,7 @@ public class Membership {
 
     /**
      * Get the membership identifier
-     * @return
+     * @return id the membership identifier
      */
     @JsonProperty
     public Integer getId() {
@@ -209,7 +209,7 @@ public class Membership {
 
     /**
      * Get the membership identifier
-     * @param id
+     * @param id the membership identifier
      */
     @JsonProperty
     public void setId(Integer id) {
@@ -218,7 +218,7 @@ public class Membership {
 
     /**
      * Get the membership object type
-     * @return
+     * @return object the membership object type
      */
     @JsonProperty
     public String getObject() {
@@ -227,7 +227,7 @@ public class Membership {
 
     /**
      * Set the membership object type
-     * @param object
+     * @param object the membership object type
      */
     @JsonProperty
     public void setObject(String object) {
@@ -236,7 +236,7 @@ public class Membership {
 
     /**
      * Get the membership canceled timestamp (seconds since the epoch)
-     * @return
+     * @return canceledAt the membership canceled timestamp
      */
     @JsonProperty
     public Integer getCanceledAt() {
@@ -245,7 +245,7 @@ public class Membership {
 
     /**
      * Set the membership canceled timestamp (seconds since the epoch)
-     * @param canceledAt
+     * @param canceledAt the membership canceled timestamp
      */
     @JsonProperty
     public void setCanceledAt(Integer canceledAt) {
@@ -254,7 +254,7 @@ public class Membership {
 
     /**
      * Get the canceled at date as an ISO 8601 timestamp string
-     * @return
+     * @return the membership canceled timestamp
      */
     public String getCanceledAtTimestamp() {
 
@@ -264,7 +264,7 @@ public class Membership {
 
     /**
      * Get the membership collection method
-     * @return
+     * @return collectionMethod the membership collection metho
      */
     @JsonProperty
     public String getCollectionMethod() {
@@ -273,7 +273,7 @@ public class Membership {
 
     /**
      * Set the membership collection method
-     * @param collectionMethod
+     * @param collectionMethod the membership collection metho
      */
     @JsonProperty
     public void setCollectionMethod(String collectionMethod) {
@@ -282,7 +282,7 @@ public class Membership {
 
     /**
      * Get the membership creation timestamp (seconds since the epoch)
-     * @return
+     * @return created the membership creation timestamp
      */
     @JsonProperty
     public Integer getCreated() {
@@ -291,7 +291,7 @@ public class Membership {
 
     /**
      * Set the membership creation timestamp (seconds since the epoch)
-     * @param created
+     * @param created the membership creation timestamp
      */
     @JsonProperty
     public void setCreated(Integer created) {
@@ -300,7 +300,7 @@ public class Membership {
 
     /**
      * Get the creation date as an ISO 8601 timestamp string
-     * @return
+     * @return timestamp the membership creation timestamp
      */
     public String getCreatedTimestamp() {
 
@@ -310,7 +310,7 @@ public class Membership {
 
     /**
      * Get the membership customer
-     * @return
+     * @return customer the membership customer
      */
     @JsonProperty
     public Customer getCustomer() {
@@ -319,7 +319,7 @@ public class Membership {
 
     /**
      * Set the membership customer
-     * @param customer
+     * @param customer the membership customer
      */
     @JsonProperty
     public void setCustomer(Customer customer) {
@@ -328,7 +328,7 @@ public class Membership {
 
     /**
      * Get the membership metadata
-     * @return
+     * @return metadata the membership metadata
      */
     @JsonProperty
     public ObjectNode getMetadata() {
@@ -337,7 +337,7 @@ public class Membership {
 
     /**
      * Set the membership metadata
-     * @param metadata
+     * @param metadata the membership metadata
      */
     @JsonProperty
     public void setMetadata(ObjectNode metadata) {
@@ -347,7 +347,7 @@ public class Membership {
     /**
      * Return the metadata hash as a JSON string
      * @return metadata the metadata object hash
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException a JSON processing exception
      */
 
     public String getMetadataJSON() throws JsonProcessingException {
@@ -360,7 +360,7 @@ public class Membership {
 
     /**
      * Get the membership product
-     * @return
+     * @return product the membership product
      */
     @JsonProperty
     public Product getProduct() {
@@ -369,7 +369,7 @@ public class Membership {
 
     /**
      * Set the membership product
-     * @param product
+     * @param product the membership product
      */
     @JsonProperty
     public void setProduct(Product product) {
@@ -378,7 +378,7 @@ public class Membership {
 
     /**
      * Get the product id
-     * @return
+     * @return productId the product id
      */
     public Integer getProductId() {
         Integer productId = null;
@@ -390,7 +390,7 @@ public class Membership {
 
     /**
      * Get the membership quantity of the product
-     * @return
+     * @return quantity the membership quantity of the product
      */
     @JsonProperty
     public Integer getQuantity() {
@@ -399,7 +399,7 @@ public class Membership {
 
     /**
      * Set the membership quantity of the product
-     * @param quantity
+     * @param quantity the membership quantity of the product
      */
     @JsonProperty
     public void setQuantity(Integer quantity) {
@@ -408,7 +408,7 @@ public class Membership {
 
     /**
      * Get the membership start timestamp (seconds since the epoch)
-     * @return
+     * @return startDate the membership start timestamp
      */
     @JsonProperty
     public Integer getStartDate() {
@@ -417,7 +417,7 @@ public class Membership {
 
     /**
      * Set the membership start timestamp (seconds since the epoch)
-     * @param startDate
+     * @param startDate the membership start date  in seconds since the epoch)
      */
     @JsonProperty
     public void setStartDate(Integer startDate) {
@@ -426,7 +426,7 @@ public class Membership {
 
     /**
      * Get the start date as an ISO 8601 timestamp string
-     * @return
+     * @return startDateTimestamp the start date as an ISO 8601 timestamp
      */
     public String getStartDateTimestamp() {
 
@@ -436,7 +436,7 @@ public class Membership {
 
     /**
      * Get the membership status
-     * @return
+     * @return status the membership status
      */
     @JsonProperty
     public String getStatus() {
@@ -445,7 +445,7 @@ public class Membership {
 
     /**
      * Set the membership status
-     * @param status
+     * @param status the membership status
      */
     @JsonProperty
     public void setStatus(String status) {
@@ -454,7 +454,7 @@ public class Membership {
 
     /**
      * Get the membership trial end timestamp (seconds since the epoch)
-     * @return
+     * @return trialEnd the membership trial end timestamp
      */
     @JsonProperty
     public Integer getTrialEnd() {
@@ -463,7 +463,7 @@ public class Membership {
 
     /**
      * Set the membership trial end timestamp (seconds since the epoch)
-     * @param trialEnd
+     * @param trialEnd the membership trial end in seconds since the epoch
      */
     @JsonProperty
     public void setTrialEnd(Integer trialEnd) {
@@ -472,7 +472,7 @@ public class Membership {
 
     /**
      * Get the trial end date as an ISO 8601 timestamp string
-     * @return
+     * @return trailDateTimestamp the trial end date as an ISO 8601 timestamp
      */
     public String getTrialEndTimestamp() {
 
@@ -482,7 +482,7 @@ public class Membership {
 
     /**
      * Get the membership trial start timestamp (seconds since the epoch)
-     * @return
+     * @return trialStart the membership trial start timestamp (seconds since the epoch)
      */
     @JsonProperty
     public Integer getTrialStart() {
@@ -491,7 +491,7 @@ public class Membership {
 
     /**
      * Set the membership trial start timestamp (seconds since the epoch)
-     * @param trialStart
+     * @param trialStart the membership trial start timestamp (seconds since the epoch)
      */
     @JsonProperty
     public void setTrialStart(Integer trialStart) {
@@ -500,7 +500,7 @@ public class Membership {
 
     /**
      * Get the trial start date as an ISO 8601 timestamp string
-     * @return
+     * @return trialStartTimestamp the trial start date as an ISO 8601 timestamp
      */
     public String getTrailStartTimestamp() {
 
@@ -510,7 +510,7 @@ public class Membership {
 
     /**
      * Get the membership quotas
-     * @return
+     * @return quotas the membership quotas
      */
     @JsonProperty
     public List<Quota> getQuotas() {
@@ -519,7 +519,7 @@ public class Membership {
 
     /**
      * Set the membership quotas
-     * @param quotas
+     * @param quotas the membership quotas
      */
     @JsonProperty
     public void setQuotas(List<Quota> quotas) {
@@ -529,7 +529,7 @@ public class Membership {
     /**
      * Determine object equality based on the equality of all fields
      * @param o the object to compare
-     * @return
+     * @return true if the objects are equal
      */
     @Override
     public boolean equals(Object o) {
@@ -554,7 +554,7 @@ public class Membership {
 
     /**
      * Calculate a hash based on all fields
-     * @return
+     * @return hashcode the hashcode of the object
      */
     @Override
     public int hashCode() {
