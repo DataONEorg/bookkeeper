@@ -83,10 +83,10 @@ public class Membership {
     private Integer currentPeriodStart;
     */
 
-    /* The membership customer identifier */
+    /* The membership customer */
     @NotNull
     @NotEmpty
-    private Integer customerId;
+    private Customer customer;
 
     /* The membership days until due
     private Integer daysUntilDue;
@@ -157,7 +157,7 @@ public class Membership {
      * @param canceledAt
      * @param collectionMethod
      * @param created
-     * @param customerId
+     * @param customer
      * @param metadata
      * @param product
      * @param quantity
@@ -173,7 +173,7 @@ public class Membership {
         Integer canceledAt,
         @NotNull @NotEmpty @Pattern(regexp = "charge_automatically|send_invoice") String collectionMethod,
         Integer created,
-        @NotNull Integer customerId,
+        @NotNull Customer customer,
         ObjectNode metadata,
         @NotNull @NotEmpty Product product,
         @NotNull @Min(1) Integer quantity,
@@ -187,7 +187,7 @@ public class Membership {
         this.canceledAt = canceledAt;
         this.collectionMethod = collectionMethod;
         this.created = created;
-        this.customerId = customerId;
+        this.customer = customer;
         this.metadata = metadata;
         this.product = product;
         this.quantity = quantity;
@@ -309,21 +309,21 @@ public class Membership {
     }
 
     /**
-     * Get the membership customer identifier
+     * Get the membership customer
      * @return
      */
     @JsonProperty
-    public Integer getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
     /**
-     * Set the membership customer identifier
-     * @param customerId
+     * Set the membership customer
+     * @param customer
      */
     @JsonProperty
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     /**
@@ -541,7 +541,7 @@ public class Membership {
             Objects.equals(getCanceledAt(), that.getCanceledAt()) &&
             Objects.equals(getCollectionMethod(), that.getCollectionMethod()) &&
             Objects.equals(getCreated(), that.getCreated()) &&
-            Objects.equals(getCustomerId(), that.getCustomerId()) &&
+            Objects.equals(getCustomer(), that.getCustomer()) &&
             Objects.equals(getMetadata(), that.getMetadata()) &&
             Objects.equals(getProduct(), that.getProduct()) &&
             Objects.equals(getQuantity(), that.getQuantity()) &&
@@ -560,7 +560,7 @@ public class Membership {
     public int hashCode() {
 
         return Objects.hash(getId(), getObject(), getCanceledAt(), getCollectionMethod(),
-            getCreated(), getCustomerId(), getMetadata(), getProduct(), getQuantity(),
+            getCreated(), getCustomer(), getMetadata(), getProduct(), getQuantity(),
             getStartDate(), getStatus(), getTrialEnd(), getTrialStart(), getQuotas());
     }
 }
