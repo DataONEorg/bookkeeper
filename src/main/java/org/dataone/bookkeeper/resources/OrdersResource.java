@@ -378,7 +378,7 @@ public class OrdersResource extends BaseResource {
                         membership.setCanceledAt(null);
                         membership.setCollectionMethod("send_invoice");
                         membership.setCreated(secondsSinceEpoch);
-                        membership.setCustomerId(order.getCustomer());
+                        membership.setCustomer(customer);
                         membership.setQuantity(item.getQuantity());
                         membership.setTrialStart(secondsSinceEpoch);
                         membership.setTrialEnd(trialEndSecondsSinceEpoch);
