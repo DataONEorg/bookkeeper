@@ -30,7 +30,7 @@ ALTER SEQUENCE memberships_id_seq OWNED BY memberships.id;
 CREATE INDEX memberships_customer_id_idx ON memberships USING btree(customerId);
 CREATE INDEX memberships_status_idx ON memberships USING btree(status);
 
-COMMENT ON TABLE  memberships IS 'Subscriptions of products and their quotas by customers.';
+COMMENT ON TABLE  memberships IS 'Memberships with products and their quotas by customers.';
 COMMENT ON COLUMN memberships.id IS 'The unique membership identifier.';
 COMMENT ON COLUMN memberships.object IS 'The serialized object type, set to "membership".';
 --- COMMENT ON COLUMN memberships.billingCycleAnchor IS 'The timestamp used to calculate membership billing cycles.';
