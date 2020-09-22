@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Subscriptions represent a Product purchased by a Customer, charged for periodically.
+ * Memberships represent a Product purchased by a Customer, charged for periodically.
  */
 @JsonIgnoreProperties({"metadataJSON"})
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -104,10 +104,10 @@ public interface MembershipStore {
     String SELECT_ONE = SELECT_CLAUSE + "WHERE s.id = :id";
 
     /** The query used to find a membership by owner identifier */
-    String SELECT_OWNER = SELECT_CLAUSE + "WHERE c.owner = :owner";
+    String SELECT_OWNER = SELECT_CLAUSE + "WHERE c.subject = :owner";
 
     /** The query used to find a membership by owner identifier */
-    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE c.owner IN (<owners>)";
+    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE c.subject IN (<owners>)";
 
     /**
      * List all memberships with their quotas

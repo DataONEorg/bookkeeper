@@ -35,13 +35,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Maps membership rows to Subscription instances. We use this since the JSON
- * fields within a Subscription instance are not handled by BeanMapper
+ * Maps membership rows to Membership instances. We use this since the JSON
+ * fields within a Membership instance are not handled by BeanMapper
  */
 public class MembershipMapper implements RowMapper<Membership> {
 
     /**
-     * Construct a SubscriptionMapper
+     * Construct a MembershipMapper
      */
     public MembershipMapper() {
     }

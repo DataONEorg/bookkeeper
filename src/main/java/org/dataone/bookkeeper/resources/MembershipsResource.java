@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.*;
 import org.dataone.bookkeeper.jdbi.CustomerStore;
-import org.dataone.bookkeeper.jdbi.SubscriptionStore;
+import org.dataone.bookkeeper.jdbi.MembershipStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
@@ -49,19 +49,19 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The entry point to the subscriptions collection
+ * The entry point to the memberships collection
  */
 @Timed
-@Path("/subscriptions")
+@Path("/memberships")
 @Produces(MediaType.APPLICATION_JSON)
 
-public class SubscriptionsResource extends BaseResource {
+public class MembershipsResource extends BaseResource {
 
     /* The logging facility for this class */
-    private Log log = LogFactory.getLog(SubscriptionsResource.class);
+    private final Log log = LogFactory.getLog(MembershipsResource.class);
 
-    /* The subscriptio store for database calls */
-    private final SubscriptionStore subscriptionStore;
+    /* The membership store for database calls */
+    private final MembershipStore membershipStore;
 
     /* The customer store for database calls */
     private final CustomerStore customerStore;
@@ -73,41 +73,41 @@ public class SubscriptionsResource extends BaseResource {
      * Construct a quota collection
      * @param database  the jdbi database access reference
      */
-    public SubscriptionsResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
-        this.subscriptionStore = database.onDemand(SubscriptionStore.class);
+    public MembershipsResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
+        this.membershipStore = database.onDemand(MembershipStore.class);
         this.customerStore = database.onDemand(CustomerStore.class);
         this.dataoneAuthHelper = dataoneAuthHelper;
 
     }
 
     /**
-     * List quotas, optionally by subscriptionId or subscriber.
+     * List quotas, optionally by membershipId or owner.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
-     * @param subscribers the list of subscribers to fetch the subscription for
+     * @param owners the list of owners to fetch the membership for
      * @param requestor the DataONE subject to make the request as
-     * @return subscriptions the subscriptions list
+     * @return memberships the memberships list
      */
     @Timed
     @GET
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
-    public SubscriptionList listSubscriptions(
+    public MembershipList listMemberships(
             @Context SecurityContext context,
             @QueryParam("start") @DefaultValue("0") Integer start,
             @QueryParam("count") @DefaultValue("1000") Integer count,
-            @QueryParam("subscriber") Set<String> subscribers,
+            @QueryParam("owner") Set<String> owners,
             @QueryParam("requestor") String requestor) throws WebApplicationException {
 
         // The calling user injected in the security context via authentication
         Customer caller = (Customer) context.getUserPrincipal();
-        List<Subscription> subscriptions = new ArrayList<>();
+        List<Membership> memberships = new ArrayList<>();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject())
                 || this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject());
 
-        Set<String> associatedSubscribers;
-        List<String> approvedSubscribers = new ArrayList<>();
+        Set<String> associatedOwners;
+        List<String> approvedOwners = new ArrayList<>();
         Boolean isProxy = isAdmin && requestor != null;
 
         // Admin users can make request as another user
@@ -118,7 +118,7 @@ public class SubscriptionsResource extends BaseResource {
                 try {
                     caller = this.dataoneAuthHelper.createCustomerFromSubject(requestor);
                 } catch (io.dropwizard.auth.AuthenticationException dae) {
-                    String message = "The requested subscriptions couldn't be listed: " + dae.getMessage();
+                    String message = "The requested memberships couldn't be listed: " + dae.getMessage();
                     throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
                 }
             } else {
@@ -126,107 +126,107 @@ public class SubscriptionsResource extends BaseResource {
             }
         }
 
-        /* Determine if the caller is allowed to retrieve subscriptions for the specified subscribers */
-        if (subscribers != null && subscribers.size() > 0) {
-            // Filter out non-associated subscribers if not an admin
+        /* Determine if the caller is allowed to retrieve memberships for the specified owners */
+        if (owners != null && owners.size() > 0) {
+            // Filter out non-associated owners if not an admin
             if (!isAdmin || isProxy) {
-                associatedSubscribers =
-                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
-                if (associatedSubscribers.size() > 0) {
-                    approvedSubscribers.addAll(associatedSubscribers);
+                associatedOwners =
+                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
+                if (associatedOwners.size() > 0) {
+                    approvedOwners.addAll(associatedOwners);
                 }
 
-                /* Caller is not admin and is not associated with any of the specified subscribers. */
-                if (approvedSubscribers.size() == 0) {
-                    throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
+                /* Caller is not admin and is not associated with any of the specified owners. */
+                if (approvedOwners.size() == 0) {
+                    throw new WebApplicationException("The requested owners don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                 }
             } else {
-                /* Admin caller, so can see quotas for all requested subscribers */
-                approvedSubscribers.addAll(subscribers);
+                /* Admin caller, so can see quotas for all requested owners */
+                approvedOwners.addAll(owners);
             }
         } else {
-            /** No subscribers specified and caller is not admin, so caller is allowed to
-             view any subscription for subscribers with which they are associated.
-             If the caller is admin, then don't set subject, so that subscriptions for all subscribers requested can be viewed.
+            /** No owners specified and caller is not admin, so caller is allowed to
+             view any membership for owners with which they are associated.
+             If the caller is admin, then don't set subject, so that memberships for all owners requested can be viewed.
              */
             if (!isAdmin || isProxy) {
-                if (approvedSubscribers.size() == 0) {
-                    approvedSubscribers = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
+                if (approvedOwners.size() == 0) {
+                    approvedOwners = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                 }
             }
         }
 
-        if (approvedSubscribers.size() > 0) {
-            subscriptions = subscriptionStore.findSubscriptionsBySubscribers(approvedSubscribers);
+        if (approvedOwners.size() > 0) {
+            memberships = membershipStore.findMembershipsByOwners(approvedOwners);
         } else {
-            subscriptions = subscriptionStore.listSubscriptions();
+            memberships = membershipStore.listMemberships();
         }
 
-        if (subscriptions == null || subscriptions.size() == 0) {
+        if (memberships == null || memberships.size() == 0) {
             if (! isAdmin || isProxy) {
                 // If not an admin user or is a proxy user, we have no way to determine if they didn't have enough
                 // privilege or if the quotas don't exist.
-                throw new WebApplicationException("The requested subscriptions were not found or requestor does not have privilege to view them.", Response.Status.NOT_FOUND);
+                throw new WebApplicationException("The requested memberships were not found or requestor does not have privilege to view them.", Response.Status.NOT_FOUND);
             } else {
                 // Admin user can see any existing quota, so can't be a priv issue.
-                throw new WebApplicationException("The requested subscriptions were not found.", Response.Status.NOT_FOUND);
+                throw new WebApplicationException("The requested memberships were not found.", Response.Status.NOT_FOUND);
             }
         }
 
-        // TODO: Incorporate paging params - new SubscriptionList(start, count, total, quotas)
-        return new SubscriptionList(subscriptions);
+        // TODO: Incorporate paging params - new MembershipList(start, count, total, quotas)
+        return new MembershipList(memberships);
     }
 
     /**
-     * Get the subscription given an id
-     * @param subscriptionId the subscription id
-     * @return  the subscription for the id
+     * Get the membership given an id
+     * @param membershipId the membership id
+     * @return  the membership for the id
      */
     @Timed
     @GET
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{subscriptionId}")
-    public Subscription retrieve(
+    @Path("{membershipId}")
+    public Membership retrieve(
             @Context SecurityContext context,
-            @PathParam("subscriptionId") @NotNull Integer subscriptionId)
+            @PathParam("membershipId") @NotNull Integer membershipId)
             throws WebApplicationException {
 
         Customer caller = (Customer) context.getUserPrincipal();
-        Subscription subscription = null;
+        Membership membership = null;
 
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject())
                 || this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject());
 
         /* Admin user is making this request as another subject */
         if (!isAdmin) {
-            throw new WebApplicationException("Admin privilege is required to retrieve a subscription, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+            throw new WebApplicationException("Admin privilege is required to retrieve a membership, " + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
         }
 
-        // Get the subscription from the store
+        // Get the membership from the store
         try {
-            subscription = subscriptionStore.getSubscription(subscriptionId);
+            membership = membershipStore.getMembership(membershipId);
 
             if ( isAdmin) {
-                return subscription;
+                return membership;
             } else {
-                // Ensure the caller is asssociated with the quota subscriber
-                // TODO: add customer 'subject' to subscription object
-                Customer customer = customerStore.getCustomer(subscription.getCustomerId());
-                String subscriber = customer.getSubject();
+                // Ensure the caller is asssociated with the quota owner
+                // TODO: add customer 'subject' to membership object
+                Customer customer = customerStore.getCustomer(membership.getCustomerId());
+                String owner = customer.getSubject();
 
-                Set<String> subscribers = new HashSet<String>();
-                subscribers.add(subscriber);
-                Set<String> associatedSubscribers =
-                    this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subscribers);
-                if (associatedSubscribers.size() > 0) {
-                    return subscription;
+                Set<String> owners = new HashSet<String>();
+                owners.add(owner);
+                Set<String> associatedOwners =
+                    this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
+                if (associatedOwners.size() > 0) {
+                    return membership;
                 } else {
-                    throw new WebApplicationException(caller.getSubject() + " is not associated with this subscription.", Response.Status.FORBIDDEN);
+                    throw new WebApplicationException(caller.getSubject() + " is not associated with this membership.", Response.Status.FORBIDDEN);
                 }
             }
         } catch (Exception e) {
-            String message = "Couldn't get the subscription: " + e.getMessage();
+            String message = "Couldn't get the membership: " + e.getMessage();
             throw new WebApplicationException(message, Response.Status.NOT_FOUND);
         }
     }
