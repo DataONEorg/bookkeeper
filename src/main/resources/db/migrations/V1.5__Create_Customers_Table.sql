@@ -43,5 +43,5 @@ COMMENT ON COLUMN customers.invoicePrefix IS 'The customer invoice prefix';
 COMMENT ON COLUMN customers.invoiceSettings IS 'The customer settings, stored as a JSON InvoiceSettings object';
 COMMENT ON COLUMN customers.metadata IS 'The customer metadata, stored as a JSON object (undefined as of yet)';
 COMMENT ON COLUMN customers.givenName IS 'The customer given name';
-COMMENT ON COLUMN customers.surName IS 'The customer sur name';
+COMMENT ON COLUMN customers.surName IS 'The customer surname';
 COMMENT ON COLUMN customers.phone IS 'The customer phone';
