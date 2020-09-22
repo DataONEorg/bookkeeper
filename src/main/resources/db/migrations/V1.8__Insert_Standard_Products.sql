@@ -1,6 +1,6 @@
 --- Insert products
 
---- Individual Subscription
+--- Individual Membership
 INSERT INTO products (object, active, amount, caption, created, currency, description,
     interval, name, statementDescriptor, type, unitLabel, url, metadata)
 VALUES (
@@ -13,7 +13,7 @@ VALUES (
     'Create a customized portal for your work and projects. Help others understand and access your data.',
     'year',
     'Individual',
-    'DataONE Subscription Plan - Individual',
+    'DataONE Membership Plan - Individual',
     'service',
     'membership',
     'https://products.dataone.org/plus',
@@ -21,7 +21,7 @@ VALUES (
 );
 
 
---- Small Organization Subscription
+--- Small Organization Membership
 INSERT INTO products (object, active, amount, caption, created, currency, description,
     interval, name, statementDescriptor, type, unitLabel, url, metadata)
 VALUES (
@@ -34,14 +34,14 @@ VALUES (
     'Create multiple portals for your work and projects. Help others understand and access your data.',
     'year',
     'Small Organization',
-    'DataONE Subscription Plan - Small Organization',
+    'DataONE Membership Plan - Small Organization',
     'service',
     'membership',
     'https://products.dataone.org/plus',
     '{"features": [{"name": "branded_portal","label": "Branded Portals","description": "Showcase your research, data, results, and usage metrics by building a custom web portal.","quota": {"object": "quota","quotaType": "portal","softLimit": "5","hardLimit": "5","totalUsage":"0","unit": "portal"}},{"name": "custom_search_filters","label": "Custom Search Filters","description": "Create custom search filters in your portal to allow scientists to search your holdings using filters appropriate to your field of science."},{"name": "fair_data_assessment","label": "FAIR Data Assessments","description": "Access quality metric reports using the FAIR data suite of checks."},{"name": "custom_quality_service","label": "Custom Quality Metrics","description": "Create a suite of custom quality metadata checks specific to your datasets."},{"name": "aggregated_metrics","label": "Aggregated Metrics","description": "Access and share reports on aggregated usage metrics such as dataset views, data downloads, and dataset citations."},{"name": "dataone_voting_member","label": "DataONE Voting Member","description": "Vote on the direction and priorities at DataONE Community meetings."}]}'
 );
 
---- Medium Organization Subscription
+--- Medium Organization Membership
 INSERT INTO products (object, active, amount, caption, created, currency, description,
     interval, name, statementDescriptor, type, unitLabel, url, metadata)
 VALUES (
@@ -54,14 +54,14 @@ VALUES (
     'Create multiple portals for your work and projects. Help others understand and access your data.',
     'year',
     'Medium Organization',
-    'DataONE Subscription Plan - Medium Organization',
+    'DataONE Membership Plan - Medium Organization',
     'service',
     'membership',
     'https://products.dataone.org/plus',
     '{"features": [{"name": "branded_portal","label": "Branded Portals","description": "Showcase your research, data, results, and usage metrics by building a custom web portal.","quota": {"object": "quota","quotaType": "portal","softLimit": "15","hardLimit": "15","totalUsage":"0","unit": "portal"}},{"name": "custom_search_filters","label": "Custom Search Filters","description": "Create custom search filters in your portal to allow scientists to search your holdings using filters appropriate to your field of science."},{"name": "fair_data_assessment","label": "FAIR Data Assessments","description": "Access quality metric reports using the FAIR data suite of checks."},{"name": "custom_quality_service","label": "Custom Quality Metrics","description": "Create a suite of custom quality metadata checks specific to your datasets."},{"name": "aggregated_metrics","label": "Aggregated Metrics","description": "Access and share reports on aggregated usage metrics such as dataset views, data downloads, and dataset citations."},{"name": "dataone_voting_member","label": "DataONE Voting Member","description": "Vote on the direction and priorities at DataONE Community meetings."}]}'
 );
 
---- Large Organization Subscription
+--- Large Organization Membership
 INSERT INTO products (object, active, amount, caption, created, currency, description,
     interval, name, statementDescriptor, type, unitLabel, url, metadata)
 VALUES (
@@ -74,7 +74,7 @@ VALUES (
     'Create multiple portals for your work and projects. Help others understand and access your data.',
     'year',
     'Large Organization',
-    'DataONE Subscription Plan - Large Organization',
+    'DataONE Membership Plan - Large Organization',
     'service',
     'membership',
     'https://products.dataone.org/plus',
