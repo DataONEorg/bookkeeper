@@ -246,7 +246,7 @@ public interface MembershipStore {
 
     /**
      * Delete a membership
-     * @param id
+     * @param id the membership id to delete
      */
     @SqlUpdate("DELETE FROM memberships WHERE id = :id")
     void delete(@Bind("id") Integer id);
