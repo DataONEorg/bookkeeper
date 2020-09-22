@@ -537,8 +537,8 @@ public class UsageStoreTest extends BaseTestCase {
     public void testDelete() {
         Integer customerId;
         Integer productId;
-        Integer quotaId;
-        Integer usageId;
+        Integer quotaId = null;
+        Integer usageId = null;
         try {
             // Add a test customer
             customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());

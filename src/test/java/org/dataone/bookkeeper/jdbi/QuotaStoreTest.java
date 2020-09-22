@@ -160,7 +160,7 @@ public class QuotaStoreTest extends BaseTestCase {
      * Test getting quotas by owner
      */
     @Test
-    @DisplayName("Test getting quotas by subscriber")
+    @DisplayName("Test getting quotas by owner")
     public void testGetQuotasByOwner() {
         try {
             // Insert a customer
@@ -286,7 +286,7 @@ public class QuotaStoreTest extends BaseTestCase {
                             StoreHelper.getRandomId(), customerTwo.getId());
             this.membershipIds.add(membershipIdTwo); // To be deleted
 
-            // Insert two quotas with separate owners, maintaining unique subscriptionId + quotaType
+            // Insert two quotas with separate owners, maintaining unique membershipId + quotaType
             Integer quotaOneId = QuotaHelper.insertTestQuotaWithOwner(
                     StoreHelper.getRandomId(), membershipId, customer.getSubject());
             this.quotaIds.add(quotaOneId);
