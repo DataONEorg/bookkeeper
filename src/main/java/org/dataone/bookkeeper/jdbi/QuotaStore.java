@@ -180,8 +180,8 @@ public interface QuotaStore {
        "softLimit = :softLimit, " +
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
-       "subscriptionId = :membershipId, " +
-       "subscriber = :owner " +
+       "membershipId = :membershipId, " +
+       "owner = :owner " +
        "WHERE id = :id ")
    @GetGeneratedKeys
    Quota update(@BindBean Quota quota);

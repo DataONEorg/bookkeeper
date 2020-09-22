@@ -129,9 +129,9 @@ public class QuotasResource extends BaseResource {
             }
         }
 
-        /* Determine if the caller is allowed to retrieve quotas for the specified subscribers */
+        /* Determine if the caller is allowed to retrieve quotas for the specified owners */
         if (owners != null && owners.size() > 0) {
-            // Filter out non-associated subscribers if not an admin
+            // Filter out non-associated owners if not an admin
             if (!isAdmin || isProxy) {
                 associatedOwners =
                         this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
@@ -139,12 +139,13 @@ public class QuotasResource extends BaseResource {
                     approvedOwners.addAll(associatedOwners);
                 }
 
-                /* Caller is not admin and is not associated with any of the specified subscribers. */
+                /* Caller is not admin and is not associated with any of the specified owners. */
                 if (approvedOwners.size() == 0) {
-                    throw new WebApplicationException("The requested subscribers don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
+                    throw new WebApplicationException("The requested owners don't exist or " +
+                        "requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                 }
             } else {
-                /* Admin caller, so can see quotas for all requested subscribers */
+                /* Admin caller, so can see quotas for all requested owners */
                 approvedOwners.addAll(owners);
             }
         } else {

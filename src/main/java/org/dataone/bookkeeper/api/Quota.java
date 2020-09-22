@@ -298,7 +298,7 @@ public class Quota {
     }
 
     /**
-     * Set the subscriber
+     * Set the owner
      * @param owner  the quota owner
      */
     @JsonProperty

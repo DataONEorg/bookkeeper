@@ -399,7 +399,7 @@ public class OrdersResource extends BaseResource {
                             quota = feature.getQuota();
                             if ( quota != null ) {
                                 quota.setTotalUsage(0.0);
-                                quota.setSubscriber(customer.getSubject());
+                                quota.setOwner(customer.getSubject());
                                 if ( ! quotas.containsKey(quota.getQuotaType()) ) {
                                     // Add new quotas
                                     quotas.put(quota.getQuotaType(), quota);
