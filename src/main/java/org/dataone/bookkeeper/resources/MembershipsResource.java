@@ -212,7 +212,7 @@ public class MembershipsResource extends BaseResource {
             } else {
                 // Ensure the caller is asssociated with the quota owner
                 // TODO: add customer 'subject' to membership object
-                Customer customer = customerStore.getCustomer(membership.getCustomerId());
+                Customer customer = customerStore.getCustomer(membership.getCustomer().getId());
                 String owner = customer.getSubject();
 
                 Set<String> owners = new HashSet<String>();
