@@ -309,6 +309,17 @@ public class Membership {
     }
 
     /**
+     * Get the customer id
+     * @return customerId the customer id
+     */
+    public Integer getCustomerId() {
+        Integer customerId = null;
+        if ( this.customer != null ) {
+            customerId = this.customer.getId();
+        }
+        return customerId;
+    }
+    /**
      * Get the membership customer
      * @return customer the membership customer
      */
