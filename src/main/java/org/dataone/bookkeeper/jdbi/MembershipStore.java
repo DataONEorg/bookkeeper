@@ -21,6 +21,7 @@
 
 package org.dataone.bookkeeper.jdbi;
 
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Product;
 import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.api.Membership;
@@ -115,6 +116,7 @@ public interface MembershipStore {
      */
     @SqlQuery(SELECT_ALL)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Customer.class, prefix = "c")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = MembershipMapper.class)
     @UseRowReducer(MembershipQuotasReducer.class)
@@ -127,6 +129,7 @@ public interface MembershipStore {
      */
     @SqlQuery(SELECT_ONE)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Customer.class, prefix = "c")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = MembershipMapper.class)
     @UseRowReducer(MembershipQuotasReducer.class)
@@ -139,6 +142,7 @@ public interface MembershipStore {
      */
     @SqlQuery(SELECT_OWNER)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Customer.class, prefix = "c")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = MembershipMapper.class)
     @UseRowReducer(MembershipQuotasReducer.class)
@@ -151,6 +155,7 @@ public interface MembershipStore {
      */
     @SqlQuery(SELECT_OWNERS)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
+    @RegisterBeanMapper(value = Customer.class, prefix = "c")
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = MembershipMapper.class)
     @UseRowReducer(MembershipQuotasReducer.class)
