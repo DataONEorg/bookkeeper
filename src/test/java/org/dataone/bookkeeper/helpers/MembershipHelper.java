@@ -110,7 +110,8 @@ public class MembershipHelper {
 
         if (membership.getProduct() != null &&
             membership.getProduct().getId() != null &&
-            membership.getCustomerId() != null) {
+            membership.getCustomer() != null &&
+            membership.getCustomer().getId() != null) {
             BaseTestCase.dbi.useHandle(handle ->
                 handle.execute("INSERT INTO memberships (" +
                     "id, " +
@@ -146,7 +147,7 @@ public class MembershipHelper {
                     membership.getCanceledAt(),
                     membership.getCollectionMethod(),
                     membership.getCreated(),
-                    membership.getCustomerId(),
+                    membership.getCustomer().getId(),
                     Jackson.newObjectMapper().writeValueAsString(membership.getMetadata()),
                     membership.getProduct().getId(),
                     membership.getQuantity(),
@@ -198,7 +199,7 @@ public class MembershipHelper {
             null,
             "send_invoice",
             new Integer(1570486366),
-            customer.getId(),
+            customer,
             Jackson.newObjectMapper().createObjectNode(),
             product,
             new Integer(1),
