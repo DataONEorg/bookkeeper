@@ -24,6 +24,7 @@ package org.dataone.bookkeeper.jdbi.mappers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
+import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Membership;
 import org.dataone.bookkeeper.api.Product;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -59,35 +60,21 @@ public class MembershipMapper implements RowMapper<Membership> {
     public Membership map(ResultSet rs, StatementContext ctx) throws SQLException {
         Membership membership = null;
         Product product = null;
+        Customer customer = null;
         ObjectMapper mapper = Jackson.newObjectMapper();
 
         try {
-            // If we have product fields in the resultset, build and add a product
-            if (new Integer(rs.getInt("p_id")) != null) {
-                product = new Product(
-                    new Integer(rs.getInt("p_id")),
-                    rs.getString("p_object"),
-                    rs.getBoolean("p_active"),
-                    new Integer(rs.getInt("p_amount")),
-                    rs.getString("p_caption"),
-                    rs.getString("p_currency"),
-                    new Integer(rs.getInt("p_created")),
-                    rs.getString("p_description"),
-                    rs.getString("p_interval"),
-                    rs.getString("p_name"),
-                    rs.getString("p_statementDescriptor"),
-                    rs.getString("p_type"),
-                    rs.getString("p_unitLabel"),
-                    rs.getString("p_url"),
-                    rs.getString("p_metadata") != null ?
-                        (ObjectNode) mapper.readTree(rs.getString("p_metadata")) : null
-                );
-            }
+            product = new ProductMapper().map(rs, ctx);
+
         } catch (PSQLException psqle) {
             // There are no products in the result, continue
+        }
 
-        } catch (IOException e) {
-            throw new SQLException(e);
+        try {
+            customer = new CustomerMapper().map(rs, ctx);
+
+        } catch (PSQLException psqle) {
+            // There are no customers in the result, continue
         }
 
         try {
@@ -98,7 +85,7 @@ public class MembershipMapper implements RowMapper<Membership> {
                 new Integer(rs.getInt("s_canceledAt")),
                 rs.getString("s_collectionMethod"),
                 new Integer(rs.getInt("s_created")),
-                new Integer(rs.getInt("s_customerId")),
+                customer,
                 rs.getString("s_metadata") != null ?
                     (ObjectNode) mapper.readTree(rs.getString("s_metadata")) : null,
                 product,
