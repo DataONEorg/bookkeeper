@@ -2,6 +2,7 @@
 skinparam shadowing false   
 skinparam roundcorner 5
 skinparam linetype ortho
+skinparam stereotypeCBackgroundColor #C3D3E3
 
 ' Style the sequences
 skinparam sequence {
