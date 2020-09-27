@@ -4,9 +4,9 @@
 Overview
 --------
 
-To sustain ongoing operations, DataONE offers paid services for memberships alongside free services. This document outlines the design and implementation details needed to offer and manage these services. It describes the ``Products``, ``Customers``, ``Services``, ``Quotas``, ``Usages``, and ``Orders`` that DataONE needs to track. This documents:
+To sustain ongoing operations, DataONE offers paid services for memberships alongside free services. This document outlines the design and implementation details needed to offer and manage these services. It describes the ``Products``, ``Customers``, ``Orders``, ``Quotas``, and ``Usages`` that DataONE needs to track. This documents:
 
-- What service ``Products`` are available for purchase
+- What ``Products`` are available for purchase
 - What ``Products`` a ``Customer`` purchased in an ``Order``
 - What ``Quota`` limits are set for ``Customers`` per paid ``Order``.
 - What ``Usages`` are associated with a given ``Quota``
