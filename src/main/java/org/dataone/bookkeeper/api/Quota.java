@@ -73,6 +73,9 @@ public class Quota {
     /* The quota owner id */
     private String owner;
 
+    /* A name that helps associate a quota with an order */
+    private String name;
+
     /**
      * Construct an empty Quota
      */
@@ -304,6 +307,22 @@ public class Quota {
     @JsonProperty
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    /**
+     * Get the quota name
+     * @return the quota name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get the quota name
+     * @param name the quota name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
