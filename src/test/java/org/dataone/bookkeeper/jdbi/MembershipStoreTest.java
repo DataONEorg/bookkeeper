@@ -222,7 +222,7 @@ public class MembershipStoreTest extends BaseTestCase {
         this.membershipIds.add(expectedMembership.getId());
 
         // Get the membership
-        Membership membership = membershipStore.findMembershipByOwner(customer.getSubject());
+        Membership membership = membershipStore.findMembershipBySubject(customer.getSubject());
         assertTrue(membership.getId().equals(expectedMembership.getId()));
     }
 

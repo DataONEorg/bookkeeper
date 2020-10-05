@@ -57,49 +57,49 @@ public interface UsageStore {
     /** Select by instance identifier */
     String SELECT_BY_INSTANCE_ID = SELECT_CLAUSE + "WHERE u.instanceId = :instanceId";
 
-    /** Select by instance identifier and owners */
+    /** Select by instance identifier and subjects */
     String SELECT_BY_INSTANCE_ID_AND_OWNERS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
             "WHERE u.instanceid = :instanceId " +
-            "AND q.owner IN (<owners>)";
+            "AND q.subject IN (<subjects>)";
 
     /** Select by instance identifier and quota identifier */
     String SELECT_BY_INSTANCE_ID_AND_QUOTA_ID = SELECT_CLAUSE + "WHERE u.instanceId = :instanceId AND u.quotaid = :quotaId";
 
-    /** Select by instance identifier, quota identifier and owners */
+    /** Select by instance identifier, quota identifier and subjects */
     String SELECT_BY_INSTANCE_ID_AND_QUOTA_ID_AND_OWNERS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
             "WHERE u.instanceid = :instanceId " +
             "AND u.quotaId = :quotaId " +
-            "AND q.owner IN (<owners>)";
+            "AND q.subject IN (<subjects>)";
 
     /** Select by quota identifier */
     String SELECT_BY_QUOTA_ID = SELECT_CLAUSE +
             "WHERE u.quotaId = :quotaId";
 
-    /** Select by quota identifier and owner */
+    /** Select by quota identifier and subject */
     String SELECT_BY_QUOTA_ID_AND_OWNERS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
             "WHERE u.quotaid = :quotaId " +
-            "AND q.owner IN (<owners>)";
+            "AND q.subject IN (<subjects>)";
 
     /** Select by quota type */
     String SELECT_BY_QUOTA_TYPE = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
             "WHERE q.quotaType = :quotaType";
 
-    /** Select by quota owners */
+    /** Select by quota subjects */
     String SELECT_BY_QUOTA_OWNERS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
-            "WHERE q.owner IN (<owners>)";
+            "WHERE q.subject IN (<subjects>)";
 
-    /** Select by quota type and owners */
+    /** Select by quota type and subjects */
     String SELECT_BY_QUOTA_TYPE_AND_OWNERS = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
             "WHERE q.quotaType = :quotaType " +
-            "AND q.owner IN (<owners>)";
+            "AND q.subject IN (<subjects>)";
 
-    /** Select by instance identifier, quota identifier and owner */
+    /** Select by instance identifier, quota identifier and subject */
     String SELECT_BY_INSTANCE_ID_AND_QUOTA_TYPE = SELECT_CLAUSE +
             "INNER JOIN quotas q ON q.id = u.quotaid " +
             "WHERE u.instanceid = :instanceId " +
@@ -129,13 +129,13 @@ public interface UsageStore {
     List <Usage> findUsagesByInstanceId(@Bind("instanceId") String instanceId);
 
     /**
-     * Find usages by instance identifier and owner.
+     * Find usages by instance identifier and subject.
      * @param instanceId the usage instance id
-     * @param owners list of quota owners
-     * @return usage the usage for the instanceId and owners
+     * @param subjects list of quota subjects
+     * @return usage the usage for the instanceId and subjects
      */
     @SqlQuery(SELECT_BY_INSTANCE_ID_AND_OWNERS)
-    List<Usage> findUsagesByInstanceIdAndOwners(@Bind("instanceId") String instanceId, @BindList("owners") List<String> owners);
+    List<Usage> findUsagesByInstanceIdAndSubjects(@Bind("instanceId") String instanceId, @BindList("subjects") List<String> subjects);
 
     /**
      * Find usages by instance identifier and quota identifier.
@@ -147,14 +147,14 @@ public interface UsageStore {
     Usage findUsageByInstanceIdAndQuotaId(@Bind("instanceId") String instanceId, @Bind("quotaId") Integer quotaId);
 
     /**
-     * Find usages by instance identifier, quota identifier and owners.
+     * Find usages by instance identifier, quota identifier and subjects.
      * @param instanceId the usage instance id
      * @param quotaId the quota id
-     * @param owners list of owners
-     * @return usage the usage for the instance identifier, quota identifier and owners
+     * @param subjects list of subjects
+     * @return usage the usage for the instance identifier, quota identifier and subjects
      */
     @SqlQuery(SELECT_BY_INSTANCE_ID_AND_QUOTA_ID_AND_OWNERS)
-    Usage findUsageByInstanceIdQuotaIdAndOwners (@Bind("instanceId") String instanceId, @Bind("quotaId") Integer quotaId, @BindList("owners") List<String> owners);
+    Usage findUsageByInstanceIdQuotaIdAndSubjects (@Bind("instanceId") String instanceId, @Bind("quotaId") Integer quotaId, @BindList("subjects") List<String> subjects);
 
     /**
      * Find usages by quota identifier
@@ -165,13 +165,13 @@ public interface UsageStore {
     List<Usage> findUsagesByQuotaId(@Bind("quotaId") Integer quotaId);
 
     /**
-     * Find usages by quota identifier and owners.
+     * Find usages by quota identifier and subjects.
      * @param quotaId the quota id
-     * @param owners list of owners
-     * @return usage the usage for the instanceId and owners
+     * @param subjects list of subjects
+     * @return usage the usage for the instanceId and subjects
      */
     @SqlQuery(SELECT_BY_QUOTA_ID_AND_OWNERS)
-    List<Usage> findUsagesByQuotaIdAndOwners (@Bind("quotaId") Integer quotaId, @BindList("owners") List<String> owners);
+    List<Usage> findUsagesByQuotaIdAndSubjects (@Bind("quotaId") Integer quotaId, @BindList("subjects") List<String> subjects);
 
     /**
      * Find usages by quota type.
@@ -182,21 +182,21 @@ public interface UsageStore {
     List<Usage> findUsagesByQuotaType(@Bind("quotaType") String quotaType);
 
     /**
-     * Find usages by quota owners
-     * @param owners the quota owners
-     * @return the list of usages for the quota owners
+     * Find usages by quota subjects
+     * @param subjects the quota subjects
+     * @return the list of usages for the quota subjects
      */
     @SqlQuery(SELECT_BY_QUOTA_OWNERS)
-    List<Usage> findUsagesByQuotaOwners(@BindList("owners") List<String> owners);
+    List<Usage> findUsagesByQuotaSubjects(@BindList("subjects") List<String> subjects);
 
     /**
-     * Find usages by name and owners.
+     * Find usages by name and subjects.
      * @param quotaType the object ("portal", "storage", ...)
-     * @param owners the list of quota owners
-     * @return usages the list of usages for quota type and owners
+     * @param subjects the list of quota subjects
+     * @return usages the list of usages for quota type and subjects
      */
     @SqlQuery(SELECT_BY_QUOTA_TYPE_AND_OWNERS)
-    List<Usage> findUsagesByQuotaTypeAndOwners(@Bind("quotaType") String quotaType, @BindList("owners") List<String> owners);
+    List<Usage> findUsagesByQuotaTypeAndSubjects(@Bind("quotaType") String quotaType, @BindList("subjects") List<String> subjects);
 
     /**
      * Find usages by instance identifier and quota type.

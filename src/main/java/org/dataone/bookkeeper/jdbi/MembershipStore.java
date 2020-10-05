@@ -89,7 +89,7 @@ public interface MembershipStore {
             "q.totalUsage AS q_totalUsage, " +
             "q.unit AS q_unit, " +
             "q.membershipId AS q_membershipId, " +
-            "q.owner AS q_owner " +
+            "q.subject AS q_subject " +
         "FROM memberships s " +
         "LEFT JOIN quotas q ON s.id = q.membershipId " +
         "LEFT JOIN customers c ON s.customerId = c.id " +
@@ -104,11 +104,11 @@ public interface MembershipStore {
     /** The query used to find an individual membership */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE s.id = :id";
 
-    /** The query used to find a membership by owner identifier */
-    String SELECT_OWNER = SELECT_CLAUSE + "WHERE c.subject = :owner";
+    /** The query used to find a membership by subject identifier */
+    String SELECT_OWNER = SELECT_CLAUSE + "WHERE c.subject = :subject";
 
-    /** The query used to find a membership by owner identifier */
-    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE c.subject IN (<owners>)";
+    /** The query used to find a membership by subject identifier */
+    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE c.subject IN (<subjects>)";
 
     /**
      * List all memberships with their quotas
@@ -136,9 +136,9 @@ public interface MembershipStore {
     Membership getMembership(@Bind("id") Integer id);
 
     /**
-     * Get a membership by owner identifier
-     * @param owner the customer owner identifier
-     * @return membership the membership with the given owner identifier
+     * Get a membership by subject identifier
+     * @param subject the customer subject identifier
+     * @return membership the membership with the given subject identifier
      */
     @SqlQuery(SELECT_OWNER)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
@@ -146,11 +146,11 @@ public interface MembershipStore {
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = MembershipMapper.class)
     @UseRowReducer(MembershipQuotasReducer.class)
-    Membership findMembershipByOwner(@Bind("owner") String owner);
+    Membership findMembershipBySubject(@Bind("subject") String subject);
 
     /**
-     * Get memberships by owner identifiers
-     * @param owners the owner identifiers
+     * Get memberships by subject identifiers
+     * @param subjects the subject identifiers
      * @return memberships the memberships matching the requested identifiers
      */
     @SqlQuery(SELECT_OWNERS)
@@ -159,7 +159,7 @@ public interface MembershipStore {
     @RegisterBeanMapper(value = Product.class, prefix = "p")
     @RegisterRowMapper(value = MembershipMapper.class)
     @UseRowReducer(MembershipQuotasReducer.class)
-    List<Membership> findMembershipsByOwners(@BindList("owners") List<String> owners);
+    List<Membership> findMembershipsBySubjects(@BindList("subjects") List<String> subjects);
 
     /**
      * Insert a membership
@@ -218,9 +218,9 @@ public interface MembershipStore {
      * @param quota the quota to insert
      */
     @SqlUpdate("INSERT INTO quotas " +
-        "(object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, owner) " +
+        "(object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, subject) " +
         "VALUES " +
-        "(:object, :quotaType, :softLimit, :hardLimit, :totalUsage, :unit, :membershipId, :owner) " +
+        "(:object, :quotaType, :softLimit, :hardLimit, :totalUsage, :unit, :membershipId, :subject) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insertQuota(@BindBean Quota quota);

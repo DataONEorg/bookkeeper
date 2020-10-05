@@ -81,11 +81,11 @@ public class MembershipsResource extends BaseResource {
     }
 
     /**
-     * List quotas, optionally by membershipId or owner.
+     * List quotas, optionally by membershipId or subject.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
-     * @param owners the list of owners to fetch the membership for
+     * @param subjects the list of subjects to fetch the membership for
      * @param requestor the DataONE subject to make the request as
      * @return memberships the memberships list
      */
@@ -97,7 +97,7 @@ public class MembershipsResource extends BaseResource {
             @Context SecurityContext context,
             @QueryParam("start") @DefaultValue("0") Integer start,
             @QueryParam("count") @DefaultValue("1000") Integer count,
-            @QueryParam("owner") Set<String> owners,
+            @QueryParam("subject") Set<String> subjects,
             @QueryParam("requestor") String requestor) throws WebApplicationException {
 
         // The calling user injected in the security context via authentication
@@ -106,8 +106,8 @@ public class MembershipsResource extends BaseResource {
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject())
                 || this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject());
 
-        Set<String> associatedOwners;
-        List<String> approvedOwners = new ArrayList<>();
+        Set<String> associatedSubjects;
+        List<String> approvedSubjects = new ArrayList<>();
         Boolean isProxy = isAdmin && requestor != null;
 
         // Admin users can make request as another user
@@ -126,38 +126,38 @@ public class MembershipsResource extends BaseResource {
             }
         }
 
-        /* Determine if the caller is allowed to retrieve memberships for the specified owners */
-        if (owners != null && owners.size() > 0) {
-            // Filter out non-associated owners if not an admin
+        /* Determine if the caller is allowed to retrieve memberships for the specified subjects */
+        if (subjects != null && subjects.size() > 0) {
+            // Filter out non-associated subjects if not an admin
             if (!isAdmin || isProxy) {
-                associatedOwners =
-                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
-                if (associatedOwners.size() > 0) {
-                    approvedOwners.addAll(associatedOwners);
+                associatedSubjects =
+                        this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subjects);
+                if (associatedSubjects.size() > 0) {
+                    approvedSubjects.addAll(associatedSubjects);
                 }
 
-                /* Caller is not admin and is not associated with any of the specified owners. */
-                if (approvedOwners.size() == 0) {
-                    throw new WebApplicationException("The requested owners don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
+                /* Caller is not admin and is not associated with any of the specified subjects. */
+                if (approvedSubjects.size() == 0) {
+                    throw new WebApplicationException("The requested subjects don't exist or requestor doesn't have privilege to view them.", Response.Status.FORBIDDEN);
                 }
             } else {
-                /* Admin caller, so can see quotas for all requested owners */
-                approvedOwners.addAll(owners);
+                /* Admin caller, so can see quotas for all requested subjects */
+                approvedSubjects.addAll(subjects);
             }
         } else {
-            /** No owners specified and caller is not admin, so caller is allowed to
-             view any membership for owners with which they are associated.
-             If the caller is admin, then don't set subject, so that memberships for all owners requested can be viewed.
+            /** No subjects specified and caller is not admin, so caller is allowed to
+             view any membership for subjects with which they are associated.
+             If the caller is admin, then don't set subject, so that memberships for all subjects requested can be viewed.
              */
             if (!isAdmin || isProxy) {
-                if (approvedOwners.size() == 0) {
-                    approvedOwners = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
+                if (approvedSubjects.size() == 0) {
+                    approvedSubjects = new ArrayList(this.dataoneAuthHelper.getAssociatedSubjects(caller));
                 }
             }
         }
 
-        if (approvedOwners.size() > 0) {
-            memberships = membershipStore.findMembershipsByOwners(approvedOwners);
+        if (approvedSubjects.size() > 0) {
+            memberships = membershipStore.findMembershipsBySubjects(approvedSubjects);
         } else {
             memberships = membershipStore.listMemberships();
         }
@@ -210,16 +210,16 @@ public class MembershipsResource extends BaseResource {
             if ( isAdmin) {
                 return membership;
             } else {
-                // Ensure the caller is asssociated with the quota owner
+                // Ensure the caller is asssociated with the quota subject
                 // TODO: add customer 'subject' to membership object
                 Customer customer = customerStore.getCustomer(membership.getCustomer().getId());
-                String owner = customer.getSubject();
+                String subject = customer.getSubject();
 
-                Set<String> owners = new HashSet<String>();
-                owners.add(owner);
-                Set<String> associatedOwners =
-                    this.dataoneAuthHelper.filterByAssociatedSubjects(caller, owners);
-                if (associatedOwners.size() > 0) {
+                Set<String> subjects = new HashSet<String>();
+                subjects.add(subject);
+                Set<String> associatedSubjects =
+                    this.dataoneAuthHelper.filterByAssociatedSubjects(caller, subjects);
+                if (associatedSubjects.size() > 0) {
                     return membership;
                 } else {
                     throw new WebApplicationException(caller.getSubject() + " is not associated with this membership.", Response.Status.FORBIDDEN);

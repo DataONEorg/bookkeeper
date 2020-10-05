@@ -42,6 +42,7 @@ public class OrderItem {
     private String object;
 
     /* The order item amount */
+    @NotNull
     private Integer amount;
 
     /* The order item currency */

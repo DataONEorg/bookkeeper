@@ -70,8 +70,8 @@ public class Quota {
     /* The quota membership id */
     private Integer membershipId;
 
-    /* The quota owner id */
-    private String owner;
+    /* The quota subject id */
+    private String subject;
 
     /* A name that helps associate a quota with an order */
     private String name;
@@ -104,7 +104,7 @@ public class Quota {
             this.totalUsage = quota.totalUsage;
             this.unit = quota.unit;
             this.membershipId = quota.membershipId;
-            this.owner = quota.owner;
+            this.subject = quota.subject;
         }
     }
 
@@ -118,7 +118,7 @@ public class Quota {
      * @param unit          the quota unit
      * @param totalUsage    the quota total usage
      * @param membershipId  the quota membership identifier
-     * @param owner         the quota owner
+     * @param subject         the quota subject
      */
     public Quota(Integer id,
                  @NotNull @NotEmpty String object,
@@ -128,7 +128,7 @@ public class Quota {
                  @NotNull Double totalUsage,
                  @NotNull @NotEmpty String unit,
                  Integer membershipId,
-                 String owner) {
+                 String subject) {
         if ( id != null ) {
             if ( ! id.toString().equals("") ) {
                 this.id = id;
@@ -141,7 +141,7 @@ public class Quota {
         this.unit = unit;
         this.totalUsage = totalUsage;
         this.membershipId = membershipId;
-        this.owner = owner;
+        this.subject = subject;
     }
 
     /**
@@ -292,21 +292,21 @@ public class Quota {
     }
 
     /**
-     * Get the owner
-     * @return owner  the quota owner
+     * Get the subject
+     * @return subject  the quota subject
      */
     @JsonProperty
-    public String getOwner() {
-        return owner;
+    public String getSubject() {
+        return subject;
     }
 
     /**
-     * Set the owner
-     * @param owner  the quota owner
+     * Set the subject
+     * @param subject  the quota subject
      */
     @JsonProperty
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     /**
@@ -336,23 +336,25 @@ public class Quota {
         if (o == null || getClass() != o.getClass()) return false;
         Quota quota = (Quota) o;
         return Objects.equals(getId(), quota.getId()) &&
-            Objects.equals(getObject(), quota.getObject()) &&
-            Objects.equals(getQuotaType(), quota.getQuotaType()) &&
-            Objects.equals(getSoftLimit(), quota.getSoftLimit()) &&
-            Objects.equals(getHardLimit(), quota.getHardLimit()) &&
+            getObject().equals(quota.getObject()) &&
+            getQuotaType().equals(quota.getQuotaType()) &&
+            getSoftLimit().equals(quota.getSoftLimit()) &&
+            getHardLimit().equals(quota.getHardLimit()) &&
             Objects.equals(getTotalUsage(), quota.getTotalUsage()) &&
-            Objects.equals(getUnit(), quota.getUnit()) &&
+            getUnit().equals(quota.getUnit()) &&
             Objects.equals(getMembershipId(), quota.getMembershipId()) &&
-            Objects.equals(getOwner(), quota.getOwner());
+            Objects.equals(getSubject(), quota.getSubject()) &&
+            Objects.equals(getName(), quota.getName());
     }
 
     /**
      * Calculate a hash based on all fields
      * @return hashcode  the hashcode of the object
      */
+
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getObject(), getQuotaType(), getSoftLimit(),
-            getHardLimit(), getTotalUsage(), getUnit(), getMembershipId(), getOwner());
+            getHardLimit(), getTotalUsage(), getUnit(), getMembershipId(), getSubject(), getName());
     }
 }

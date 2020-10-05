@@ -186,7 +186,7 @@ public class MembershipHelper {
             Quota quota = feature.getQuota();
             if ( quota != null ) {
                 quota.setMembershipId(membershipId);
-                quota.setOwner(customer.getSubject());
+                quota.setSubject(customer.getSubject());
                 quota.setTotalUsage(0.0);
             }
             quotas.add(quota);
@@ -267,7 +267,7 @@ public class MembershipHelper {
                     "q.totalUsage AS q_totalUsage, " +
                     "q.unit AS q_unit, " +
                     "q.membershipId AS q_membershipId, " +
-                    "q.owner AS q_owner " +
+                    "q.subject AS q_subject " +
                 "FROM memberships s " +
                 "LEFT JOIN quotas q ON s.id = q.membershipId " +
                 "LEFT JOIN products p ON s.productId = p.id " +

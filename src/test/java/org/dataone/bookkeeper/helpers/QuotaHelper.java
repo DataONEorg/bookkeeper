@@ -53,7 +53,7 @@ public class QuotaHelper {
                     "totalUsage, " +
                     "unit, " +
                     "membershipId, " +
-                    "owner) " +
+                    "subject) " +
                 "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
@@ -70,18 +70,18 @@ public class QuotaHelper {
     }
 
     /**
-     * Insert a test quota with a given id, membership id, and owner
+     * Insert a test quota with a given id, membership id, and subject
      * @param quotaId
      * @param membershipId
-     * @param owner
+     * @param subject
      * @return
      * @throws SQLException
      */
-    public static Integer insertTestQuotaWithOwner(
-        Integer quotaId, Integer membershipId, String owner) throws SQLException {
+    public static Integer insertTestQuotaWithSubject(
+        Integer quotaId, Integer membershipId, String subject) throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
             handle.execute("INSERT INTO quotas " +
-                "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, owner) " +
+                "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, subject) " +
                 "VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 quotaId,
@@ -92,7 +92,7 @@ public class QuotaHelper {
                 null,
                 "portal",
                 membershipId,
-                owner)
+                subject)
         );
         return quotaId;
     }
@@ -114,7 +114,7 @@ public class QuotaHelper {
         quotas.put(portalQuotaId, QuotaHelper.createTestPortalQuota(portalQuotaId, membershipId));
 
         String insertStatement = "INSERT INTO quotas " +
-            "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, owner) " +
+            "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, membershipId, subject) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Insert them into the database for the given membership id
         BaseTestCase.dbi.useHandle(handle -> {
@@ -127,7 +127,7 @@ public class QuotaHelper {
                 quotas.get(storageQuotaId).getTotalUsage(),
                 quotas.get(storageQuotaId).getUnit(),
                 quotas.get(storageQuotaId).getMembershipId(),
-                quotas.get(storageQuotaId).getOwner()
+                quotas.get(storageQuotaId).getSubject()
             );
             handle.execute(insertStatement,
                 portalQuotaId,
@@ -138,7 +138,7 @@ public class QuotaHelper {
                 quotas.get(portalQuotaId).getTotalUsage(),
                 quotas.get(portalQuotaId).getUnit(),
                 quotas.get(portalQuotaId).getMembershipId(),
-                quotas.get(portalQuotaId).getOwner()
+                quotas.get(portalQuotaId).getSubject()
             );
         });
         return quotas;
@@ -171,7 +171,7 @@ public class QuotaHelper {
         quota.setTotalUsage(null);
         quota.setUnit("megabyte");
         quota.setMembershipId(membershipId);
-        quota.setOwner("http://orcid.org/0000-0000-0000-0000");
+        quota.setSubject("http://orcid.org/0000-0000-0000-0000");
         return quota;
     }
 
@@ -185,7 +185,7 @@ public class QuotaHelper {
         quota.setTotalUsage(null);
         quota.setUnit("portal");
         quota.setMembershipId(membershipId);
-        quota.setOwner("http://orcid.org/0000-0000-0000-0000");
+        quota.setSubject("http://orcid.org/0000-0000-0000-0000");
         return quota;
     }
     /**
@@ -242,7 +242,7 @@ public class QuotaHelper {
     public static Quota getQuotaById(Integer quotaId) {
         Quota quota = BaseTestCase.dbi.withHandle(handle ->
             handle.createQuery("SELECT id, object, quotaType, softLimit, hardLimit, totalUsage, unit, " +
-                "membershipId, owner " +
+                "membershipId, subject " +
                 "FROM quotas WHERE id = :id")
                 .bind("id", quotaId)
                 .mapToBean(Quota.class)

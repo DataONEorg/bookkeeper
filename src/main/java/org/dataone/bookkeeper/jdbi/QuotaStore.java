@@ -50,7 +50,7 @@ public interface QuotaStore {
             "q.totalUsage, " +
             "q.unit, " +
             "q.membershipId, " +
-            "q.owner " +
+            "q.subject " +
             "FROM quotas q ";
 
     /** The full ordered query */
@@ -68,14 +68,14 @@ public interface QuotaStore {
     /** The query used to find a quota by membership identifier */
     String SELECT_MEMBERSHIP = SELECT_CLAUSE + "WHERE q.membershipId = :membershipId ";
 
-    /** The query used to find a quota by owner identifier */
-    String SELECT_OWNER = SELECT_CLAUSE + "WHERE q.owner = :owner ";
+    /** The query used to find a quota by subject identifier */
+    String SELECT_OWNER = SELECT_CLAUSE + "WHERE q.subject = :subject ";
 
-    /** The query used to find quotas by multiple owner identifiers */
-    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE q.owner IN (<owners>) ";
+    /** The query used to find quotas by multiple subject identifiers */
+    String SELECT_OWNERS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
 
-    /** The query used to find quotas by type and multiple owner identifiers */
-    String SELECT_BY_NAME_AND_OWNERS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.owner IN (<owners>) ";
+    /** The query used to find quotas by type and multiple subject identifiers */
+    String SELECT_BY_NAME_AND_OWNERS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.subject IN (<subjects>) ";
 
     /**
      * List all quotas
@@ -119,32 +119,32 @@ public interface QuotaStore {
     List<Quota> findQuotasByType(@Bind("quotaType") String quotaType);
 
     /**
-     * Find quotas by owner identifier
+     * Find quotas by subject identifier
      *
-     * @param owner the owner identifier (such as an ORCID identifier)
-     * @return quotas the list of quotas for the owner
+     * @param subject the subject identifier (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subject
      */
     @SqlQuery(SELECT_OWNER)
-    List<Quota> findQuotasByOwner(@Bind("owner") String owner);
+    List<Quota> findQuotasBySubject(@Bind("subject") String subject);
 
     /**
-     * Find quotas by a list of owner identifiers
+     * Find quotas by a list of subject identifiers
      *
-     * @param owners the owner identifiers list (such as an ORCID identifier)
-     * @return quotas the list of quotas for the owner
+     * @param subjects the subject identifiers list (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subject
      */
     @SqlQuery(SELECT_OWNERS)
-    List<Quota> findQuotasByOwners(@BindList("owners") List<String> owners);
+    List<Quota> findQuotasBySubjects(@BindList("subjects") List<String> subjects);
 
     /**
-     * Find quotas by a quota type and owners
+     * Find quotas by a quota type and subjects
      *
      * @param quotaType the quota name (e.g. "portal", "storage")
-     * @param owners the owner identifiers (such as an ORCID identifier)
-     * @return quotas the list of quotas for the owners and names
+     * @param subjects the subject identifiers (such as an ORCID identifier)
+     * @return quotas the list of quotas for the subjects and names
      */
     @SqlQuery(SELECT_BY_NAME_AND_OWNERS)
-    List<Quota> findQuotasByNameAndOwners(@Bind("quotaType") String quotaType, @BindList("owners") List<String> owners);
+    List<Quota> findQuotasByNameAndSubjects(@Bind("quotaType") String quotaType, @BindList("subjects") List<String> subjects);
 
     /**
      * Insert a quota with a given Quota instance
@@ -157,7 +157,7 @@ public interface QuotaStore {
         "hardLimit, " +
         "unit, " +
         "membershipId, " +
-        "owner) " +
+        "subject) " +
         "VALUES " +
         "(:object, " +
         ":quotaType, " +
@@ -165,7 +165,7 @@ public interface QuotaStore {
         ":hardLimit, " +
         ":unit, " +
         ":membershipId, " +
-        ":owner) " +
+        ":subject) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Quota quota);
@@ -181,7 +181,7 @@ public interface QuotaStore {
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
        "membershipId = :membershipId, " +
-       "owner = :owner " +
+       "subject = :subject " +
        "WHERE id = :id ")
    @GetGeneratedKeys
    Quota update(@BindBean Quota quota);
