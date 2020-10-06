@@ -85,15 +85,22 @@ public class OrderMapper implements RowMapper<Order> {
                     (ObjectNode) mapper.readTree(rs.getString("charge")) : null,
                 new Integer(rs.getInt("created")),
                 rs.getString("currency"),
+                rs.getString("subject"),
                 new Integer(rs.getInt("customer")),
                 rs.getString("email"),
                 items,
                 rs.getString("metadata") != null ?
                     (ObjectNode) mapper.readTree(rs.getString("metadata")) : null,
+                rs.getString("name"),
                 rs.getString("status"),
                 rs.getString("statusTransitions") != null ?
                     (ObjectNode) mapper.readTree(rs.getString("statusTransitions")) : null,
-                new Integer(rs.getInt("updated"))
+                new Integer(rs.getInt("updated")),
+                rs.getString("seriesId"),
+                new Integer(rs.getInt("startDate")),
+                new Integer(rs.getInt("endDate")),
+                null // let the row reducer populate quotas
+
             );
         } catch (IOException e) {
             throw new SQLException(e);
