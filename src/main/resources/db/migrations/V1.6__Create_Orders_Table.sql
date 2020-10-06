@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 CREATE INDEX orders_customer_idx ON orders USING btree(customer);
-CREATE INDEX orders_customer_idx ON orders USING btree(subject);
+CREATE INDEX orders_subject_idx ON orders USING btree(subject);
 CREATE INDEX orders_email_idx ON orders USING btree(email);
 CREATE INDEX orders_status_idx ON orders USING btree(status);
 
