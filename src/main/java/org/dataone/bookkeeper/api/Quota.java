@@ -68,7 +68,7 @@ public class Quota {
     private String unit;
 
     /* The quota membership id */
-    private Integer membershipId;
+    private Integer orderId;
 
     /* The quota subject id */
     private String subject;
@@ -103,7 +103,7 @@ public class Quota {
             this.hardLimit = quota.hardLimit;
             this.totalUsage = quota.totalUsage;
             this.unit = quota.unit;
-            this.membershipId = quota.membershipId;
+            this.orderId = quota.orderId;
             this.subject = quota.subject;
         }
     }
@@ -117,7 +117,7 @@ public class Quota {
      * @param hardLimit     the quota hard limit
      * @param unit          the quota unit
      * @param totalUsage    the quota total usage
-     * @param membershipId  the quota membership identifier
+     * @param orderId  the quota membership identifier
      * @param subject         the quota subject
      */
     public Quota(Integer id,
@@ -127,7 +127,7 @@ public class Quota {
                  @NotNull Double hardLimit,
                  @NotNull Double totalUsage,
                  @NotNull @NotEmpty String unit,
-                 Integer membershipId,
+                 Integer orderId,
                  String subject) {
         if ( id != null ) {
             if ( ! id.toString().equals("") ) {
@@ -140,7 +140,7 @@ public class Quota {
         this.hardLimit = hardLimit;
         this.unit = unit;
         this.totalUsage = totalUsage;
-        this.membershipId = membershipId;
+        this.orderId = orderId;
         this.subject = subject;
     }
 
@@ -275,20 +275,20 @@ public class Quota {
 
     /**
      * Get the membership id
-     * @return membershipId  the quota membership identifier
+     * @return orderId  the quota membership identifier
      */
     @JsonProperty
-    public Integer getMembershipId() {
-        return membershipId;
+    public Integer getOrderId() {
+        return orderId;
     }
 
     /**
      * Set the membership id
-     * @param membershipId  the quota membership identifier
+     * @param orderId  the quota membership identifier
      */
     @JsonProperty
-    public void setMembershipId(Integer membershipId) {
-        this.membershipId = membershipId;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     /**
@@ -342,7 +342,7 @@ public class Quota {
             getHardLimit().equals(quota.getHardLimit()) &&
             Objects.equals(getTotalUsage(), quota.getTotalUsage()) &&
             getUnit().equals(quota.getUnit()) &&
-            Objects.equals(getMembershipId(), quota.getMembershipId()) &&
+            Objects.equals(getOrderId(), quota.getOrderId()) &&
             Objects.equals(getSubject(), quota.getSubject()) &&
             Objects.equals(getName(), quota.getName());
     }
@@ -355,6 +355,6 @@ public class Quota {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getObject(), getQuotaType(), getSoftLimit(),
-            getHardLimit(), getTotalUsage(), getUnit(), getMembershipId(), getSubject(), getName());
+            getHardLimit(), getTotalUsage(), getUnit(), getOrderId(), getSubject(), getName());
     }
 }
