@@ -26,11 +26,9 @@ import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.BaseTestCase;
 import org.dataone.bookkeeper.api.Address;
 import org.dataone.bookkeeper.api.Customer;
-import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.jdbi.mappers.CustomerMapper;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
 
 /**
  * A delegate class with helper methods for manipulating the customers table for testing
@@ -46,11 +44,39 @@ public class CustomerHelper {
 
         BaseTestCase.dbi.useHandle(handle -> {
             handle.execute("INSERT INTO customers " +
-                    "(id, object, subject, balance, address, created, currency, delinquent, " +
-                    "description, discount, email, invoicePrefix, invoiceSettings, " +
-                    "metadata, givenName, surName, phone) " +
-                    "VALUES (?, ?, ?, ?, ?::json, to_timestamp(?), ?, ?, " +
-                    "?, ?::json, ?, ?, ?::json, ?::json, ?, ?, ?)",
+                    "(id, " +
+                    "object, " +
+                    "subject, " +
+                    "balance, " +
+                    "address, " +
+                    "created, " +
+                    "currency, " +
+                    "delinquent, " +
+                    "description, " +
+                    "discount, " +
+                    "email, " +
+                    "invoicePrefix, " +
+                    "invoiceSettings, " +
+                    "metadata, " +
+                    "givenName, " +
+                    "surName, " +
+                    "phone) " +
+                    "VALUES " +
+                    "(?, " +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "to_timestamp(?), ?, ?, " +
+                    "?, " +
+                    "?::json, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "?::json, " +
+                    "?, " +
+                    "?, " +
+                    "?)",
                 customerId,
                 "customer",
                 "http://orcid.org/0000-0002-8121-2341",
@@ -83,12 +109,43 @@ public class CustomerHelper {
     public static Customer insertTestCustomer(Customer customer)
         throws SQLException, JsonProcessingException {
         BaseTestCase.dbi.useHandle(handle ->
-            handle.execute("INSERT INTO customers " +
-                "(id, object, subject, balance, address, created, currency, delinquent, " +
-                "description, discount, email, invoicePrefix, invoiceSettings, " +
-                "metadata, givenName, surName, phone) " +
-                "VALUES (?, ?, ?, ?, ?::json, to_timestamp(?), ?, ?, " +
-                "?, ?::json, ?, ?, ?::json, ?::json, ?, ?, ?)",
+            handle.execute(
+                "INSERT INTO customers " +
+                    "(id, " +
+                    "object, " +
+                    "subject, " +
+                    "balance, " +
+                    "address, " +
+                    "created, " +
+                    "currency, " +
+                    "delinquent, " +
+                    "description, " +
+                    "discount, " +
+                    "email, " +
+                    "invoicePrefix, " +
+                    "invoiceSettings, " +
+                    "metadata, " +
+                    "givenName, " +
+                    "surName, " +
+                    "phone) " +
+                "VALUES (" +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "to_timestamp(?), " +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "?::json, " +
+                    "?, " +
+                    "?, " +
+                    "?)",
                 customer.getId(),
                 customer.getObject(),
                 customer.getSubject(),

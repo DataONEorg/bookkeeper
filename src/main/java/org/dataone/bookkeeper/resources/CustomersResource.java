@@ -31,7 +31,6 @@ import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -81,7 +80,7 @@ public class CustomersResource extends BaseResource {
     }
 
     /**
-     * List customers, optionally by membershipId or subject.
+     * List customers, optionally by orderId or subject.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
