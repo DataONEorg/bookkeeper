@@ -22,6 +22,7 @@
   "created": 1559768309,
   "currency": "USD",
   "customer": 2,
+  "subject": "http://orcid.org/0000-0002-8121-2341",
   "email": "cjones@nceas.ucsb.edu",
   "items": [
     {
@@ -35,10 +36,14 @@
     }
   ],
   "metadata": {},
+  "name": "DataONE Order # 1",
   "status": "paid",
   "statusTransitions": {
     "created": 1559768309,
     "paid": 1559768309
   },
-  "updated": 1559768309
+  "updated": 1559768309,
+  "seriesId": "1234567890",
+  "startDate": 1559768309,
+  "endDate": 1559768309
 }
