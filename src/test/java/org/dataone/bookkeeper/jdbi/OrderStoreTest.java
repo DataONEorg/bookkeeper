@@ -124,7 +124,7 @@ public class OrderStoreTest extends BaseTestCase {
                 customerId, StoreHelper.getRandomId(), StoreHelper.getRandomId()));
             Order order = orderStore.getOrder(expected.getId());
 
-            assertTrue(order.equals(expected));
+            assertEquals(expected, order);
         } catch (SQLException sqle) {
             fail(sqle);
         }
