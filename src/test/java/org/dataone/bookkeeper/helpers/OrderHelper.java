@@ -21,13 +21,21 @@
 
 package org.dataone.bookkeeper.helpers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import org.dataone.bookkeeper.BaseTestCase;
+import org.dataone.bookkeeper.api.Customer;
+import org.dataone.bookkeeper.api.Feature;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.api.OrderItem;
+import org.dataone.bookkeeper.api.Product;
+import org.dataone.bookkeeper.api.Quota;
+import org.dataone.bookkeeper.jdbi.OrderQuotasReducer;
 import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
+import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -43,11 +51,65 @@ public class OrderHelper {
 
     /**
      * Create a test order
-     * @param orderId
-     * @return
+     * @param orderId the order identifier
+     * @return order the created order
      */
     public static Order createTestOrder(Integer orderId, Integer customerId,
                                         Integer chargeId, Integer invoiceId) {
+        Order order = new Order();
+        order.setId(orderId);
+        order.setObject("order");
+        order.setAmount(new Integer(50000));
+        order.setAmountReturned(0);
+        order.setCharge(OrderHelper.createTestCharge(chargeId, customerId, invoiceId, orderId));
+        order.setCreated(new Integer(1559768309));
+        order.setCurrency("USD");
+        order.setCustomer(customerId);
+        order.setSubject("http://orcid.org/0000-0002-8121-2341");
+        order.setEmail("cjones@nceas.ucsb.edu");
+        order.setItems(OrderHelper.createTestOrderItems());
+        order.setMetadata(Jackson.newObjectMapper().createObjectNode());
+        order.setName("DataONE Order # 1");
+        order.setStatus("paid");
+        order.setStatusTransitions(OrderHelper.createTestStatusTransitions());
+        order.setUpdated(new Integer(1559768309));
+        order.setSeriesId("1234567890");
+        order.setStartDate(new Integer(1559768309));
+        order.setEndDate(new Integer(1559768309));
+
+        return order;
+    }
+
+    /**
+     * Create an order for unit tests
+     * @param orderId the order id
+     * @return order the Order instance
+     */
+    public static Order createOrder(Integer orderId, Integer customerId,
+                                    Integer chargeId, Integer invoiceId, Integer productId) {
+
+        // Create and insert a product to include in the membership
+        Product product = ProductHelper.createTestProduct(productId);
+        ProductHelper.insertTestProduct(product);
+
+        // Create a customer for the membership
+        Customer customer = CustomerHelper.createCustomer(customerId);
+
+        // Extract quotas from the product features
+        List<Quota> quotas = new LinkedList<Quota>();
+        ArrayNode features = (ArrayNode) product.getMetadata().get("features");
+        Feature feature;
+        for (JsonNode jsonNode : features) {
+            feature = Jackson.newObjectMapper().convertValue(jsonNode, Feature.class);
+            Quota quota = feature.getQuota();
+            if ( quota != null ) {
+                quota.setOrderId(orderId);
+                quota.setSubject(customer.getSubject());
+                quota.setTotalUsage(0.0);
+            }
+            quotas.add(quota);
+        }
+
         Order order = new Order();
         order.setId(orderId);
         order.setObject("order");
@@ -66,12 +128,13 @@ public class OrderHelper {
 
         return order;
     }
+
     /**
      * Create a test charge object to represent the transaction for the order
-     * @param chargeId
-     * @param customerId
-     * @param invoiceId
-     * @param orderId
+     * @param chargeId the charge identifier
+     * @param customerId the customer identifier
+     * @param invoiceId the invoice identifier
+     * @param orderId the order identifier
      * @return charge the charge associated with the order, invoice, and customer
      */
     public static ObjectNode createTestCharge(Integer chargeId, Integer customerId,
@@ -119,7 +182,7 @@ public class OrderHelper {
 
     /**
      * Create a test status transitions object for an order
-     * @return
+     * @return statusTransitions the status transitions object
      */
     public static ObjectNode createTestStatusTransitions() {
         ObjectMapper mapper = Jackson.newObjectMapper();
@@ -132,8 +195,8 @@ public class OrderHelper {
 
 
     /**
-     * Remove test orders
-     * @param orderId
+     * Remove a test order
+     * @param orderId the order identifier
      */
     public static void removeTestOrder(Integer orderId) throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
@@ -162,15 +225,37 @@ public class OrderHelper {
                     "created, " +
                     "currency, " +
                     "customer, " +
+                    "subject, " +
                     "email, " +
                     "items, " +
                     "metadata, " +
+                    "name, " +
                     "status, " +
                     "statusTransitions, " +
-                    "updated " +
+                    "updated, " +
+                    "seriesId, " +
+                    "startDate, " +
+                    "endDate " +
                     ") VALUES (" +
-                    "?, ?, ?, ?, ?::json, to_timestamp(?), " +
-                    "?, ?, ?, ?::json, ?::json, ?, ?::json, to_timestamp(?))",
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "to_timestamp(?), " +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "?::json, " +
+                    "?, " +
+                    "?, " +
+                    "?::json, " +
+                    "to_timestamp(?), " +
+                    "?, " +
+                    "to_timestamp(?), " +
+                    "to_timestamp(?))",
                     order.getId(),
                     order.getObject(),
                     order.getAmount(),
@@ -179,12 +264,17 @@ public class OrderHelper {
                     order.getCreated(),
                     order.getCurrency(),
                     order.getCustomer(),
+                    order.getSubject(),
                     order.getEmail(),
                     order.getItemsJSON(),
                     order.getMetadataJSON(),
+                    order.getName(),
                     order.getStatus(),
                     order.getStatusTransitionsJSON(),
-                    order.getUpdated()
+                    order.getUpdated(),
+                    order.getSeriesId(),
+                    order.getStartDate(),
+                    order.getEndDate()
                 )
             );
         } catch (IOException e) {
@@ -211,15 +301,37 @@ public class OrderHelper {
                         "created, " +
                         "currency, " +
                         "customer, " +
+                        "subject, " +
                         "email, " +
                         "items, " +
                         "metadata, " +
+                        "name, " +
                         "status, " +
                         "statusTransitions, " +
-                        "updated " +
+                        "updated, " +
+                        "seriesId, " +
+                        "startDate, " +
+                        "endDate " +
                         ") VALUES (" +
-                        "?, ?, ?, ?, ?::json, to_timestamp(?), " +
-                        "?, ?, ?, ?::json, ?::json, ?, ?::json, to_timestamp(?))",
+                        "?, " +
+                        "?, " +
+                        "?, " +
+                        "?, " +
+                        "?::json, " +
+                        "to_timestamp(?), " +
+                        "?, " +
+                        "?, " +
+                        "?, " +
+                        "?, " +
+                        "?::json, " +
+                        "?::json, " +
+                        "?, " +
+                        "?, " +
+                        "?::json, " +
+                        "to_timestamp(?), " +
+                        "?, " +
+                        "to_timestamp(?), " +
+                        "to_timestamp(?))",
                     order.getId(),
                     order.getObject(),
                     order.getAmount(),
@@ -228,12 +340,17 @@ public class OrderHelper {
                     order.getCreated(),
                     order.getCurrency(),
                     order.getCustomer(),
+                    order.getSubject(),
                     order.getEmail(),
                     order.getItemsJSON(),
                     order.getMetadataJSON(),
+                    order.getName(),
                     order.getStatus(),
                     order.getStatusTransitionsJSON(),
-                    order.getUpdated()
+                    order.getUpdated(),
+                    order.getSeriesId(),
+                    order.getStartDate(),
+                    order.getEndDate()
                 )
             );
         } catch (IOException e) {
@@ -264,25 +381,46 @@ public class OrderHelper {
      */
     public static Order getTestOrderById(Integer orderId) {
         Order order = BaseTestCase.dbi.withHandle(handle ->
-            handle.createQuery("SELECT " +
-                "id, " +
-                "object, " +
-                "amount, " +
-                "amountReturned, " +
-                "charge, " +
-                "date_part('epoch', created)::int AS created, " +
-                "currency, " +
-                "customer, " +
-                "email, " +
-                "items, " +
-                "metadata, " +
-                "status, " +
-                "statusTransitions, " +
-                "date_part('epoch',updated)::int AS updated " +
-                "FROM orders WHERE id = :id")
+            handle.createQuery(
+                "SELECT " +
+                    "o.id AS o_id, " +
+                    "o.object AS o_object, " +
+                    "o.amount AS o_amount, " +
+                    "o.amountReturned AS o_amountReturned, " +
+                    "o.charge AS o_charge, " +
+                    "date_part('epoch', o.created)::int AS o_created, " +
+                    "o.currency AS o_currency, " +
+                    "o.customer AS o_customer, " +
+                    "o.subject AS o_subject, " +
+                    "o.email AS o_email, " +
+                    "o.items AS o_items, " +
+                    "o.metadata AS o_metadata, " +
+                    "o.name AS o_name, " +
+                    "o.status AS o_status, " +
+                    "o.statusTransitions AS o_statusTransitions, " +
+                    "date_part('epoch', o.updated)::int AS o_updated, " +
+                    "o.seriesId AS o_seriesId, " +
+                    "date_part('epoch', o.startDate)::int AS o_startDate, " +
+                    "date_part('epoch', o.endDate)::int AS o_endDate, " +
+                    "q.id AS q_id, " +
+                    "q.object AS q_object, " +
+                    "q.quotaType AS q_quotaType, " +
+                    "q.softLimit AS q_softLimit, " +
+                    "q.hardLimit AS q_hardLimit, " +
+                    "q.totalUsage AS q_totalUsage, " +
+                    "q.unit AS q_unit, " +
+                    "q.orderId AS q_orderId, " +
+                    "q.subject AS q_subject, " +
+                    "q.name AS q_name " +
+                "FROM orders o " +
+                "LEFT JOIN quotas q ON q.orderId = o.id " +
+                "WHERE o.id = :id")
                 .bind("id", orderId)
-                .map(new OrderMapper())
-                .one()
+                .registerRowMapper(new OrderMapper())
+                .registerRowMapper(BeanMapper.factory(Quota.class, "q"))
+                .reduceRows(new OrderQuotasReducer())
+                .findFirst()
+                .get()
         );
         return order;
     }
