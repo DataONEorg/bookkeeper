@@ -82,7 +82,7 @@ public class QuotasResource extends BaseResource {
     }
 
     /**
-     * List quotas, optionally by membershipId or subject.
+     * List quotas, optionally by subject or by proxy requestor.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
