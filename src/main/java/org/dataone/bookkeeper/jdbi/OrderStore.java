@@ -22,14 +22,16 @@
 package org.dataone.bookkeeper.jdbi;
 
 import org.dataone.bookkeeper.api.Order;
+import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
-import org.jdbi.v3.sqlobject.statement.UseRowMapper;
+import org.jdbi.v3.sqlobject.statement.UseRowReducer;
 
 import java.util.List;
 
@@ -41,24 +43,37 @@ public interface OrderStore {
 
     /** The query used to find all orders */
     String SELECT_CLAUSE = "SELECT " +
-        "o.id, " +
-        "o.object, " +
-        "o.amount, " +
-        "o.amountReturned, " +
-        "o.charge::json AS charge, " +
-        "date_part('epoch', o.created)::int AS created, " +
-        "o.currency, " +
-        "o.customer, " +
-        "o.email, " +
-        "o.items::json AS items, " +
-        "o.metadata::json AS metadata, " +
-        "o.status, " +
-        "o.statusTransitions::json AS statusTransitions, " +
-        "date_part('epoch', o.updated)::int AS updated, " +
-        "c.subject AS subject " +
+        "o.id AS o_id, " +
+        "o.object AS o_object, " +
+        "o.amount AS o_amount, " +
+        "o.amountReturned AS o_amountReturned, " +
+        "o.charge::json AS o_charge, " +
+        "date_part('epoch', o.created)::int AS o_created, " +
+        "o.currency AS o_currency, " +
+        "o.customer AS o_customer, " +
+        "o.subject AS o_subject, " +
+        "o.email AS o_email, " +
+        "o.items::json AS o_items, " +
+        "o.metadata::json AS o_metadata, " +
+        "o.name AS o_name, " +
+        "o.status AS o_status, " +
+        "o.statusTransitions::json AS o_statusTransitions, " +
+        "date_part('epoch', o.updated)::int AS o_updated, " +
+        "o.seriesId AS o_seriesId, " +
+        "date_part('epoch', o.startDate)::int AS o_startDate, " +
+        "date_part('epoch', o.endDate)::int AS o_endDate, " +
+        "q.id AS q_id, " +
+        "q.object AS q_object, " +
+        "q.quotaType AS q_quotaType, " +
+        "q.softLimit AS q_softLimit, " +
+        "q.hardLimit AS q_hardLimit, " +
+        "q.totalUsage AS q_totalUsage, " +
+        "q.unit AS q_unit, " +
+        "q.orderId AS q_orderId, " +
+        "q.subject AS q_subject, " +
+        "q.name AS q_name " +
         "FROM orders o " +
-        "INNER JOIN customers c ON o.customer = c.id ";
-
+        "LEFT JOIN quotas q ON q.orderId = o.id ";
     /** Clause to order listed results */
     String ORDER_CLAUSE = "ORDER BY o.id, o.created, o.updated ";
 
@@ -69,45 +84,49 @@ public interface OrderStore {
 
     String SELECT_CUSTOMER = SELECT_CLAUSE + "WHERE customer = :customer ";
 
-    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE subject = :subject " + ORDER_CLAUSE;
+    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE o.subject = :subject " + ORDER_CLAUSE;
 
     /**
      * List all orders
-     * @return
+     * @return the order list
      */
     @SqlQuery(SELECT_ALL)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterRowMapper(OrderMapper.class)
-    @UseRowMapper(OrderMapper.class)
+    @UseRowReducer(OrderQuotasReducer.class)
     List<Order> listOrders();
 
     /**
      * Get an order by order id
      * @param id the order id
-     * @return
+     * @return the desired order
      */
     @SqlQuery(SELECT_ONE)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterRowMapper(OrderMapper.class)
-    @UseRowMapper(OrderMapper.class)
+    @UseRowReducer(OrderQuotasReducer.class)
     Order getOrder(@Bind("id") Integer id);
 
     /**
      * Find orders by customer id
      * @param customerId the id of the customer
-     * @return
+     * @return the desired orders
      */
     @SqlQuery(SELECT_CUSTOMER)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterRowMapper(OrderMapper.class)
-    @UseRowMapper(OrderMapper.class)
+    @UseRowReducer(OrderQuotasReducer.class)
     List<Order> findOrdersByCustomerId(@Bind("customer") Integer customerId);
 
     /**
      * Find orders by subject
      * @param subject the subject of the customer
-     * @return
+     * @return the desired orders
      */
     @SqlQuery(SELECT_SUBJECT)
+    @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterRowMapper(OrderMapper.class)
-    @UseRowMapper(OrderMapper.class)
+    @UseRowReducer(OrderQuotasReducer.class)
     List<Order> findOrdersBySubject(@Bind("subject") String subject);
 
     /**
@@ -122,12 +141,17 @@ public interface OrderStore {
         "created, " +
         "currency, " +
         "customer, " +
+        "subject, " +
         "email, " +
         "items, " +
         "metadata, " +
+        "name, " +
         "status, " +
         "statusTransitions, " +
-        "updated " +
+        "updated, " +
+        "seriesId, " +
+        "startDate, " +
+        "endDate " +
         ") VALUES (" +
         ":getObject, " +
         ":getAmount, " +
@@ -136,12 +160,17 @@ public interface OrderStore {
         "to_timestamp(:getCreated), " +
         ":getCurrency, " +
         ":getCustomer, " +
+        ":getSubject, " +
         ":getEmail, " +
         ":getItemsJSON::json, " +
         ":getMetadataJSON::json, " +
+        ":getName, " +
         ":getStatus, " +
         ":getStatusTransitionsJSON::json, " +
-        "to_timestamp(:getUpdated)) " +
+        "to_timestamp(:getUpdated), " +
+        ":getSeriesId, " +
+        "to_timestamp(:getStartDate), " +
+        "to_timestamp(:getEndDate)) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindMethods Order order);
@@ -158,12 +187,17 @@ public interface OrderStore {
         "created = to_timestamp(:getCreated), " +
         "currency = :getCurrency, " +
         "customer = :getCustomer, " +
+        "subject = :getSubject, " +
         "email = :getEmail, " +
         "items = :getItemsJSON::json, " +
         "metadata = :getMetadataJSON::json, " +
+        "name = :getName, " +
         "status = :getStatus, " +
         "statusTransitions = :getStatusTransitionsJSON::json, " +
-        "updated = to_timestamp(:getUpdated) " +
+        "updated = to_timestamp(:getUpdated), " +
+        "seriesId = :getSeriesId, " +
+        "startDate = to_timestamp(:getStartDate), " +
+        "endDate = to_timestamp(:getEndDate) " +
         "WHERE id = :getId " +
         "RETURNING id")
     @GetGeneratedKeys
