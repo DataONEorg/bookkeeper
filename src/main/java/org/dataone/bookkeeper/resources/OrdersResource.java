@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.api.Feature;
-import org.dataone.bookkeeper.api.Membership;
 import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.api.OrderItem;
 import org.dataone.bookkeeper.api.OrderList;
@@ -39,7 +38,7 @@ import org.dataone.bookkeeper.api.Quota;
 import org.dataone.bookkeeper.jdbi.CustomerStore;
 import org.dataone.bookkeeper.jdbi.OrderStore;
 import org.dataone.bookkeeper.jdbi.ProductStore;
-import org.dataone.bookkeeper.jdbi.MembershipStore;
+import org.dataone.bookkeeper.jdbi.QuotaStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
@@ -78,7 +77,7 @@ import java.util.Map;
 public class OrdersResource extends BaseResource {
 
     /* The logging facility for this class */
-    private Log log = LogFactory.getLog(OrdersResource.class);
+    private final Log log = LogFactory.getLog(OrdersResource.class);
 
     /* The order store for database calls */
     private final OrderStore orderStore;
@@ -86,8 +85,8 @@ public class OrdersResource extends BaseResource {
     /* The product store for database calls */
     private final ProductStore productStore;
 
-    /* The membership store for database calls */
-    private final MembershipStore membershipStore;
+    /* The quota store for database calls */
+    private final QuotaStore quotaStore;
 
     /* The customer store for database calls */
     private final CustomerStore customerStore;
@@ -105,17 +104,17 @@ public class OrdersResource extends BaseResource {
     public OrdersResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.orderStore = database.onDemand(OrderStore.class);
         this.productStore = database.onDemand(ProductStore.class);
-        this.membershipStore = database.onDemand(MembershipStore.class);
+        this.quotaStore = database.onDemand(QuotaStore.class);
         this.customerStore = database.onDemand(CustomerStore.class);
         this.dataoneAuthHelper = dataoneAuthHelper;
     }
 
     /**
-     * List orders, optionally by membershipId or subject.
+     * List orders, optionally by orderId or subject.
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
-     * @param customerId  the membershipId
+     * @param customerId  the orderId
      * @param subject  the order subject
      * @return orders  the order list
      */
@@ -142,7 +141,7 @@ public class OrdersResource extends BaseResource {
                     // Customer subjects must match
                     existing = this.customerStore.getCustomer(customerId);
                     if ( ! caller.getSubject().equals(existing.getSubject()) ) {
-                        throw new Exception("Customer doesn't have access to this record.");
+                        throw new Exception("Caller doesn't have access to this record.");
                     }
                 }
                 orders = orderStore.findOrdersByCustomerId(customerId);
@@ -151,7 +150,7 @@ public class OrdersResource extends BaseResource {
                     // Customer subjects must match
                     existing = this.customerStore.getCustomer(customerId);
                     if ( ! caller.getSubject().equals(existing.getSubject()) ) {
-                        throw new Exception("Customer doesn't have access to this record.");
+                        throw new Exception("Caller doesn't have access to this record.");
                     }
                 }
                 orders = orderStore.findOrdersBySubject(subject);
@@ -181,13 +180,18 @@ public class OrdersResource extends BaseResource {
     public Order create(@Context SecurityContext context,
         @NotNull @Valid Order order) throws WebApplicationException {
 
+        ObjectMapper mapper = Jackson.newObjectMapper();
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
+        int now = new Integer((int) Instant.now().getEpochSecond());
 
         // Insert the order after it is validated
         try {
             order.setStatus("created");
-            order.setCreated(new Integer((int) Instant.now().getEpochSecond()));
+            ObjectNode statusTransitions = mapper.createObjectNode();
+            statusTransitions.put("created", now);
+            order.setStatusTransitions(statusTransitions);
+            order.setCreated(now);
 
             // Update order item details from the listed product
             Product product = null;
@@ -326,6 +330,13 @@ public class OrdersResource extends BaseResource {
         return order;
     }
 
+    /**
+     * Pay for the order (currently just confirms a trial state)
+     * @param context the security context for the caller
+     * @param orderId the order identifier
+     * @return order the paid order
+     * @throws WebApplicationException any web application exception
+     */
     @Timed
     @POST
     @PermitAll
@@ -365,24 +376,19 @@ public class OrdersResource extends BaseResource {
                 List<OrderItem> orderItems = order.getItems();
                 Customer customer = customerStore.getCustomer(order.getCustomer());
                 Integer productId = null;
+
+                // Set the order status and transitions object
+                order.setStatus("trialing");
+                order.getStatusTransitions().put("trialing", secondsSinceEpoch);
+                order.setStartDate(secondsSinceEpoch);
+                order.setEndDate(trialEndSecondsSinceEpoch);
+
                 for (OrderItem item : orderItems) {
 
                     // For SKUs, add customer to the service and set quotas
                     if ( item.getType().equals("sku") ) {
                         productId = item.getParent();
                         Product product = productStore.getProduct(productId);
-                        Membership membership = new Membership();
-                        membership.setObject("membership");
-                        membership.setProduct(product);
-                        membership.setStatus("trialing");
-                        membership.setCanceledAt(null);
-                        membership.setCollectionMethod("send_invoice");
-                        membership.setCreated(secondsSinceEpoch);
-                        membership.setCustomer(customer);
-                        membership.setQuantity(item.getQuantity());
-                        membership.setTrialStart(secondsSinceEpoch);
-                        membership.setTrialEnd(trialEndSecondsSinceEpoch);
-                        membership.setStartDate(trialEndSecondsSinceEpoch);
 
                         // Translate the product's feature quota into a customer/subject quota
                         Map<String, Quota> quotas = new LinkedHashMap<String, Quota>();
@@ -399,7 +405,9 @@ public class OrdersResource extends BaseResource {
                             quota = feature.getQuota();
                             if ( quota != null ) {
                                 quota.setTotalUsage(0.0);
-                                quota.setSubject(customer.getSubject());
+                                quota.setSubject(order.getSubject());
+                                quota.setOrderId(order.getId());
+                                quota.setName(order.getName());
                                 if ( ! quotas.containsKey(quota.getQuotaType()) ) {
                                     // Add new quotas
                                     quotas.put(quota.getQuotaType(), quota);
@@ -414,14 +422,17 @@ public class OrdersResource extends BaseResource {
                                 }
                             }
                         }
-                        Integer membershipId =
-                            membershipStore.insertWithQuotas(membership, quotas.values());
+
+                        // Insert the quotas associated with the order
+                        for ( Quota newQuota : quotas.values()) {
+                            Integer quotaId = quotaStore.insert(newQuota);
+                        }
                     }
 
                 }
                 order.setUpdated(new Integer((int) Instant.now().getEpochSecond()));
                 order.setStatus("paid");
-                // TODO: Decide if this call should be a transaction with the membership/quota
+                // TODO: Decide if this call should be a transaction with the quota
                 orderStore.update(order);
             } else {
                 String message = "Couldn't find the order for order id " + orderId;
@@ -460,7 +471,7 @@ public class OrdersResource extends BaseResource {
             throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
         }
         try {
-            orderStore.delete(orderId);
+            orderStore.delete(orderId); // Uses a SQL DELETE CASCADE
         } catch (Exception e) {
             message = "Deleting the order with id " + orderId + " failed: " + e.getMessage();
             log.error(message);
