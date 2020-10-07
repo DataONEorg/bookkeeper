@@ -49,7 +49,7 @@ public interface QuotaStore {
             "q.hardLimit, " +
             "q.totalUsage, " +
             "q.unit, " +
-            "q.membershipId, " +
+            "q.orderId, " +
             "q.subject " +
             "FROM quotas q ";
 
@@ -57,7 +57,7 @@ public interface QuotaStore {
     String SELECT_ALL = SELECT_CLAUSE;
 
     /** The query used to find unassigned quotas (i.e. generic product quotas */
-    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE membershipId IS NULL ";
+    String SELECT_UNASSIGNED = SELECT_CLAUSE + "WHERE orderId IS NULL ";
 
     /** The query used to find an individual quota */
     String SELECT_ONE = SELECT_CLAUSE + "WHERE q.id = :id ";
@@ -65,8 +65,8 @@ public interface QuotaStore {
     /** The query used to find quotas by name */
     String SELECT_BY_TYPE = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType";
 
-    /** The query used to find a quota by membership identifier */
-    String SELECT_MEMBERSHIP = SELECT_CLAUSE + "WHERE q.membershipId = :membershipId ";
+    /** The query used to find a quota by order identifier */
+    String SELECT_ORDER = SELECT_CLAUSE + "WHERE q.orderId = :orderId ";
 
     /** The query used to find a quota by subject identifier */
     String SELECT_OWNER = SELECT_CLAUSE + "WHERE q.subject = :subject ";
@@ -85,7 +85,7 @@ public interface QuotaStore {
     List<Quota> listQuotas();
 
     /**
-     * List all unassigned quotas (no membershipId)
+     * List all unassigned quotas (no orderId)
      * @return quotas the list of unassigned quotas
      */
     @SqlQuery(SELECT_UNASSIGNED)
@@ -100,14 +100,14 @@ public interface QuotaStore {
     Quota getQuota(@Bind("id") Integer id);
 
     /**
-     * Find quotas by membership identifier.
+     * Find quotas by order identifier.
      *
-     * Pass a null membershipId to list all product-associated quotas (i.e. not bound to a membership).
-     * @param membershipId the membership identifier
-     * @return quotas the quotas for the membershipId
+     * Pass a null orderId to list all product-associated quotas (i.e. not bound to an order).
+     * @param orderId the order identifier
+     * @return quotas the quotas for the orderId
      */
-    @SqlQuery(SELECT_MEMBERSHIP)
-    List<Quota> findQuotasByMembershipId(@Bind("membershipId") Integer membershipId);
+    @SqlQuery(SELECT_ORDER)
+    List<Quota> findQuotasByOrderId(@Bind("orderId") Integer orderId);
 
     /**
      * Find quotas by quota type
@@ -156,7 +156,7 @@ public interface QuotaStore {
         "softLimit, " +
         "hardLimit, " +
         "unit, " +
-        "membershipId, " +
+        "orderId, " +
         "subject) " +
         "VALUES " +
         "(:object, " +
@@ -164,7 +164,7 @@ public interface QuotaStore {
         ":softLimit, " +
         ":hardLimit, " +
         ":unit, " +
-        ":membershipId, " +
+        ":orderId, " +
         ":subject) " +
         "RETURNING id")
     @GetGeneratedKeys
@@ -180,7 +180,7 @@ public interface QuotaStore {
        "softLimit = :softLimit, " +
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
-       "membershipId = :membershipId, " +
+       "orderId = :orderId, " +
        "subject = :subject " +
        "WHERE id = :id ")
    @GetGeneratedKeys
