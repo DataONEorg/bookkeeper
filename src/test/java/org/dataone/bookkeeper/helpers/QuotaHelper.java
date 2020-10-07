@@ -36,7 +36,7 @@ public class QuotaHelper {
 
 
     /**
-     * Insert a test quota with a given id and membership id
+     * Insert a test quota with a given id and order id
      * @param quotaId the quota identifier
      * @param orderId the order identifier
      * @return quotaId the quota identifier
@@ -70,7 +70,7 @@ public class QuotaHelper {
     }
 
     /**
-     * Insert a test quota with a given id, membership id, and subject
+     * Insert a test quota with a given id, order id, and subject
      * @param quotaId the quota identifier
      * @param orderId the order identifier
      * @param subject the order subject
@@ -107,7 +107,7 @@ public class QuotaHelper {
     }
 
     /**
-     * Insert test storage and portal quotas into the quotas table  for the given membership id
+     * Insert test storage and portal quotas into the quotas table  for the given order id
      * @param storageQuotaId the storage quota identifier
      * @param portalQuotaId the portal quota identifier
      * @param orderId the order identifier
@@ -125,7 +125,7 @@ public class QuotaHelper {
         String insertStatement = "INSERT INTO quotas " +
             "(id, object, quotaType, softLimit, hardLimit, totalUsage, unit, orderId, subject) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        // Insert them into the database for the given membership id
+        // Insert them into the database for the given order id
         BaseTestCase.dbi.useHandle(handle -> {
             handle.execute(insertStatement,
                 storageQuotaId,

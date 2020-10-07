@@ -30,6 +30,6 @@ COMMENT ON COLUMN quotas.softLimit IS 'The soft limit of the resource.';
 COMMENT ON COLUMN quotas.hardLimit IS 'The hard limit of the resource.';
 COMMENT ON COLUMN quotas.totalUsage IS 'The current observed total usage of the quota.';
 COMMENT ON COLUMN quotas.unit IS 'The named unit of the quota.';
-COMMENT ON COLUMN quotas.orderId IS 'The membership id to which the quota is applied.';
+COMMENT ON COLUMN quotas.orderId IS 'The order id to which the quota is applied.';
 COMMENT ON COLUMN quotas.subject IS 'The subject identifier to which the quota is applied.';
 COMMENT ON COLUMN quotas.name IS 'The quota name, copied from the order name.';

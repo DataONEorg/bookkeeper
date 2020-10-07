@@ -30,16 +30,17 @@ import java.sql.SQLException;
 public class UsageHelper {
 
     /**
-     * Insert a test quota with a given id and membership id
-     * @param usageId
-     * @param quotaId
-     * @param instanceId
-     * @param quantity
-     * @param status
-     * @param nodeId
-     * @return
+     * Insert a test usage with a given id and quota id
+     * @param usageId the usage identifier
+     * @param quotaId the quota identifier
+     * @param instanceId the instance identifier
+     * @param quantity the quantity being used
+     * @param status the status of th usage
+     * @param nodeId the node identifier of the usage
+     * @return the usage identifier
      */
-    public static Integer insertTestUsage(Integer usageId, Integer quotaId, String instanceId, Double quantity, String status, String nodeId)  throws SQLException {
+    public static Integer insertTestUsage(Integer usageId, Integer quotaId,
+        String instanceId, Double quantity, String status, String nodeId)  throws SQLException {
         BaseTestCase.dbi.useHandle(handle ->
                 handle.execute(
                         "INSERT INTO usages " +
@@ -65,10 +66,9 @@ public class UsageHelper {
 
     /**
      * Insert a test usage with a given id, quota type, and instanceId
-     * @param quotaId
-     * @param instanceId
-     * @return
-     * @throws SQLException
+     * @param quotaId the quota identifier
+     * @param instanceId the instance identifier
+     * @return usageId the usage identifier
      */
     public static Integer insertTestUsageInstanceId(Integer usageId, Integer quotaId, String instanceId) {
         BaseTestCase.dbi.useHandle(handle ->
@@ -95,7 +95,7 @@ public class UsageHelper {
 
     /**
      * Remove a test usage given its id
-     * @param usageId
+     * @param usageId the usage identifier
      */
     public static void removeTestUsage(Integer usageId) throws SQLException {
 
@@ -106,9 +106,9 @@ public class UsageHelper {
 
     /**
      * Create a test Storage instance given the usageId, quotaId and instanceId
-     * @param usageId
-     * @param quotaId
-     * @return
+     * @param usageId the usage identifier
+     * @param quotaId the quota identifier
+     * @return usage the created usage
      */
     public static Usage createTestStorageUsage(@NotNull Integer usageId, Integer quotaId, String instanceId) {
         Usage usage = new Usage();
@@ -125,8 +125,8 @@ public class UsageHelper {
 
     /**
      * Return the number of usages for the given usage id
-     * @param usageId
-     * @return
+     * @param usageId the usage identifier
+     * @return count the number of usages
      */
     public static Integer getUsageCountById(Integer usageId) {
         Integer count = BaseTestCase.dbi.withHandle(handle ->
@@ -141,8 +141,8 @@ public class UsageHelper {
 
     /**
      * Return a usage instance given a usage id
-     * @param usageId
-     * @return
+     * @param usageId the usage identifier
+     * @return usage the usage for the given identifier
      */
     public static Usage getUsageById(Integer usageId) {
         Usage usage = BaseTestCase.dbi.withHandle(handle ->

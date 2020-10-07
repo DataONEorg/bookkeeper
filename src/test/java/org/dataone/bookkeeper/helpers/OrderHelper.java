@@ -88,11 +88,11 @@ public class OrderHelper {
     public static Order createOrder(Integer orderId, Integer customerId,
                                     Integer chargeId, Integer invoiceId, Integer productId) {
 
-        // Create and insert a product to include in the membership
+        // Create and insert a product to include in the order
         Product product = ProductHelper.createTestProduct(productId);
         ProductHelper.insertTestProduct(product);
 
-        // Create a customer for the membership
+        // Create a customer for the order
         Customer customer = CustomerHelper.createCustomer(customerId);
 
         // Extract quotas from the product features

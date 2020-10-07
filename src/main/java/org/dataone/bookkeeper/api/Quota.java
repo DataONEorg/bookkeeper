@@ -67,7 +67,7 @@ public class Quota {
     @NotNull
     private String unit;
 
-    /* The quota membership id */
+    /* The quota order id */
     private Integer orderId;
 
     /* The quota subject id */
@@ -117,7 +117,7 @@ public class Quota {
      * @param hardLimit     the quota hard limit
      * @param unit          the quota unit
      * @param totalUsage    the quota total usage
-     * @param orderId  the quota membership identifier
+     * @param orderId  the quota order identifier
      * @param subject         the quota subject
      */
     public Quota(Integer id,
@@ -274,8 +274,8 @@ public class Quota {
     }
 
     /**
-     * Get the membership id
-     * @return orderId  the quota membership identifier
+     * Get the order id
+     * @return orderId  the quota order identifier
      */
     @JsonProperty
     public Integer getOrderId() {
@@ -283,8 +283,8 @@ public class Quota {
     }
 
     /**
-     * Set the membership id
-     * @param orderId  the quota membership identifier
+     * Set the order id
+     * @param orderId  the quota order identifier
      */
     @JsonProperty
     public void setOrderId(Integer orderId) {
