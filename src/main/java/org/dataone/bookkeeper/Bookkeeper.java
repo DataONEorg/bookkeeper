@@ -108,9 +108,6 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
         // Register the orders resource
         environment.jersey().register(new OrdersResource(database, dataoneHelper));
 
-        // Register the memberships resource
-        environment.jersey().register(new MembershipsResource(database, dataoneHelper));
-
         // Register role-based authorization
         environment.jersey().register(RolesAllowedDynamicFeature.class);
 
