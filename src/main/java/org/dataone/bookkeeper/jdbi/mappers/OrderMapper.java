@@ -69,7 +69,7 @@ public class OrderMapper implements RowMapper<Order> {
 
         try {
             itemsArray =
-                (ArrayNode) mapper.readTree(rs.getString("items"));
+                (ArrayNode) mapper.readTree(rs.getString("o_items"));
 
             Iterator<JsonNode> iterator = itemsArray.elements();
             while ( iterator.hasNext() ) {
@@ -77,28 +77,28 @@ public class OrderMapper implements RowMapper<Order> {
                 items.add(mapper.readValue(item.toString(), OrderItem.class));
             }
             order = new Order(
-                new Integer(rs.getInt("id")),
-                rs.getString("object"),
-                new Integer(rs.getInt("amount")),
-                new Integer(rs.getInt("amountReturned")),
-                rs.getString("charge") != null ?
-                    (ObjectNode) mapper.readTree(rs.getString("charge")) : null,
-                new Integer(rs.getInt("created")),
-                rs.getString("currency"),
-                rs.getString("subject"),
-                new Integer(rs.getInt("customer")),
-                rs.getString("email"),
+                new Integer(rs.getInt("o_id")),
+                rs.getString("o_object"),
+                new Integer(rs.getInt("o_amount")),
+                new Integer(rs.getInt("o_amountReturned")),
+                rs.getString("o_charge") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("o_charge")) : null,
+                new Integer(rs.getInt("o_created")),
+                rs.getString("o_currency"),
+                rs.getString("o_subject"),
+                new Integer(rs.getInt("o_customer")),
+                rs.getString("o_email"),
                 items,
-                rs.getString("metadata") != null ?
-                    (ObjectNode) mapper.readTree(rs.getString("metadata")) : null,
-                rs.getString("name"),
-                rs.getString("status"),
-                rs.getString("statusTransitions") != null ?
-                    (ObjectNode) mapper.readTree(rs.getString("statusTransitions")) : null,
-                new Integer(rs.getInt("updated")),
-                rs.getString("seriesId"),
-                new Integer(rs.getInt("startDate")),
-                new Integer(rs.getInt("endDate")),
+                rs.getString("o_metadata") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("o_metadata")) : null,
+                rs.getString("o_name"),
+                rs.getString("o_status"),
+                rs.getString("o_statusTransitions") != null ?
+                    (ObjectNode) mapper.readTree(rs.getString("o_statusTransitions")) : null,
+                new Integer(rs.getInt("o_updated")),
+                rs.getString("o_seriesId"),
+                new Integer(rs.getInt("o_startDate")),
+                new Integer(rs.getInt("o_endDate")),
                 null // let the row reducer populate quotas
 
             );
