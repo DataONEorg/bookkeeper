@@ -21,9 +21,9 @@
 
 package org.dataone.bookkeeper.jdbi;
 
-import org.dataone.bookkeeper.api.Membership;
+import org.dataone.bookkeeper.api.Order;
 import org.dataone.bookkeeper.api.Quota;
-import org.dataone.bookkeeper.jdbi.mappers.MembershipMapper;
+import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
 import org.jdbi.v3.core.result.LinkedHashMapRowReducer;
 import org.jdbi.v3.core.result.RowView;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
@@ -34,31 +34,37 @@ import java.util.Map;
 
 /**
  * Row reducer that accumulates multiple quotas associated
- * with a membership into a list based on a SQL join between
- * the memberships and quotas tables.
+ * with an order into a list based on a SQL join between
+ * the orders and quotas tables.
  */
 @RegisterBeanMapper(value = Quota.class)
-@RegisterRowMapper(value = MembershipMapper.class)
-public class MembershipQuotasReducer implements LinkedHashMapRowReducer<Integer, Membership> {
+@RegisterRowMapper(value = OrderMapper.class)
+public class OrderQuotasReducer implements LinkedHashMapRowReducer<Integer, Order> {
 
     /**
-     * Accumulate quotas into a list in the membership instance
-     * @param map The map of membership id to membership instances
+     * Accumulate quotas into a list in the order instance
+     * @param map The map of order id to order instances
      * @param rowView The view of the result set row from the joined tables
      */
     @Override
-    public void accumulate(Map<Integer, Membership> map, RowView rowView) {
-        // Build a membership from the resultset if one isn't in the map given the id
-        Membership membership =
-            map.computeIfAbsent(rowView.getColumn("s_id", Integer.class),
-            id -> rowView.getRow(Membership.class));
+    public void accumulate(Map<Integer, Order> map, RowView rowView) {
+        // Build an order from the resultset if one isn't in the map given the id
+        Order order =
+            map.computeIfAbsent(rowView.getColumn("o_id", Integer.class),
+            id -> rowView.getRow(Order.class));
 
-        // Otherwise, for the same membership id, add quotas to the quota list
-        if ( rowView.getColumn("s_id", Integer.class) != null ) {
-            if ( membership.getQuotas() == null ) {
-                membership.setQuotas(new LinkedList<Quota>());
+        // Otherwise, for the same order id, add quotas to the quota list
+        if ( rowView.getColumn("o_id", Integer.class) != null ) {
+            // Ensure quotas are present before adding the list
+            boolean hasQuotas = rowView.getColumn("q_id", Integer.class) != null;
+            if ( hasQuotas && order.getQuotas() == null ) {
+                order.setQuotas(new LinkedList<Quota>());
             }
-            membership.getQuotas().add(rowView.getRow(Quota.class));
+            // When present, add the quota
+            if ( hasQuotas ) {
+                Quota quota = rowView.getRow(Quota.class);
+                order.getQuotas().add(quota);
+            }
         }
     }
 }
