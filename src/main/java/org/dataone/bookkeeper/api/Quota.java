@@ -60,7 +60,7 @@ public class Quota {
     private @NotNull Double hardLimit;
 
     /* The total usage of the quota */
-    private @NotNull Double totalUsage = 0.0;
+    private @NotNull Double totalUsage;
 
     /* The quota unit */
     @NotEmpty
