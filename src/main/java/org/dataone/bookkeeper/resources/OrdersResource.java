@@ -67,6 +67,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * The entry point to the orders collection
@@ -114,8 +116,8 @@ public class OrdersResource extends BaseResource {
      * Use start and count to get paginated results
      * @param start  the paging start index
      * @param count  the paging size count
-     * @param customerId  the orderId
-     * @param subject  the order subject
+     * @param customerId  the order customer identifier
+     * @param subjects  the subjects associated with the desired orders
      * @return orders  the order list
      */
     @Timed
@@ -126,44 +128,80 @@ public class OrdersResource extends BaseResource {
         @Context SecurityContext context,
         @QueryParam("start") @DefaultValue("0") Integer start,
         @QueryParam("count") @DefaultValue("1000") Integer count,
-        @QueryParam("subject") String subject,
+        @QueryParam("subject") Set<String> subjects,
         @QueryParam("customerId") Integer customerId)
         throws WebApplicationException {
 
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
-        List<Order> orders = new ArrayList<Order>();
+        List<Order> orders = new ArrayList<>();
+        Set<String> desiredSubjects;
+        List<String> associatedSubjects = new ArrayList<>();
         Customer existing;
         try {
-            if (customerId != null) {
-                if ( ! isAdmin ) {
-                    // Customer subjects must match
-                    existing = this.customerStore.getCustomer(customerId);
+            if ( isAdmin ) {
+                // Admins have access to all orders by customerId or subjects or unfiltered
+                if ( customerId != null ) {
+                    orders = orderStore.findOrdersByCustomerId(customerId);
+                } else if ( subjects != null && ! subjects.isEmpty() ) {
+                    associatedSubjects.addAll(subjects);
+                    orders = orderStore.findOrdersBySubjects(associatedSubjects);
+                } else {
+                    orders = orderStore.listOrders();
+                }
+            } else {
+                // Handle non-admins
+                if ( customerId != null ) {
+                    // Only allow non-admins access to their own orders
+                    existing = customerStore.getCustomer(customerId);
                     if ( ! caller.getSubject().equals(existing.getSubject()) ) {
-                        throw new Exception("Caller doesn't have access to this record.");
+                        throw new WebApplicationException(
+                            "Caller doesn't have access to this record.", Response.Status.FORBIDDEN);
+                    }
+                    orders = orderStore.findOrdersByCustomerId(customerId);
+                } else if ( subjects != null && ! subjects.isEmpty() ) {
+                    // Or return redacted orders the caller is associated with
+                    desiredSubjects = dataoneAuthHelper.filterByAssociatedSubjects(caller, subjects);
+                    associatedSubjects.addAll(desiredSubjects);
+                    List<Order> associatedOrders = orderStore.findOrdersBySubjects(associatedSubjects);
+                    // Redact order information if the caller is not the customer subject
+                    // TODO: If caller.subject is an owner of the order.subject group, don't redact,
+                    //       but we don't easily have this information currently
+                    for (Order order : associatedOrders) {
+                        existing = customerStore.findCustomerBySubject(order.getSubject());
+                        if ( ! caller.getSubject().equals(existing.getSubject()) ) {
+                            Order redactedOrder = new Order();
+                            redactedOrder.setId(order.getId());
+                            redactedOrder.setSeriesId(order.getSeriesId());
+                            redactedOrder.setObject(order.getObject());
+                            redactedOrder.setName(order.getName());
+                            redactedOrder.setStatus(order.getStatus());
+                            redactedOrder.setCreated(order.getCreated());
+                            redactedOrder.setUpdated(order.getUpdated());
+                            redactedOrder.setEndDate(order.getEndDate());
+                            redactedOrder.setStartDate(order.getStartDate());
+                            redactedOrder.setQuotas(order.getQuotas());
+                            orders.add(redactedOrder);
+                        } else {
+                            orders.add(order);
+                        }
                     }
                 }
-                orders = orderStore.findOrdersByCustomerId(customerId);
-            } else if ( ! subject.isEmpty() ) {
-                if ( ! isAdmin ) {
-                    // Customer subjects must match
-                    existing = this.customerStore.getCustomer(customerId);
-                    if ( ! caller.getSubject().equals(existing.getSubject()) ) {
-                        throw new Exception("Caller doesn't have access to this record.");
-                    }
-                }
-                orders = orderStore.findOrdersBySubject(subject);
-
-            } else if ( isAdmin ) {
-                // Allow admins to list all orders
-                orders = orderStore.listOrders();
             }
+
         } catch (Exception e) {
-            String message = "Couldn't list orders: " + e.getMessage();
+            e.printStackTrace();
+            String message = "Couldn't list the orders due to an internal error.";
             throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
+
         }
 
+        // Handle empty orders
+        if (orders.isEmpty()) {
+            throw new WebApplicationException(
+                "No orders were found.", Response.Status.NOT_FOUND);
+        }
         // TODO: Incorporate paging params - new OrderList(start, count, total, orders)
         return new OrderList(orders);
     }
@@ -188,6 +226,9 @@ public class OrdersResource extends BaseResource {
         // Insert the order after it is validated
         try {
             order.setStatus("created");
+            if ( order.getSeriesId() == null) {
+                order.setSeriesId("urn:uuid:".concat(UUID.randomUUID().toString()));
+            }
             ObjectNode statusTransitions = mapper.createObjectNode();
             statusTransitions.put("created", now);
             order.setStatusTransitions(statusTransitions);
@@ -293,6 +334,7 @@ public class OrdersResource extends BaseResource {
         }
         // Update the order
         try {
+            order.setSeriesId(existing.getSeriesId());
             order.setCreated(existing.getCreated());
             order.setCurrency(existing.getCurrency());
             if (existing.getEmail() != null) {
@@ -304,6 +346,12 @@ public class OrdersResource extends BaseResource {
             }
             order.setStatus("created");
             order.setUpdated(new Integer((int) Instant.now().getEpochSecond()));
+            order.setMetadata(existing.getMetadata());
+            order.setStartDate(existing.getStartDate());
+            order.setEndDate(existing.getEndDate());
+            order.setCharge(existing.getCharge());
+            order.setAmountReturned(existing.getAmountReturned());
+            order.setCurrency(existing.getCurrency());
 
             // Update order item details from the listed product
             Product product = null;
@@ -425,13 +473,12 @@ public class OrdersResource extends BaseResource {
 
                         // Insert the quotas associated with the order
                         for ( Quota newQuota : quotas.values()) {
-                            Integer quotaId = quotaStore.insert(newQuota);
+                            quotaStore.insert(newQuota);
                         }
                     }
 
                 }
                 order.setUpdated(new Integer((int) Instant.now().getEpochSecond()));
-                order.setStatus("paid");
                 // TODO: Decide if this call should be a transaction with the quota
                 orderStore.update(order);
             } else {
