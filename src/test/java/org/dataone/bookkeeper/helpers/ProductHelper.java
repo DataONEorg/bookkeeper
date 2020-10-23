@@ -42,7 +42,7 @@ public class ProductHelper {
 
     /**
      * Remove a test product given its id
-     * @param productId
+     * @param productId the product identifier
      */
     public static void removeTestProduct(Integer productId) throws SQLException {
 
@@ -53,8 +53,8 @@ public class ProductHelper {
 
     /**
      * Create a test product
-     * @param productId
-     * @return
+     * @param productId the product identifier
+     * @return product a test product
      */
     public static Product createTestProduct(Integer productId) {
 
@@ -82,7 +82,7 @@ public class ProductHelper {
 
     /**
      * Create a test metadata instance as a Jackson ObjectNode
-     * @return
+     * @return metadata a metadata object
      */
     public static ObjectNode createTestMetadata() {
         ObjectMapper mapper = Jackson.newObjectMapper();
@@ -102,15 +102,17 @@ public class ProductHelper {
         Integer quota_id = 1;
         String quota_object = "quota";
         String quota_type = "portal";
-        @javax.validation.constraints.NotNull Double quota_soft_limit = 3.0;
-        @javax.validation.constraints.NotNull Double quota_hard_limit = 3.0;
-        @javax.validation.constraints.NotNull Double quota_total_usage = 0.0;
+        Double quota_soft_limit = 3.0;
+        Double quota_hard_limit = 3.0;
+        Double quota_total_usage = 0.0;
         String quota_unit = "portal";
         Integer quota_customer_id = null;
         String quota_subject = null;
+        String quota_name = null;
 
         Quota quota = new Quota(quota_id, quota_object, quota_type,
-            quota_soft_limit, quota_hard_limit, quota_total_usage, quota_unit, quota_customer_id, quota_subject);
+            quota_soft_limit, quota_hard_limit, quota_total_usage, quota_unit,
+            quota_customer_id, quota_subject, quota_name);
 
         feature1.setName("custom_portal");
         feature1.setLabel("Branded Portals");
@@ -150,8 +152,8 @@ public class ProductHelper {
     }
     /**
      * Return the number of products for the given product id
-     * @param productId
-     * @return
+     * @param productId the product identifier
+     * @return count the product count
      */
     public static Integer getProductCountById(Integer productId) {
         Integer count = BaseTestCase.dbi.withHandle(handle ->
@@ -166,8 +168,8 @@ public class ProductHelper {
 
     /**
      * Insert a test product into the database
-     * @param productId
-     * @return
+     * @param productId the product identifier
+     * @return productId the product identifier
      */
     public static Integer insertTestProduct(Integer productId) {
 
@@ -215,6 +217,11 @@ public class ProductHelper {
         return productId;
     }
 
+    /**
+     * Insert a test product
+     * @param product the product to insert
+     * @return product the inserted product
+     */
     public static Product insertTestProduct(Product product) {
 
         try {
@@ -261,8 +268,8 @@ public class ProductHelper {
     }
     /**
      * Return a product given its id
-     * @param productId
-     * @return
+     * @param productId the product identifier
+     * @return product the desired product
      */
     public static Product getProductById(Integer productId) {
         Product product = BaseTestCase.dbi.withHandle(handle ->
