@@ -105,30 +105,33 @@ public class Quota {
             this.unit = quota.unit;
             this.orderId = quota.orderId;
             this.subject = quota.subject;
+            this.name = quota.name;
         }
     }
 
     /**
      * Construct a quota
-     * @param id            the quota identifier
-     * @param object        the quota object type
-     * @param quotaType     the quota type
-     * @param softLimit     the quota soft limit
-     * @param hardLimit     the quota hard limit
-     * @param unit          the quota unit
-     * @param totalUsage    the quota total usage
-     * @param orderId  the quota order identifier
-     * @param subject         the quota subject
+     * @param id the quota identifier
+     * @param object the quota object type
+     * @param quotaType the quota type
+     * @param softLimit the quota soft limit
+     * @param hardLimit the quota hard limit
+     * @param unit the quota unit
+     * @param totalUsage the quota total usage
+     * @param orderId the quota order identifier
+     * @param subject the quota subject
+     * @param name the quota name from the associated order
      */
     public Quota(Integer id,
-                 @NotNull @NotEmpty String object,
-                 @NotNull @NotEmpty String quotaType,
-                 @NotNull Double softLimit,
-                 @NotNull Double hardLimit,
-                 @NotNull Double totalUsage,
-                 @NotNull @NotEmpty String unit,
-                 Integer orderId,
-                 String subject) {
+        @NotNull @NotEmpty String object,
+        @NotNull @NotEmpty String quotaType,
+        @NotNull Double softLimit,
+        @NotNull Double hardLimit,
+        @NotNull Double totalUsage,
+        @NotNull @NotEmpty String unit,
+        Integer orderId,
+        String subject,
+        String name) {
         if ( id != null ) {
             if ( ! id.toString().equals("") ) {
                 this.id = id;
@@ -142,6 +145,7 @@ public class Quota {
         this.totalUsage = totalUsage;
         this.orderId = orderId;
         this.subject = subject;
+        this.name = name;
     }
 
     /**
