@@ -52,6 +52,7 @@ class QuotaTest {
     private static final String UNIT =  "portal";
     private static final Integer MEMBERSHIP_ID = null;
     private static final String SUBJECT = null;
+    private static final String NAME = null;
 
     /**
      * Test serialization to JSON
@@ -61,7 +62,7 @@ class QuotaTest {
     public void serializesToJSON() throws Exception {
         // Build the Quota instance
         final Quota quota = new Quota(ID, OBJECT, TYPE, SOFTLIMIT, HARDLIMIT,
-            USAGE, UNIT, MEMBERSHIP_ID, SUBJECT);
+            USAGE, UNIT, MEMBERSHIP_ID, SUBJECT, NAME);
         // Test the Quota instance
         final String expected = MAPPER.writeValueAsString(
             MAPPER.readValue(fixture("fixtures/quota.json"), Quota.class));
@@ -77,7 +78,7 @@ class QuotaTest {
     public void deserializesFromJSON() throws Exception {
         // Build the Quota instance
         final Quota quota = new Quota(ID, OBJECT, TYPE, SOFTLIMIT, HARDLIMIT,
-            USAGE, UNIT, MEMBERSHIP_ID, SUBJECT);
+            USAGE, UNIT, MEMBERSHIP_ID, SUBJECT, NAME);
 
         // Test the Quota instance
         final Quota deserializedQuota =
