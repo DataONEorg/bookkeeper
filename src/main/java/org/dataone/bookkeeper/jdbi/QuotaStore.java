@@ -50,7 +50,8 @@ public interface QuotaStore {
             "q.totalUsage, " +
             "q.unit, " +
             "q.orderId, " +
-            "q.subject " +
+            "q.subject, " +
+            "q.name " +
             "FROM quotas q ";
 
     /** The full ordered query */
@@ -75,7 +76,8 @@ public interface QuotaStore {
     String SELECT_OWNERS = SELECT_CLAUSE + "WHERE q.subject IN (<subjects>) ";
 
     /** The query used to find quotas by type and multiple subject identifiers */
-    String SELECT_BY_NAME_AND_OWNERS = SELECT_CLAUSE + "WHERE q.quotaType = :quotaType AND q.subject IN (<subjects>) ";
+    String SELECT_BY_NAME_AND_OWNERS = SELECT_CLAUSE +
+        "WHERE q.quotaType = :quotaType AND q.subject IN (<subjects>) ";
 
     /**
      * List all quotas
@@ -144,7 +146,8 @@ public interface QuotaStore {
      * @return quotas the list of quotas for the subjects and names
      */
     @SqlQuery(SELECT_BY_NAME_AND_OWNERS)
-    List<Quota> findQuotasByNameAndSubjects(@Bind("quotaType") String quotaType, @BindList("subjects") List<String> subjects);
+    List<Quota> findQuotasByNameAndSubjects(@Bind("quotaType") String quotaType,
+        @BindList("subjects") List<String> subjects);
 
     /**
      * Insert a quota with a given Quota instance
@@ -157,7 +160,8 @@ public interface QuotaStore {
         "hardLimit, " +
         "unit, " +
         "orderId, " +
-        "subject) " +
+        "subject, " +
+        "name) " +
         "VALUES " +
         "(:object, " +
         ":quotaType, " +
@@ -165,13 +169,14 @@ public interface QuotaStore {
         ":hardLimit, " +
         ":unit, " +
         ":orderId, " +
-        ":subject) " +
+        ":subject, " +
+        ":name) " +
         "RETURNING id")
     @GetGeneratedKeys
     Integer insert(@BindBean Quota quota);
 
     /**
-     * Update a quota for a given id
+     * Update a quota for a given id, but don't update totalUsage since they are handled by triggers
      * @param quota the quota to update
      */
    @SqlUpdate("UPDATE quotas " +
@@ -181,7 +186,8 @@ public interface QuotaStore {
        "hardLimit = :hardLimit, " +
        "unit = :unit, " +
        "orderId = :orderId, " +
-       "subject = :subject " +
+       "subject = :subject, " +
+       "name = :name " +
        "WHERE id = :id ")
    @GetGeneratedKeys
    Quota update(@BindBean Quota quota);
