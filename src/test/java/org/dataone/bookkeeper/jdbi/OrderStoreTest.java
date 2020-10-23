@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -160,8 +161,8 @@ public class OrderStoreTest extends BaseTestCase {
      * Test getting orders by subject
      */
     @Test
-    @DisplayName("Test getting orders by subject")
-    public void testFindOrdersBySubject() {
+    @DisplayName("Test getting orders by subjects")
+    public void testFindOrdersBySubjects() {
         try {
             // Insert a new customer
             Customer customer =
@@ -177,7 +178,8 @@ public class OrderStoreTest extends BaseTestCase {
             this.orderIds.add(expected.getId());
 
             // Get orders for the given subject
-            List<Order> orders = orderStore.findOrdersBySubject(customer.getSubject());
+            List<Order> orders = orderStore.findOrdersBySubjects(
+                new ArrayList<String>(Collections.singleton(customer.getSubject())));
             assertEquals(1, orders.size());
             assertEquals(orders.get(0).getId(), expected.getId());
         } catch (SQLException | JsonProcessingException e) {
