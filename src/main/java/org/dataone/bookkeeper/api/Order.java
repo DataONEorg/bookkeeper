@@ -55,7 +55,6 @@ public class Order {
     private String object;
 
     /* The order amount (in the smallest unit of the currency) */
-    @NotNull
     private Integer amount;
 
     /* The order amount returned */
@@ -93,7 +92,6 @@ public class Order {
     private String name;
 
     /* The order status */
-    @NotEmpty
     @Pattern(regexp = "active|created|paid|past_due|refunded|trialing|unpaid")
     private String status;
 
@@ -104,8 +102,6 @@ public class Order {
     private Integer updated;
 
     /*The order series identifier used to track renewals */
-    @NotEmpty
-    @NotNull
     private String seriesId;
 
     /* The start date for the order used to determine service expiry */
