@@ -27,6 +27,7 @@ import org.dataone.bookkeeper.jdbi.mappers.OrderMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.customizer.BindList;
 import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -84,7 +85,7 @@ public interface OrderStore {
 
     String SELECT_CUSTOMER = SELECT_CLAUSE + "WHERE customer = :customer ";
 
-    String SELECT_SUBJECT = SELECT_CLAUSE + "WHERE o.subject = :subject " + ORDER_CLAUSE;
+    String SELECT_SUBJECTS = SELECT_CLAUSE + "WHERE o.subject IN (<subjects>) " + ORDER_CLAUSE;
 
     /**
      * List all orders
@@ -120,15 +121,14 @@ public interface OrderStore {
 
     /**
      * Find orders by subject
-     * @param subject the subject of the customer
+     * @param subjects the list of subjects for the desired orders
      * @return the desired orders
      */
-    @SqlQuery(SELECT_SUBJECT)
+    @SqlQuery(SELECT_SUBJECTS)
     @RegisterBeanMapper(value = Quota.class, prefix = "q")
     @RegisterRowMapper(OrderMapper.class)
     @UseRowReducer(OrderQuotasReducer.class)
-    List<Order> findOrdersBySubject(@Bind("subject") String subject);
-
+    List<Order> findOrdersBySubjects(@BindList("subjects") List<String> subjects);
     /**
      * Insert an order
      * @param order the order to insert
