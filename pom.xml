@@ -32,6 +32,7 @@
         <!-- <docker.registry>docker.io</docker.registry> -->
         <docker.repo>d1bookkeeper</docker.repo>
         <docker.tag>0.3.0</docker.tag>
+        <bookkeeper-api.version>1.0-SNAPSHOT</bookkeeper-api.version>
     </properties>
     <distributionManagement>
         <repository>
@@ -124,6 +125,11 @@
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dataone</groupId>
+            <artifactId>bookkeeper-api</artifactId>
+            <version>${bookkeeper-api.version}</version>
         </dependency>
     </dependencies>
     <repositories>
