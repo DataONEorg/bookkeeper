@@ -1,0 +1,13 @@
+# Create a persistent volume claim
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: bookkeeper-pvc
+  namespace: bookkeeper
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+

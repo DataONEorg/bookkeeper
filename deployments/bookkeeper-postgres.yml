@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: bookkeeper
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: docker.io/postgres:11-alpine
+        command: [ "su", "-", "postgres", "-c", "postgres -D /opt/local/bookkeeper/postgresql/data" ]
+        ports:
+        - name: postgres
+          containerPort: 5432
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: bookkeeper-volume
+          mountPath: "/opt/local"
+          readOnly: false
+      restartPolicy: Always
+      volumes:
+      - name: bookkeeper-volume
+        persistentVolumeClaim:
+          claimName: bookkeeper-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: bookkeeper
+spec:
+  selector:
+    app: postgres
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+    targetPort: postgres

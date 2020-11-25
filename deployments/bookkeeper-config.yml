@@ -1,0 +1,27 @@
+# Store non-secret configuration in a ConfigMap resource
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-config
+  namespace: bookkeeper
+  labels:
+    app: postgres
+data:
+  database: bookkeeper
+
+---
+
+# Store the credentials in a Secret resource
+kind: Secret
+apiVersion: v1
+metadata:
+  name: postgres-credentials
+  namespace: bookkeeper
+type: Opaque
+data:
+  # Note: these aren't encrypted, just encoded, so don't git commit
+  # echo "your-postgres-username" | base64
+  user:
+  # echo "your-postgres-password" | base64
+  password:
+

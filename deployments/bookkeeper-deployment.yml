@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookkeeper
+  namespace: bookkeeper
+spec:
+  selector:
+    matchLabels:
+      app: bookkeeper
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bookkeeper
+        tier: backend
+    spec:
+      containers:
+      - name: bookkeeper
+        image: docker.io/d1bookkeeper/bookkeeper:0.3.0
+        imagePullPolicy: Always
+        ports:
+        - name: bookkeeper
+          containerPort: 8080
+        volumeMounts:
+        - name: bookkeeper-volume
+          mountPath: "/opt/local"
+          readOnly: false
+      restartPolicy: Always
+      volumes:
+      - name: bookkeeper-volume
+        persistentVolumeClaim:
+          claimName: bookkeeper-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookkeeper
+  namespace: bookkeeper
+spec:
+  selector:
+    app: bookkeeper
+  ports:
+  - name: bookkeeper
+    port: 8080
+    protocol: TCP
+    targetPort: bookkeeper
+  - name: bookkeeper-admin
+    port: 8081
+    protocol: TCP
+    targetPort: bookkeeper
+
+
