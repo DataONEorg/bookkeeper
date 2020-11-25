@@ -1,0 +1,20 @@
+# create an NFS persistent volume
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: bookkeeper-volume
+  annotations:
+    # This group id has to match the group id of /data2 partition
+    pv.beta.kubernetes.io/gid: "1006"
+spec:
+  capacity:
+    # change capacity for production
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    # cluster IP address - change for production or minkube restart
+    server: docker-dev-ucsb-1.test.dataone.org
+    path: /data2
+    readOnly: false
