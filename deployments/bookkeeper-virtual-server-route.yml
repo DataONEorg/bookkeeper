@@ -1,0 +1,16 @@
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServerRoute
+metadata:
+  name: bookkeeper
+  namespace: bookkeeper
+spec:
+  host: api.test.dataone.org
+  #host: docker-dev-ucsb-1.test.dataone.org
+  upstreams:
+  - name: bookkeeper
+    service: bookkeeper
+    port: 8080
+  subroutes:
+  - path: /bookkeeper
+    action:
+      pass: bookkeeper
