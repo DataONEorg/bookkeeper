@@ -39,3 +39,7 @@ The following diagram shows the membership and payment records stored by DataONE
     @enduml
     
 .. image:: images/overview.png
+
+The current table structure from the generated SQL is:
+
+.. image:: images/bookkeeper-schema.png
