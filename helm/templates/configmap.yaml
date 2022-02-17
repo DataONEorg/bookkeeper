@@ -1,0 +1,9 @@
+# Store non-secret configuration in a ConfigMap resource
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bookkeeper.fullname" . }}
+  labels:
+    {{- include "bookkeeper.labels" . | nindent 4 }}
+data:
+  database: bookkeeper
