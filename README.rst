@@ -7,6 +7,17 @@ DataONE Plus and Hosted Repositories services.  See the ``docs`` for more detail
 
 .. _DataONE: https://dataone.org/
 
+Installation via Helm
+---------------------
+
+The bookkeeper app is packaged as a Helm chart and can be deployed on a Kubernetes cluster with
+a release name of `bookkeeper` using:
+
+.. code:: bash
+
+   $ helm upgrade --install -n bookkeeper bookkeeper ./helm
+
+
 Installation
 ------------
 
