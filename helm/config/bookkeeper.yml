@@ -30,8 +30,8 @@ database:
   # url: jdbc:postgresql://postgres.bookkeeper.svc.cluster.local:5432/bookkeeper
 
   # Connect with database username and password
-  user: <user goes here>
-  password: <password goes here>
+  user: {{ .Values.postgres.user }}
+  password: <password goes here> # This is in a Secret, so can't get it from .Values.
 
   # JDBC driver properties
   properties:

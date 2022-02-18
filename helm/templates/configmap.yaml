@@ -18,4 +18,4 @@ metadata:
   labels:
     {{- include "bookkeeper.labels" . | nindent 4 }}
 data:
-{{ (.Files.Glob "config/*").AsConfig | indent 4 }}
+{{ (tpl (.Files.Glob "config/*").AsConfig . ) | indent 4 }}

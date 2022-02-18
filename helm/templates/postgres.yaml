@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    {{- include "bookkeeper.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: docker.io/postgres:11-alpine
+        command: [ "su", "-", "postgres", "-c", "postgres -D /opt/local/bookkeeper/postgresql/data" ]
+        ports:
+        - name: postgres
+          containerPort: 5432
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: bookkeeper-volume
+          mountPath: "/opt/local"
+          readOnly: false
+        env:
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: POSTGRES_HOST
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: password
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: POSTGRES_USER
+      restartPolicy: Always
+      volumes:
+      - name: bookkeeper-volume
+        persistentVolumeClaim:
+          claimName: bookkeeper-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    {{- include "bookkeeper.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: postgres
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+    targetPort: postgres
