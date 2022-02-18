@@ -29,6 +29,10 @@ spec:
       - name: bookkeeper-volume
         emptyDir: {}
       {{- end }}
+      - name: {{ .Release.Name }}-config-volume
+        configMap:
+          name: {{ .Release.Name }}-configfiles
+          defaultMode: 0644
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -49,6 +53,9 @@ spec:
           volumeMounts:
             - name: bookkeeper-volume
               mountPath: "/opt/local"
+            - mountPath: /opt/local/bookkeeper/bookkeeper.yml
+              subPath: bookkeeper.yml
+              name: {{ .Release.Name }}-config-volume
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

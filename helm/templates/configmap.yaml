@@ -7,3 +7,12 @@ metadata:
     {{- include "bookkeeper.labels" . | nindent 4 }}
 data:
   database: bookkeeper
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configfiles
+  labels:
+    {{- include "bookkeeper.labels" . | nindent 4 }}
+data:
+{{ (.Files.Glob "config/*").AsConfig | indent 4 }}
