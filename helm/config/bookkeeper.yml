@@ -69,8 +69,9 @@ dataone:
   # The list of admin subjects with all CRUD permissions
   adminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"
-    - "http://orcid.org/0000-0002-8121-2341"
-    - "http://orcid.org/0000-0002-2192-403X"
+    - "http://orcid.org/0000-0003-0077-4738" # Matt Jones
+    - "http://orcid.org/0000-0002-8121-2341" # Christopher Jones
+    - "http://orcid.org/0000-0002-2192-403X" # Peter Slaughter
 
   bookkeeperAdminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"

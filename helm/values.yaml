@@ -4,6 +4,12 @@
 
 replicaCount: 1
 
+postgres:
+  dbname: bookkeeper
+  host: localhost
+  port: 5432
+  user: bookkeeper
+
 image:
   repository: d1bookkeeper/bookkeeper
   pullPolicy: Always
