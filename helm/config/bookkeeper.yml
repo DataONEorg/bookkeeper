@@ -25,7 +25,8 @@ authenticationCachePolicy: "maximumSize=1000, expireAfterAccess=10m"
 database:
   # Driver details
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/bookkeeper
+  #url: jdbc:postgresql://localhost:5432/bookkeeper
+  url: jdbc:postgresql://{{ .Values.postgres.host }}:{{ .Values.postgres.port }}/{{ .Values.postgres.dbname }}
   # for k8s:
   # url: jdbc:postgresql://postgres.bookkeeper.svc.cluster.local:5432/bookkeeper
 

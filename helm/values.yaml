@@ -6,7 +6,7 @@ replicaCount: 1
 
 postgres:
   dbname: bookkeeper
-  host: localhost
+  host: postgres
   port: 5432
   user: bookkeeper
 
