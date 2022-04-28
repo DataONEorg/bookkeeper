@@ -11,12 +11,15 @@ Installation via Helm
 ---------------------
 
 The bookkeeper app is packaged as a Helm chart and can be deployed on a Kubernetes cluster with
-a release name of `bookkeeper` using:
+a release name of `bookkeeper` using helm. First, one manual step is to edit `./helm/config/bookkeeper.yml` 
+and set the proper database password. Then install via help with:
 
 .. code:: bash
 
    $ helm upgrade --install -n bookkeeper bookkeeper ./helm
 
+Note that the helm install is not currently putting the database in place, and so some of the steps 
+below need to be performed manually to get the database set up. These will all be migrated to helm with time.
 
 Installation
 ------------
