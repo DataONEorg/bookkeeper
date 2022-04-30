@@ -9,6 +9,7 @@ postgres:
   host: postgres
   port: 5432
   user: bookkeeper
+  pgdata: /opt/local/bookkeeper/postgresql/data
 
 image:
   repository: d1bookkeeper/bookkeeper

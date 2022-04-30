@@ -21,14 +21,6 @@ spec:
         {{- include "bookkeeper.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
-      {{- if and .Values.persistence.enabled .Values.persistence.existingClaimName }}
-      - name: bookkeeper-volume
-        persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaimName }}
-      {{- else }}
-      - name: bookkeeper-volume
-        emptyDir: {}
-      {{- end }}
       - name: {{ .Release.Name }}-config-volume
         configMap:
           name: {{ .Release.Name }}-configfiles
@@ -40,6 +32,10 @@ spec:
       serviceAccountName: {{ include "bookkeeper.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      # initContainers:
+      # - name: wait-for-database
+      #   image: busybox:1.34
+      #   command: ['sh', '-c', "until nslookup postgres.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -51,8 +47,6 @@ spec:
               containerPort: 80
               protocol: TCP
           volumeMounts:
-            - name: bookkeeper-volume
-              mountPath: "/opt/local"
             - name: {{ .Release.Name }}-config-volume
               mountPath: /opt/local/bookkeeper/bookkeeper.yml
               subPath: bookkeeper.yml
