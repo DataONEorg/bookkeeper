@@ -23,6 +23,8 @@ flyway:
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "8.5.10"
+  configpath: /opt/local/bookkeeper/flyway.conf
+  dbpath: /opt/local/bookkeeper/db
 
 imagePullSecrets: []
 nameOverride: ""
