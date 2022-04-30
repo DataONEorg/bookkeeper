@@ -32,10 +32,26 @@ spec:
       serviceAccountName: {{ include "bookkeeper.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # initContainers:
-      # - name: wait-for-database
-      #   image: busybox:1.34
-      #   command: ['sh', '-c', "until nslookup postgres.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
+      initContainers:
+        - name: {{ .Chart.Name }}-init-postgres # Wait for Postgres to start
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup postgres.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
+        - name: {{ .Chart.Name }}-init-flyway # Runthe flyway database migration
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.flyway.image.repository }}:{{ .Values.flyway.image.tag | default .Chart.AppVersion }}"
+          command: ['sh', '-c', 'set -x; cat /opt/local/bookkeeper/flyway.conf; flyway -password=${POSTGRES_PASSWORD} -configFiles=/opt/local/bookkeeper/flyway.conf info']
+          imagePullPolicy: {{ .Values.flyway.image.pullPolicy }}
+          volumeMounts:
+            - name: {{ .Release.Name }}-config-volume
+              mountPath: /opt/local/bookkeeper/flyway.conf
+              subPath: flyway.conf
+          env:
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: password
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
