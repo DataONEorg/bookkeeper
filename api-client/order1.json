@@ -1,0 +1,14 @@
+{
+    "object": "order",
+    "customer": 3,
+    "status": "unpaid",
+    "items": [
+        {
+            "object": "order_item",
+            "type": "sku",
+            "parent": 7,
+            "quantity": 1,
+            "amount": 13000
+        }
+    ]
+}

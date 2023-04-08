@@ -1,0 +1,97 @@
+{
+  "id": 5,
+  "object": "product",
+  "active": true,
+  "amount": 13000,
+  "caption": "A dedicated repository solution for your group or institution’s data, managed by DataONE",
+  "currency": "USD",
+  "description": "Bring the products of your research lab, field station, or library together in a centralized location for efficient sharing, access, and reuse. Accelerate research activity, foster new collaborations, and build community with a repository that meets your needs and reflects your brand.",
+  "interval": "year",
+  "name": "DataONE Hosted Repository",
+  "statementDescriptor": "DataONE Hosted Repository",
+  "type": "service",
+  "unitLabel": "repository",
+  "url": "https://products.dataone.org/hostedrepo",
+  "metadata": {
+    "features": [
+      {
+        "name": "trusted_data_repository",
+        "label": "A Trusted Data Repository",
+        "description": "Preserve and share your data, software, and derived products in a dedicated repository system. Built on our robust and expertly managed repository software and hardware, your research products are safely inactive and easily accessible."
+      },
+      {
+        "name": "individual_fair_Assessments",
+        "label": "Individual FAIR Assessments",
+        "description": "Evaluate your metadata with community established FAIR principles. Scores are refreshed with updates to your metadata, helping make your data even more Findable, Accessible, Interoperable, and Reusable."
+      },
+      {
+        "name": "powerful_online_submission",
+        "label": "Powerful Online Submission",
+        "description": "The user friendly data submission tool helps your researchers efficiently upload and describe their data. Users can easily create detailed metadata to enhance interoperability, reusability, and value of data."
+      },
+      {
+        "name": "comprehensive_search",
+        "label": "Comprehensive Search",
+        "description": "Quickly find data with detailed search filters, or by navigating the interactive map."
+      },
+      {
+        "name": "usage_metrics",
+        "label": "Usage Metrics",
+        "description": "Understand how your data are being used over time with view, download, and citation metrics."
+      },
+      {
+        "name": "usage_metrics",
+        "label": "Usage Metrics",
+        "description": "Understand how your data are being used over time with view, download, and citation metrics."
+      },
+      {
+        "name": "expandable_storage",
+        "label": "Expandable Storage",
+        "description": "Grow your repository capacity based on your storage needs in 1 TB increments.",
+        "quota": {
+          "object": "quota",
+          "quotaType": "repository_storage",
+          "softLimit": 900,
+          "hardLimit": 1000,
+          "totalUsage": 0,
+          "unit": "Gigabyte"
+        }
+      },
+      {
+        "name": "geographic_replicas",
+        "label": "Geographic Replicas",
+        "description": "Your data are replicated to distinct geographic regions for high availability and preservation."
+      },
+      {
+        "name": "api_access",
+        "label": "API Access",
+        "description": "Programmatically work with your repository through the DataONE tools in R, Python, Matlab, and Java."
+      },
+      {
+        "name": "link_data_and_software",
+        "label": "Link data and Software",
+        "description": "Easily show how your files relate to each other by providing well-described provenance workflows."
+      },
+      {
+        "name": "private_and_public_access",
+        "label": "Private and Public Access",
+        "description": "Control access to your datasets\nprior to publication with private groups or just yourself."
+      },
+      {
+        "name": "private_and_public_access",
+        "label": "Private and Public Access",
+        "description": "Control access to your datasets\nprior to publication with private groups or just yourself."
+      },
+      {
+        "name": "any_file_format",
+        "label": "Any File Format",
+        "description": "Use the scientific file formats for your community: image, tabular, text, audio, video, and others."
+      },
+      {
+        "name": "share_when_ready",
+        "label": "Share When Ready",
+        "description": "Keep your dataset private while you document it thoroughly, and then make it public when you are ready."
+      }
+    ]
+  }
+}
