@@ -36,37 +36,78 @@ SERVICE="https://api.test.dataone.org/bookkeeper/v1"
 
 list ()
 {
-    # List all customers
-    curl -s -H "Authorization: Bearer $TOKEN" ${SERVICE}/customers | jq .
+    # List a resource collection, or just one if an ID is given
+    RESOURCE=$1
+    ID=$2
+    curl -s -H "Authorization: Bearer $TOKEN" ${SERVICE}/${RESOURCE}/${ID} | jq .
 }
 
 create ()
 {
     # Create a new customer
-    JSON=$1
-    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "@${JSON}" ${SERVICE}/customers | jq .
+    RESOURCE=$1
+    JSON=$2
+    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "@${JSON}" ${SERVICE}/${RESOURCE} | jq .
 }
 
 delete ()
 {
-    # Delete a customer
-    ID=$1
-    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -X DELETE ${SERVICE}/customers/${ID} | jq .
+    # Delete a resource
+    RESOURCE=$1
+    ID=$2
+    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -X DELETE ${SERVICE}/${RESOURCE}/${ID} | jq .
 }
 
-while getopts "hlc:d:" option; do
+while getopts "hplouc:d:" option; do
    case $option in
       h) # display Help
-         echo "$0 [-h] [-c json-file] [-l] [-d id]"
+         echo "$0 [-h] [-c json-file] -[p] [-l] [-o] -[u] [-d id]"
          exit;;
+      p) # list all products
+         # Check next positional parameter
+         eval nextopt=\${$OPTIND}
+         # existing or starting with dash?
+         if [[ -n $nextopt && $nextopt != -* ]] ; then
+            OPTIND=$((OPTIND + 1))
+            ID=$nextopt
+         fi
+         list products $ID
+         exit;; 
       l) # list all customers
-         list
+         # Check next positional parameter
+         eval nextopt=\${$OPTIND}
+         # existing or starting with dash?
+         if [[ -n $nextopt && $nextopt != -* ]] ; then
+            OPTIND=$((OPTIND + 1))
+            ID=$nextopt
+         fi
+         list customers $ID
+         exit;; 
+      o) # list all orders
+         # Check next positional parameter
+         eval nextopt=\${$OPTIND}
+         # existing or starting with dash?
+         if [[ -n $nextopt && $nextopt != -* ]] ; then
+            OPTIND=$((OPTIND + 1))
+            ID=$nextopt
+         fi
+         list orders $ID
+         exit;; 
+      u) # list all usages
+         # Check next positional parameter
+         eval nextopt=\${$OPTIND}
+         # existing or starting with dash?
+         if [[ -n $nextopt && $nextopt != -* ]] ; then
+            OPTIND=$((OPTIND + 1))
+            ID=$nextopt
+         fi
+         list usages $ID
          exit;; 
       c) # Enter a JSON filename
-         create $OPTARG
+         create customers $OPTARG
          exit;;
       d) # Enter an identifier
-         delete $OPTARG
+         delete customers $OPTARG
          exit;;
      \?) # Invalid option
          echo "Error: Invalid option"
