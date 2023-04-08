@@ -1,0 +1,77 @@
+#!/bin/bash
+# GET     /bookkeeper/v1/customers (org.dataone.bookkeeper.resources.CustomersResource)
+# POST    /bookkeeper/v1/customers (org.dataone.bookkeeper.resources.CustomersResource)
+# GET     /bookkeeper/v1/customers/{customerId: [0-9]+} (org.dataone.bookkeeper.resources.CustomersResource)
+# DELETE  /bookkeeper/v1/customers/{customerId} (org.dataone.bookkeeper.resources.CustomersResource)
+# PUT     /bookkeeper/v1/customers/{customerId} (org.dataone.bookkeeper.resources.CustomersResource)
+# GET     /bookkeeper/v1/orders (org.dataone.bookkeeper.resources.OrdersResource)
+# POST    /bookkeeper/v1/orders (org.dataone.bookkeeper.resources.OrdersResource)
+# DELETE  /bookkeeper/v1/orders/{orderId} (org.dataone.bookkeeper.resources.OrdersResource)
+# GET     /bookkeeper/v1/orders/{orderId} (org.dataone.bookkeeper.resources.OrdersResource)
+# PUT     /bookkeeper/v1/orders/{orderId} (org.dataone.bookkeeper.resources.OrdersResource)
+# POST    /bookkeeper/v1/orders/{orderId}/pay (org.dataone.bookkeeper.resources.OrdersResource)
+# GET     /bookkeeper/v1/products (org.dataone.bookkeeper.resources.ProductsResource)
+# POST    /bookkeeper/v1/products (org.dataone.bookkeeper.resources.ProductsResource)
+# DELETE  /bookkeeper/v1/products/{productId} (org.dataone.bookkeeper.resources.ProductsResource)
+# GET     /bookkeeper/v1/products/{productId} (org.dataone.bookkeeper.resources.ProductsResource)
+# PUT     /bookkeeper/v1/products/{productId} (org.dataone.bookkeeper.resources.ProductsResource)
+# GET     /bookkeeper/v1/quotas (org.dataone.bookkeeper.resources.QuotasResource)
+# POST    /bookkeeper/v1/quotas (org.dataone.bookkeeper.resources.QuotasResource)
+# DELETE  /bookkeeper/v1/quotas/{quotaId} (org.dataone.bookkeeper.resources.QuotasResource)
+# GET     /bookkeeper/v1/quotas/{quotaId} (org.dataone.bookkeeper.resources.QuotasResource)
+# PUT     /bookkeeper/v1/quotas/{quotaId} (org.dataone.bookkeeper.resources.QuotasResource)
+# GET     /bookkeeper/v1/usages (org.dataone.bookkeeper.resources.UsagesResource)
+# POST    /bookkeeper/v1/usages (org.dataone.bookkeeper.resources.UsagesResource)
+# GET     /bookkeeper/v1/usages/status (org.dataone.bookkeeper.resources.UsagesResource)
+# GET     /bookkeeper/v1/usages/{id} (org.dataone.bookkeeper.resources.UsagesResource)
+# DELETE  /bookkeeper/v1/usages/{usageId} (org.dataone.bookkeeper.resources.UsagesResource)
+# PUT     /bookkeeper/v1/usages/{usageId} (org.dataone.bookkeeper.resources.UsagesResource)
+#
+# INFO  [2022-04-26 06:07:58,204] io.dropwizard.setup.AdminEnvironment: tasks =
+#
+# POST    /tasks/log-level (io.dropwizard.servlets.tasks.LogConfigurationTask)
+# POST    /tasks/gc (io.dropwizard.servlets.tasks.GarbageCollectionTask)
+
+SERVICE="https://api.test.dataone.org/bookkeeper/v1"
+
+list ()
+{
+    # List all customers
+    curl -s -H "Authorization: Bearer $TOKEN" ${SERVICE}/customers | jq .
+}
+
+create ()
+{
+    # Create a new customer
+    JSON=$1
+    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "@${JSON}" ${SERVICE}/customers | jq .
+}
+
+delete ()
+{
+    # Delete a customer
+    ID=$1
+    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -X DELETE ${SERVICE}/customers/${ID} | jq .
+}
+
+while getopts "hlc:d:" option; do
+   case $option in
+      h) # display Help
+         echo "$0 [-h] [-c json-file] [-l] [-d id]"
+         exit;;
+      l) # list all customers
+         list
+         exit;; 
+      c) # Enter a JSON filename
+         create $OPTARG
+         exit;;
+      d) # Enter an identifier
+         delete $OPTARG
+         exit;;
+     \?) # Invalid option
+         echo "Error: Invalid option"
+         exit;;
+   esac
+done
+
+

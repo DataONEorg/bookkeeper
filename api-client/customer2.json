@@ -1,0 +1,18 @@
+{
+  "id": 8,
+  "object": "customer",
+  "subject": "http://orcid.org/0000-0002-2192-403X",
+  "balance": 0,
+  "address": {},
+  "created": 1607626364,
+  "currency": "USD",
+  "delinquent": false,
+  "description": "Peter Slaughter ",
+  "discount": {},
+  "email": "slaughter@nceas.ucsb.edu",
+  "invoiceSettings": {},
+  "metadata": {},
+  "givenName": "Peter",
+  "surName": "Slaughter",
+  "name": "http://orcid.org/0000-0002-2192-403X"
+}

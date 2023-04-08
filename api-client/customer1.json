@@ -1,0 +1,16 @@
+{
+  "object": "customer",
+  "subject": "http://orcid.org/0000-0003-0077-4738",
+  "balance": 0,
+  "address": {},
+  "currency": "USD",
+  "delinquent": false,
+  "description": "Matt Jones ",
+  "discount": {},
+  "email": "mbjones.89@gmail.com",
+  "invoiceSettings": {},
+  "metadata": {},
+  "givenName": "Matt",
+  "surName": "Jones",
+  "name": "http://orcid.org/0000-0003-0077-4738"
+}
