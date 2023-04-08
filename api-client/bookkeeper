@@ -58,10 +58,22 @@ delete ()
     curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -X DELETE ${SERVICE}/${RESOURCE}/${ID} | jq .
 }
 
-while getopts "hplouc:d:" option; do
+mark_paid ()
+{
+    # Mark an order as paid
+    ID=$1
+    curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -X POST ${SERVICE}/orders/${ID}/pay | jq .
+}
+
+usage ()
+{
+    echo "$0 [-h] [-c json-file] -[p] [-l] [-o] [-q] [-u] [-d id] [-m id]"
+}
+
+while getopts "hploquc:d:m:" option; do
    case $option in
       h) # display Help
-         echo "$0 [-h] [-c json-file] -[p] [-l] [-o] -[u] [-d id]"
+         usage
          exit;;
       p) # list products
          # Check next positional parameter
@@ -93,6 +105,16 @@ while getopts "hplouc:d:" option; do
          fi
          list orders $ID
          exit;; 
+      q) # list quotas
+         # Check next positional parameter
+         eval nextopt=\${$OPTIND}
+         # existing or starting with dash?
+         if [[ -n $nextopt && $nextopt != -* ]] ; then
+            OPTIND=$((OPTIND + 1))
+            ID=$nextopt
+         fi
+         list quotas $ID
+         exit;; 
       u) # list usages
          # Check next positional parameter
          eval nextopt=\${$OPTIND}
@@ -109,8 +131,12 @@ while getopts "hplouc:d:" option; do
       d) # Enter an identifier
          delete customers $OPTARG
          exit;;
+      m) # mark order as paid
+         mark_paid $OPTARG
+         exit;;
      \?) # Invalid option
          echo "Error: Invalid option"
+         usage
          exit;;
    esac
 done
