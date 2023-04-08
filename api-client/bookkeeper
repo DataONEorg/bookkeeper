@@ -44,9 +44,9 @@ list ()
 
 create ()
 {
-    # Create a new customer
-    RESOURCE=$1
-    JSON=$2
+    # Create a new resource, determining the RESOURCE type from the JSON object passed in
+    JSON=$1
+    RESOURCE=$(cat ${JSON} | jq .object | sed -e 's/"//g' -e 's/$/s/')
     curl -s -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d "@${JSON}" ${SERVICE}/${RESOURCE} | jq .
 }
 
@@ -63,7 +63,7 @@ while getopts "hplouc:d:" option; do
       h) # display Help
          echo "$0 [-h] [-c json-file] -[p] [-l] [-o] -[u] [-d id]"
          exit;;
-      p) # list all products
+      p) # list products
          # Check next positional parameter
          eval nextopt=\${$OPTIND}
          # existing or starting with dash?
@@ -73,7 +73,7 @@ while getopts "hplouc:d:" option; do
          fi
          list products $ID
          exit;; 
-      l) # list all customers
+      l) # list customers
          # Check next positional parameter
          eval nextopt=\${$OPTIND}
          # existing or starting with dash?
@@ -83,7 +83,7 @@ while getopts "hplouc:d:" option; do
          fi
          list customers $ID
          exit;; 
-      o) # list all orders
+      o) # list orders
          # Check next positional parameter
          eval nextopt=\${$OPTIND}
          # existing or starting with dash?
@@ -93,7 +93,7 @@ while getopts "hplouc:d:" option; do
          fi
          list orders $ID
          exit;; 
-      u) # list all usages
+      u) # list usages
          # Check next positional parameter
          eval nextopt=\${$OPTIND}
          # existing or starting with dash?
@@ -104,7 +104,7 @@ while getopts "hplouc:d:" option; do
          list usages $ID
          exit;; 
       c) # Enter a JSON filename
-         create customers $OPTARG
+         create $OPTARG
          exit;;
       d) # Enter an identifier
          delete customers $OPTARG
