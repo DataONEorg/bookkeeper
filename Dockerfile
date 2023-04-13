@@ -1,5 +1,9 @@
 FROM openjdk:8-jre
 
+LABEL org.opencontainers.image.source="https://github.com/dataoneorg/bookkeeper"
+LABEL org.opencontainers.image.title="DataONE Bookkeeper"
+LABEL org.opencontainers.image.version="0.4.0"
+LABEL org.opencontainers.image.url="https://github.com/DataONEorg/bookkeeper"
 LABEL maintainer="DataONE support@dataone.org"
 
 RUN mkdir -p /app/bookkeeper
