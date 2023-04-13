@@ -6,7 +6,7 @@
 
     <groupId>org.dataone</groupId>
     <artifactId>bookkeeper</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>2.0.0</dropwizard.version>
