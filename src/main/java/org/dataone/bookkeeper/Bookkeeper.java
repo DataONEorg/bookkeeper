@@ -26,10 +26,13 @@ import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.jdbi3.bundles.JdbiExceptionsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
+import org.apache.commons.logging.Log;
 import org.dataone.bookkeeper.api.Customer;
 import org.dataone.bookkeeper.config.BookkeeperConfiguration;
 import org.dataone.bookkeeper.resources.*;
@@ -84,8 +87,9 @@ public class Bookkeeper extends Application<BookkeeperConfiguration> {
 
         // Set up managed database access
         final JdbiFactory factory = new JdbiFactory();
-        final Jdbi database = factory.build(environment,
-            configuration.getDataSourceFactory(), "postgresql");
+        DataSourceFactory dataSourceFactory = configuration.getDataSourceFactory();
+        dataSourceFactory.setPassword(System.getenv("POSTGRES_PASSWORD"));
+        final Jdbi database = factory.build(environment, dataSourceFactory, "postgresql");
 
         final DataONEAuthHelper dataoneHelper =
             new DataONEAuthHelper(environment, database, configuration.getDataONEConfiguration());

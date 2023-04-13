@@ -6,7 +6,7 @@
 
     <groupId>org.dataone</groupId>
     <artifactId>bookkeeper</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.4.0</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>2.0.0</dropwizard.version>
@@ -37,9 +37,9 @@
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jenkins.dataone.org</id>
+            <id>maven.dataone.org</id>
             <name>DataONE</name>
-            <url>${url}</url>
+            <url>https://maven.dataone.org/</url>
             <layout>default</layout>
         </repository>
     </distributionManagement>
@@ -135,7 +135,7 @@
     <repositories>
         <repository>
             <id>dataone.org</id>
-            <url>http://maven.dataone.org/</url>
+            <url>https://maven.dataone.org/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -284,7 +284,7 @@
                             <generatePom>false</generatePom>
                             <pomFile>pom.xml</pomFile>
                             <packaging>jar</packaging>
-                            <repositoryId>jenkins.dataone.org</repositoryId>
+                            <repositoryId>maven.dataone.org</repositoryId>
                         </configuration>
                     </execution>
                 </executions>

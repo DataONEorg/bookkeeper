@@ -12,8 +12,8 @@ postgres:
   pgdata: /opt/local/bookkeeper/postgresql/data
 
 image:
-  repository: d1bookkeeper/bookkeeper
-  pullPolicy: Always
+  repository: ghcr.io/dataoneorg/bookkeeper
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   #tag: ""
 

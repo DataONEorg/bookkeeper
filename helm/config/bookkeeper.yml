@@ -32,7 +32,7 @@ database:
 
   # Connect with database username and password
   user: {{ .Values.postgres.user }}
-  password: <password goes here> # This is in a Secret, so can't get it from .Values.
+  #password: "not-set-here" # Dropwizard JDBI is configured to read POSTGRES_PASSWORD from the environment
 
   # JDBC driver properties
   properties:
@@ -71,17 +71,14 @@ dataone:
   adminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"
     - "http://orcid.org/0000-0003-0077-4738" # Matt Jones
-    - "http://orcid.org/0000-0002-8121-2341" # Christopher Jones
-    - "http://orcid.org/0000-0002-2192-403X" # Peter Slaughter
+    - "http://orcid.org/0000-0002-6513-4996" # Dave Vieglais
+    - "http://orcid.org/0000-0002-1209-5268" # Jing Tao
 
   bookkeeperAdminSubjects:
     - "CN=urn:node:CN,DC=dataone,DC=org"
     - "http://orcid.org/0000-0003-0077-4738" # Matt Jones
     - "http://orcid.org/0000-0002-6513-4996" # Dave Vieglais
-    - "http://orcid.org/0000-0002-8121-2341" # Christopher Jones
-    - "http://orcid.org/0000-0003-2192-431X" # Lauren Walker
     - "http://orcid.org/0000-0002-1209-5268" # Jing Tao
-    - "http://orcid.org/0000-0002-2192-403X" # Peter Slaughter
 
   # The default trial period in days
   trialDurationDays: 180

@@ -8,7 +8,7 @@ WORKDIR /app/bookkeeper
 
 # The bookkeeper configuration is obtained from a persistent volume mounted at /opt/local/
 
-COPY target/bookkeeper-0.1.0-SNAPSHOT.jar bookkeeper.jar
+COPY target/bookkeeper-0.4.0.jar bookkeeper.jar
 
 EXPOSE 8080 8081
 

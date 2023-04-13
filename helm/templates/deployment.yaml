@@ -64,6 +64,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # command:
+          #   - 'bash'
+          #   - '-c'
+          #   - 'trap "exit" TERM; while true; do sleep 1; done'
           ports:
             - name: http
               containerPort: 80
@@ -74,6 +78,12 @@ spec:
               subPath: bookkeeper.yml
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
