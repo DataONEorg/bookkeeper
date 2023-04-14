@@ -90,6 +90,7 @@ public class BaseTestCase {
             flyway = Flyway.configure()
                 .dataSource(pg.getPostgresDatabase())
                 .locations("filesystem:helm/db/migrations")
+                .cleanDisabled(false)
                 .load();
             flyway.migrate();
 
@@ -141,12 +142,9 @@ public class BaseTestCase {
             pg.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            fail();
-
+            fail(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            fail();
+            fail(e.getMessage());
         }
     }
 
