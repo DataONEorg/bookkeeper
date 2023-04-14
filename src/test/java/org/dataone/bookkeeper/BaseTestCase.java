@@ -89,7 +89,7 @@ public class BaseTestCase {
             // Run the production database migrations
             flyway = Flyway.configure()
                 .dataSource(pg.getPostgresDatabase())
-                .locations("db/migrations")
+                .locations("filesystem:helm/db/migrations")
                 .load();
             flyway.migrate();
 
