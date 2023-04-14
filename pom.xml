@@ -10,7 +10,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>2.0.0</dropwizard.version>
-        <junit.platform.version>1.4.2</junit.platform.version>
+        <junit.platform.version>1.9.2</junit.platform.version>
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
         <junit.vintage.version>5.4.2</junit.vintage.version>
         <postgresql.version>42.6.0</postgresql.version>
