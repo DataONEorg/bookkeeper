@@ -28,7 +28,7 @@
         <nimbus.version>7.9</nimbus.version>
         <client.artifact.id>bookkeeper-client</client.artifact.id>
         <unshaded.jar.file>target/original-bookkeeper-${project.version}.jar</unshaded.jar.file>
-        <io.fabric8.version>0.30.0</io.fabric8.version>
+        <io.fabric8.version>0.42.1</io.fabric8.version>
         <!-- <docker.registry>docker.io</docker.registry> -->
         <docker.repo>d1bookkeeper</docker.repo>
         <docker.tag>0.3.0</docker.tag>
