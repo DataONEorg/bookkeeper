@@ -18,3 +18,5 @@ buildNumber.properties
 
 # VS Code
 *.code-workspace
+
+volume/
