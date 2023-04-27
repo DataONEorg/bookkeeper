@@ -57,13 +57,13 @@ public class ProductMapper implements RowMapper<Product> {
         Product product;
         try {
             product = new Product(
-                new Integer(rs.getInt("id")),
+                Integer.valueOf(rs.getInt("id")),
                 rs.getString("object"),
                 rs.getBoolean("active"),
                 rs.getInt("amount"),
                 rs.getString("caption"),
                 rs.getString("currency"),
-                new Integer(rs.getInt("created")),
+                Integer.valueOf(rs.getInt("created")),
                 rs.getString("description"),
                 rs.getString("interval"),
                 rs.getString("name"),

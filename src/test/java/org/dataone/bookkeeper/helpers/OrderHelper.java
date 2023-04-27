@@ -59,10 +59,10 @@ public class OrderHelper {
         Order order = new Order();
         order.setId(orderId);
         order.setObject("order");
-        order.setAmount(new Integer(50000));
+        order.setAmount(Integer.valueOf(50000));
         order.setAmountReturned(0);
         order.setCharge(OrderHelper.createTestCharge(chargeId, customerId, invoiceId, orderId));
-        order.setCreated(new Integer(1559768309));
+        order.setCreated(Integer.valueOf(1559768309));
         order.setCurrency("USD");
         order.setCustomer(customerId);
         order.setSubject("http://orcid.org/0000-0002-8121-2341");
@@ -72,10 +72,10 @@ public class OrderHelper {
         order.setName("DataONE Order # 1");
         order.setStatus("paid");
         order.setStatusTransitions(OrderHelper.createTestStatusTransitions());
-        order.setUpdated(new Integer(1559768309));
+        order.setUpdated(Integer.valueOf(1559768309));
         order.setSeriesId("1234567890");
-        order.setStartDate(new Integer(1559768309));
-        order.setEndDate(new Integer(1559768309));
+        order.setStartDate(Integer.valueOf(1559768309));
+        order.setEndDate(Integer.valueOf(1559768309));
 
         return order;
     }
@@ -113,10 +113,10 @@ public class OrderHelper {
         Order order = new Order();
         order.setId(orderId);
         order.setObject("order");
-        order.setAmount(new Integer(50000));
+        order.setAmount(Integer.valueOf(50000));
         order.setAmountReturned(0);
         order.setCharge(OrderHelper.createTestCharge(chargeId, customerId, invoiceId, orderId));
-        order.setCreated(new Integer(1559768309));
+        order.setCreated(Integer.valueOf(1559768309));
         order.setCurrency("USD");
         order.setCustomer(customerId);
         order.setEmail("cjones@nceas.ucsb.edu");
@@ -124,7 +124,7 @@ public class OrderHelper {
         order.setMetadata(Jackson.newObjectMapper().createObjectNode());
         order.setStatus("paid");
         order.setStatusTransitions(OrderHelper.createTestStatusTransitions());
-        order.setUpdated(new Integer(1559768309));
+        order.setUpdated(Integer.valueOf(1559768309));
 
         return order;
     }
@@ -143,8 +143,8 @@ public class OrderHelper {
         ObjectNode charge = mapper.createObjectNode();
         charge.put("id", chargeId);
         charge.put("object", "charge");
-        charge.put("amount", new Integer(50000).intValue());
-        charge.put("amountRefunded", new Integer(0).intValue());
+        charge.put("amount", Integer.valueOf(50000).intValue());
+        charge.put("amountRefunded", Integer.valueOf(0).intValue());
         charge.put("created", 1559768309);
         charge.put("currency", "USD");
         charge.put("customer", customerId);
@@ -171,8 +171,8 @@ public class OrderHelper {
         orderItem.setAmount(50000);
         orderItem.setCurrency("USD");
         orderItem.setDescription("DataONE Individual Membership");
-        orderItem.setParent(new Integer(1000));
-        orderItem.setQuantity(new Integer(1));
+        orderItem.setParent(Integer.valueOf(1000));
+        orderItem.setQuantity(Integer.valueOf(1));
         orderItem.setType("sku");
 
         orderItems.add(orderItem);

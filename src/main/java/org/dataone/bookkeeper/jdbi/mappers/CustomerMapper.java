@@ -66,12 +66,12 @@ public class CustomerMapper implements RowMapper<Customer> {
         try {
             // Create a customer instance from the resultset
             customer = new Customer(
-                new Integer(rs.getInt("c_id")),
+                Integer.valueOf(rs.getInt("c_id")),
                 rs.getString("c_object"),
                 rs.getString("c_subject"),
-                new Integer(rs.getInt("c_balance")),
+                Integer.valueOf(rs.getInt("c_balance")),
                 mapper.readValue(rs.getString("c_address"), Address.class),
-                new Integer(rs.getInt("c_created")),
+                Integer.valueOf(rs.getInt("c_created")),
                 rs.getString("c_currency"),
                 rs.getBoolean("c_delinquent"),
                 rs.getString("c_description"),

@@ -163,7 +163,7 @@ public class CustomersResource extends BaseResource {
             }
 
             // Create the customer
-            customer.setCreated(new Integer((int) Instant.now().getEpochSecond()));
+            customer.setCreated(Integer.valueOf((int) Instant.now().getEpochSecond()));
             Integer id = customerStore.insert(customer);
             customer = customerStore.getCustomer(id);
         } catch (Exception e) {

@@ -77,16 +77,16 @@ public class OrderMapper implements RowMapper<Order> {
                 items.add(mapper.readValue(item.toString(), OrderItem.class));
             }
             order = new Order(
-                new Integer(rs.getInt("o_id")),
+                Integer.valueOf(rs.getInt("o_id")),
                 rs.getString("o_object"),
-                new Integer(rs.getInt("o_amount")),
-                new Integer(rs.getInt("o_amountReturned")),
+                Integer.valueOf(rs.getInt("o_amount")),
+                Integer.valueOf(rs.getInt("o_amountReturned")),
                 rs.getString("o_charge") != null ?
                     (ObjectNode) mapper.readTree(rs.getString("o_charge")) : null,
-                new Integer(rs.getInt("o_created")),
+                    Integer.valueOf(rs.getInt("o_created")),
                 rs.getString("o_currency"),
                 rs.getString("o_subject"),
-                new Integer(rs.getInt("o_customer")),
+                Integer.valueOf(rs.getInt("o_customer")),
                 rs.getString("o_email"),
                 items,
                 rs.getString("o_metadata") != null ?
@@ -95,10 +95,10 @@ public class OrderMapper implements RowMapper<Order> {
                 rs.getString("o_status"),
                 rs.getString("o_statusTransitions") != null ?
                     (ObjectNode) mapper.readTree(rs.getString("o_statusTransitions")) : null,
-                new Integer(rs.getInt("o_updated")),
+                    Integer.valueOf(rs.getInt("o_updated")),
                 rs.getString("o_seriesId"),
-                new Integer(rs.getInt("o_startDate")),
-                new Integer(rs.getInt("o_endDate")),
+                Integer.valueOf(rs.getInt("o_startDate")),
+                Integer.valueOf(rs.getInt("o_endDate")),
                 null // let the row reducer populate quotas
 
             );

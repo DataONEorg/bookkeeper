@@ -221,7 +221,7 @@ public class OrdersResource extends BaseResource {
         ObjectMapper mapper = Jackson.newObjectMapper();
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
-        int now = new Integer((int) Instant.now().getEpochSecond());
+        int now = Integer.valueOf((int) Instant.now().getEpochSecond());
 
         // Insert the order after it is validated
         try {
@@ -345,7 +345,7 @@ public class OrdersResource extends BaseResource {
                 order.setStatusTransitions(existing.getStatusTransitions());
             }
             order.setStatus("created");
-            order.setUpdated(new Integer((int) Instant.now().getEpochSecond()));
+            order.setUpdated(Integer.valueOf((int) Instant.now().getEpochSecond()));
             order.setMetadata(existing.getMetadata());
             order.setStartDate(existing.getStartDate());
             order.setEndDate(existing.getEndDate());
@@ -393,14 +393,14 @@ public class OrdersResource extends BaseResource {
     public Order pay(@Context SecurityContext context,
         @NotNull @PathParam("orderId") Integer orderId) throws WebApplicationException {
         Order order = null;
-        Integer secondsSinceEpoch = new Integer((int) Instant.now().getEpochSecond());
+        Integer secondsSinceEpoch = Integer.valueOf((int) Instant.now().getEpochSecond());
 
         Customer caller = (Customer) context.getUserPrincipal();
         boolean isAdmin = this.dataoneAuthHelper.isAdmin(caller.getSubject());
 
         long trialDurationDays = this.dataoneAuthHelper.getConfiguration().getTrialDurationDays();
         Integer trialEndSecondsSinceEpoch =
-            new Integer((int) (Instant.ofEpochSecond(
+            Integer.valueOf((int) (Instant.ofEpochSecond(
                 (long) secondsSinceEpoch).plus(
                     trialDurationDays, ChronoUnit.DAYS
                 )
@@ -478,7 +478,7 @@ public class OrdersResource extends BaseResource {
                     }
 
                 }
-                order.setUpdated(new Integer((int) Instant.now().getEpochSecond()));
+                order.setUpdated(Integer.valueOf((int) Instant.now().getEpochSecond()));
                 // TODO: Decide if this call should be a transaction with the quota
                 orderStore.update(order);
             } else {

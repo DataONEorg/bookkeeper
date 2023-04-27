@@ -135,7 +135,7 @@ public class ProductsResource extends BaseResource {
 
         try {
             // Set the created timestamp
-            product.setCreated(new Integer((int) Instant.now().getEpochSecond()));
+            product.setCreated(Integer.valueOf((int) Instant.now().getEpochSecond()));
             Integer id = productStore.insert(product);
             product = productStore.getProduct(id);
         } catch (Exception e) {

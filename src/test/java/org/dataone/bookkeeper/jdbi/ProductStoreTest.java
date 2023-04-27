@@ -196,7 +196,7 @@ public class ProductStoreTest extends BaseTestCase {
         expectedProduct.setActive(product.isActive());
         expectedProduct.setAmount(product.getAmount());
         expectedProduct.setCaption(productCaption);
-        expectedProduct.setCreated(new Integer((int) Instant.now().getEpochSecond()));
+        expectedProduct.setCreated(Integer.valueOf((int) Instant.now().getEpochSecond()));
         expectedProduct.setCurrency(product.getCurrency());
         expectedProduct.setDescription(productDescription);
         expectedProduct.setInterval(product.getInterval());

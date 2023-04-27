@@ -34,7 +34,7 @@ public class StoreHelper {
      */
     public static Integer getRandomId() {
         int randomInt = ThreadLocalRandom.current().nextInt(1, 100000000);
-        return new Integer(randomInt);
+        return Integer.valueOf(randomInt);
     }
 
 }

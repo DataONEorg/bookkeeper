@@ -54,6 +54,7 @@ public class DataONEAuthorizer implements Authorizer<Customer> {
      * @deprecated
      */
     @Override
+    @Deprecated
     public boolean authorize(Customer customer, String role) {
 
         return false;

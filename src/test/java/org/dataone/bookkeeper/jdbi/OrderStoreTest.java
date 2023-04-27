@@ -238,15 +238,15 @@ public class OrderStoreTest extends BaseTestCase {
 
             // Update the order locally
             expected.setUpdated(
-                new Integer((int) Instant.now().getEpochSecond())
+                Integer.valueOf((int) Instant.now().getEpochSecond())
             );
             expected.setStatus("canceled");
             expected.setEmail("you@me.com");
             expected.setCurrency("JPY");
             expected.setCreated(
-                new Integer((int) Instant.now().getEpochSecond())
+                Integer.valueOf((int) Instant.now().getEpochSecond())
             );
-            expected.setAmount(new Integer(60000));
+            expected.setAmount(Integer.valueOf(60000));
 
             orderStore.update(expected);
 
