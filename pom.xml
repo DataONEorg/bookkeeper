@@ -6,7 +6,7 @@
 
     <groupId>org.dataone</groupId>
     <artifactId>bookkeeper</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>2.0.0</dropwizard.version>
@@ -32,7 +32,7 @@
         <!-- <docker.registry>docker.io</docker.registry> -->
         <docker.repo>d1bookkeeper</docker.repo>
         <docker.tag>0.3.0</docker.tag>
-        <bookkeeper-api.version>1.0.0</bookkeeper-api.version>
+        <bookkeeper-api.version>1.1.0-SNAPSHOT</bookkeeper-api.version>
     </properties>
     <distributionManagement>
         <repository>
