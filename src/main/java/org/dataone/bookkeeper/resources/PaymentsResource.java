@@ -21,15 +21,21 @@
 
 package org.dataone.bookkeeper.resources;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dataone.bookkeeper.api.Payment;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
 
@@ -49,17 +55,44 @@ public class PaymentsResource extends BaseResource {
     /**
      * Construct an order collection
      * 
-     * @param database the jdbi database access reference
+     * @param database          the jdbi database access reference
      * @param dataoneAuthHelper authentication adapter
      */
     public PaymentsResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
     }
 
+    // @Timed
+    // @POST
+    // @Consumes(MediaType.APPLICATION_JSON)
+    // public Response record(String transact_json) {
+    //     log.info("PAYMENT: " + transact_json);
+    //     return Response.ok().build();
+    // }
+
     @Timed
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response record(String transact_json) {
-        log.info("PAYMENT: " + transact_json);
-        return Response.ok().build();
+    public Payment create(
+            //@Context SecurityContext context,
+            @NotNull @Valid Payment payment) throws WebApplicationException {
+        // Insert the product after it is validated
+
+        // Customer caller = (Customer) context.getUserPrincipal();
+        // if (!this.dataoneAuthHelper.isBookkeeperAdmin(caller.getSubject())) {
+        //     throw new WebApplicationException("Bookkeeper admin privilege is required to create a product, "
+        //             + caller.getSubject() + " is not authorized.", Response.Status.FORBIDDEN);
+        // }
+
+        // try {
+        //     // Set the created timestamp
+        //     product.setCreated(Integer.valueOf((int) Instant.now().getEpochSecond()));
+        //     Integer id = productStore.insert(product);
+        //     product = productStore.getProduct(id);
+        // } catch (Exception e) {
+        //     String message = "Couldn't insert the product: " + e.getMessage();
+        //     throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
+        // }
+        log.info("PAYMENT: " + payment.getAccountId());
+        return payment;
     }
 }
