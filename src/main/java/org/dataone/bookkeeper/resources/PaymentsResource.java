@@ -92,7 +92,7 @@ public class PaymentsResource extends BaseResource {
         //     String message = "Couldn't insert the product: " + e.getMessage();
         //     throw new WebApplicationException(message, Response.Status.INTERNAL_SERVER_ERROR);
         // }
-        log.info("PAYMENT: " + payment.getAccountId());
+        log.info("Processing Payment: " + payment.getTransactionId());
         return payment;
     }
 }
