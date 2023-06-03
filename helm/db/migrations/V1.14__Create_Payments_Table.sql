@@ -1,17 +1,13 @@
 --- Note that this is completed in k8s via the Dockerfile
 --- or via a shell script in non-k8s development envs
 
---- Create the sequence and table for storing payments
-CREATE SEQUENCE payments_id_seq;
-
 CREATE TABLE IF NOT EXISTS payments (
-    id integer DEFAULT nextval('payments_id_seq') PRIMARY KEY,
-    transactionId text UNIQUE NOT NULL,
+    transactionId text PRIMARY KEY,
     orderId integer NOT NULL,
-    accountId text NOT NULL,
+    accountId text,
     timestamp text,
-    count integer,
-    hash text NOT NULL,
+    count text,
+    hash text,
     authorizationCode text,
     authorizationMessage text,
     requestAmount float,
@@ -27,7 +23,6 @@ CREATE INDEX payments_order_idx ON payments USING btree(orderId);
 CREATE INDEX payments_transaction_idx ON payments USING btree(transactionId);
 
 COMMENT ON TABLE  payments IS 'Payment transactions for Orders.';
-COMMENT ON COLUMN payments.id IS 'The unique local payment identifier.';
 COMMENT ON COLUMN payments.transactionId IS 'The unique identifier of the transaction from the payment processor.';
 COMMENT ON COLUMN payments.orderId IS 'The identifier of the order to which this payment applies.';
 COMMENT ON COLUMN payments.accountId IS 'The account identifier for this order.';
