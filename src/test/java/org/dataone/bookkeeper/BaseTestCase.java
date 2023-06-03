@@ -3,7 +3,7 @@
  * jointly copyrighted by participating institutions in DataONE. For
  * more information on DataONE, see our web site at http://dataone.org.
  *
- *   Copyright 2019
+ *   Copyright 2023
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,20 @@
 
 package org.dataone.bookkeeper;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
-import com.opentable.db.postgres.embedded.EmbeddedPostgres;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.jdbi3.JdbiFactory;
-import io.dropwizard.setup.Environment;
+import static org.junit.jupiter.api.Assertions.fail;
+import java.io.IOException;
+import java.sql.Connection;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.flywaydb.core.Flyway;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-
-import java.io.IOException;
-import java.sql.Connection;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import org.testcontainers.containers.PostgreSQLContainer;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi3.JdbiFactory;
+import io.dropwizard.setup.Environment;
 
 
 /**
@@ -45,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BaseTestCase {
 
     /* The embedded database reference */
-    private static EmbeddedPostgres pg;
+    private static PostgreSQLContainer<?> pg;
 
     /* A connection to the database */
     static Connection connection;
@@ -66,29 +64,21 @@ public class BaseTestCase {
     public static Jdbi dbi;
 
     /**
-     * Initialize test resources - start an embedded PostgreSQL database
+     * Initialize test resources - start a PostgreSQL database container
      */
 
     @BeforeAll
     public static void initAll() {
         try {
-
-            // Try to optimize the PG database for testing with anti-persistence
-            // options (fsync, full_page_writes)
-            pg = EmbeddedPostgres.builder()
-                .setPort(5432)
-                .setServerConfig("shared_buffers", "1024MB")
-                .setServerConfig("work_mem", "25MB")
-                .setServerConfig("fsync", "off")
-                .setServerConfig("full_page_writes", "off")
-                .start();
+            pg = new PostgreSQLContainer<>("postgres:14");
+            pg.start();
 
             // Make a connection available to tests
-            connection = pg.getPostgresDatabase().getConnection();
+            connection = pg.createConnection("?TC_DAEMON=true");
 
             // Run the production database migrations
             flyway = Flyway.configure()
-                .dataSource(pg.getPostgresDatabase())
+                .dataSource(pg.getJdbcUrl(), pg.getUsername(), pg.getPassword())
                 .locations("filesystem:helm/db/migrations")
                 .cleanDisabled(false)
                 .load();
@@ -99,22 +89,15 @@ public class BaseTestCase {
 
             // Set up a PostgreSQL datasource for testing (Stores)
 
-            dataSourceFactory.setUrl("jdbc:postgresql://localhost:5432/postgres");
-            dataSourceFactory.setUser("postgres");
-            dataSourceFactory.setPassword("postgres");
-            dataSourceFactory.setDriverClass("org.postgresql.Driver");
+            dataSourceFactory.setUrl(pg.getJdbcUrl());
+            dataSourceFactory.setUser(pg.getUsername());
+            dataSourceFactory.setPassword(pg.getPassword());
+            dataSourceFactory.setDriverClass(pg.getDriverClassName());
             dataSourceFactory.asSingleConnectionPool();
 
             // Initialize a dbi instance for tests to use
             dbi = new JdbiFactory(new TimedAnnotationNameStrategy())
                 .build(environment, dataSourceFactory, "postgresql");
-
-            // Start all managed objects in the environment
-/*
-            for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects() ) {
-                lifeCycle.start();
-            }
-*/
 
         } catch (Exception e) {
             e.printStackTrace();
