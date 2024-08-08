@@ -72,7 +72,7 @@ Getting Started
 The following example uses ``bash`` and ``curl`` to demonstrate client connections.
 
 Interacting with the service requires authentication for most REST method
-calls using a JSON Web Token.  Log in at https://search.daataone.org to get
+calls using a JSON Web Token.  Log in at https://search.dataone.org to get
 a token (in ``My Profile > Settings > Authentication Token``).  All messages are transferred as JSON.
 
 #. Set your token

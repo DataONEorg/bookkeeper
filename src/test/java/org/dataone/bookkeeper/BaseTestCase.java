@@ -21,21 +21,23 @@
 
 package org.dataone.bookkeeper;
 
-import static org.junit.jupiter.api.Assertions.fail;
-import java.io.IOException;
-import java.sql.Connection;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
+import org.testcontainers.containers.PostgreSQLContainer;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi3.JdbiFactory;
+import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.flywaydb.core.Flyway;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.testcontainers.containers.PostgreSQLContainer;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.jdbi3.JdbiFactory;
-import io.dropwizard.setup.Environment;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A base class for initializing an embedded database for testing
@@ -70,11 +72,26 @@ public class BaseTestCase {
     @BeforeAll
     public static void initAll() {
         try {
-            pg = new PostgreSQLContainer<>("postgres:14");
-            pg.start();
 
+            // Try to optimize the PG database for testing with anti-persistence
+            // options (fsync, full_page_writes)
+            // pg = EmbeddedPostgres.builder()
+            //     .setPort(5432)
+            //     .setServerConfig("shared_buffers", "1024MB")
+            //     .setServerConfig("work_mem", "25MB")
+            //     .setServerConfig("fsync", "off")
+            //     .setServerConfig("full_page_writes", "off")
+            //     .start();
+
+            pg = new PostgreSQLContainer<>("postgres:14");
+            pg.withExposedPorts(5432)
+                    .withDatabaseName("bookkeeper")
+                    .withUsername("postgres")
+                    .withPassword("postgres");
+            pg.start();
+        
             // Make a connection available to tests
-            connection = pg.createConnection("?TC_DAEMON=true");
+            connection = DriverManager.getConnection(pg.getJdbcUrl(), pg.getUsername(), pg.getPassword());
 
             // Run the production database migrations
             flyway = Flyway.configure()
