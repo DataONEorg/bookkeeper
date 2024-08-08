@@ -213,7 +213,7 @@ public class PaymentStoreTest extends BaseTestCase {
 
             //assertThat(UsageHelper.getUsageCountById(usageId) == 1);
         } catch (Exception e) {
-            fail();
+            fail(e.getMessage());
         }
     }
 

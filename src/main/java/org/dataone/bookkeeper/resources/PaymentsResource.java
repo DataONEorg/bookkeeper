@@ -26,17 +26,15 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dataone.bookkeeper.api.Payment;
+import org.dataone.bookkeeper.jdbi.OrderStore;
+import org.dataone.bookkeeper.jdbi.PaymentStore;
 import org.dataone.bookkeeper.security.DataONEAuthHelper;
 import org.jdbi.v3.core.Jdbi;
-
 import com.codahale.metrics.annotation.Timed;
 
 /**
@@ -51,6 +49,10 @@ public class PaymentsResource extends BaseResource {
     private static final Log log = LogFactory.getLog(PaymentsResource.class);
     private String PAYMENT_API_KEY = null;
 
+    /* The stores for database queries and storage */
+    private final OrderStore orderStore;
+    private final PaymentStore paymentStore;
+
     /**
      * Construct an order collection
      * 
@@ -59,6 +61,8 @@ public class PaymentsResource extends BaseResource {
      */
     public PaymentsResource(Jdbi database, DataONEAuthHelper dataoneAuthHelper) {
         this.PAYMENT_API_KEY = System.getenv("PAYMENT_API_KEY");
+        this.orderStore = database.onDemand(OrderStore.class);
+        this.paymentStore = database.onDemand(PaymentStore.class);
     }
 
     // @Timed
@@ -97,8 +101,12 @@ public class PaymentsResource extends BaseResource {
         boolean validPayment = validateHash(payment.getAccountId(), this.PAYMENT_API_KEY,
                 payment.getTimestamp(), payment.getHash());
         if (validPayment) {
+            // TODO: ensure the orderId exists in the Orders table, and the amounts match
+            Integer id = paymentStore.insert(payment);
+            log.info("Payment transaction inserted: " + id);
             return payment;
         } else {
+            // TODO: probably should throw a WebApplicationException here to indicate the transaction was invalid
             return null;
         }
     }
