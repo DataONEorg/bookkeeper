@@ -23,7 +23,7 @@ package org.dataone.bookkeeper;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jdbi3.strategies.TimedAnnotationNameStrategy;
-import com.opentable.db.postgres.embedded.EmbeddedPostgres;
+import org.testcontainers.containers.PostgreSQLContainer;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Environment;
@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BaseTestCase {
 
     /* The embedded database reference */
-    private static EmbeddedPostgres pg;
+    private static PostgreSQLContainer<?> pg;
 
     /* A connection to the database */
     static Connection connection;
@@ -75,20 +76,27 @@ public class BaseTestCase {
 
             // Try to optimize the PG database for testing with anti-persistence
             // options (fsync, full_page_writes)
-            pg = EmbeddedPostgres.builder()
-                .setPort(5432)
-                .setServerConfig("shared_buffers", "1024MB")
-                .setServerConfig("work_mem", "25MB")
-                .setServerConfig("fsync", "off")
-                .setServerConfig("full_page_writes", "off")
-                .start();
+            // pg = EmbeddedPostgres.builder()
+            //     .setPort(5432)
+            //     .setServerConfig("shared_buffers", "1024MB")
+            //     .setServerConfig("work_mem", "25MB")
+            //     .setServerConfig("fsync", "off")
+            //     .setServerConfig("full_page_writes", "off")
+            //     .start();
 
+            pg = new PostgreSQLContainer<>("postgres:14");
+            pg.withExposedPorts(5432)
+                    .withDatabaseName("bookkeeper")
+                    .withUsername("postgres")
+                    .withPassword("postgres");
+            pg.start();
+        
             // Make a connection available to tests
-            connection = pg.getPostgresDatabase().getConnection();
+            connection = DriverManager.getConnection(pg.getJdbcUrl(), pg.getUsername(), pg.getPassword());
 
             // Run the production database migrations
             flyway = Flyway.configure()
-                .dataSource(pg.getPostgresDatabase())
+                .dataSource(pg.getJdbcUrl(), pg.getUsername(), pg.getPassword())
                 .locations("filesystem:helm/db/migrations")
                 .cleanDisabled(false)
                 .load();
@@ -99,9 +107,9 @@ public class BaseTestCase {
 
             // Set up a PostgreSQL datasource for testing (Stores)
 
-            dataSourceFactory.setUrl("jdbc:postgresql://localhost:5432/postgres");
-            dataSourceFactory.setUser("postgres");
-            dataSourceFactory.setPassword("postgres");
+            dataSourceFactory.setUrl(pg.getJdbcUrl());
+            dataSourceFactory.setUser(pg.getUsername());
+            dataSourceFactory.setPassword(pg.getPassword());
             dataSourceFactory.setDriverClass("org.postgresql.Driver");
             dataSourceFactory.asSingleConnectionPool();
 

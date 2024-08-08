@@ -13,8 +13,7 @@
         <junit.platform.version>1.9.2</junit.platform.version>
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
         <junit.vintage.version>5.4.2</junit.vintage.version>
-        <postgresql.version>42.6.0</postgresql.version>
-        <embedded-pg.version>0.13.1</embedded-pg.version>
+        <postgresql.version>42.7.3</postgresql.version>
         <flyway.version>9.16.3</flyway.version>
         <mockito.version>2.28.2</mockito.version>
         <d1libclient.version>2.3.1</d1libclient.version>
@@ -82,12 +81,12 @@
             <version>${postgresql.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.opentable.components</groupId>
-            <artifactId>otj-pg-embedded</artifactId>
-            <version>${embedded-pg.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.19.8</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+          </dependency>
+          <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-maven-plugin</artifactId>
             <version>${flyway.version}</version>
