@@ -10,7 +10,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>2.0.0</dropwizard.version>
-        <junit.platform.version>1.9.3</junit.platform.version>
+        <junit.platform.version>1.10.3</junit.platform.version>
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
         <junit.vintage.version>5.4.2</junit.vintage.version>
         <postgresql.version>42.7.3</postgresql.version>
@@ -18,16 +18,16 @@
         <mockito.version>2.28.2</mockito.version>
         <d1libclient.version>2.3.1</d1libclient.version>
         <maven.surefire.version>2.22.0</maven.surefire.version>
-        <maven.failsafe.version>3.1.0</maven.failsafe.version>
+        <maven.failsafe.version>3.3.1</maven.failsafe.version>
         <maven.shade.version>3.4.1</maven.shade.version>
         <maven.jar.version>3.3.0</maven.jar.version>
         <maven.compiler.version>3.11.0</maven.compiler.version>
-        <maven.install.version>3.0.0-M1</maven.install.version>
+        <maven.install.version>4.0.0-beta-1</maven.install.version>
         <maven.deploy.version>3.0.0-M1</maven.deploy.version>
         <nimbus.version>7.9</nimbus.version>
         <client.artifact.id>bookkeeper-client</client.artifact.id>
         <unshaded.jar.file>target/original-bookkeeper-${project.version}.jar</unshaded.jar.file>
-        <io.fabric8.version>0.42.1</io.fabric8.version>
+        <io.fabric8.version>0.45.0</io.fabric8.version>
         <!-- <docker.registry>docker.io</docker.registry> -->
         <docker.repo>d1bookkeeper</docker.repo>
         <docker.tag>0.3.0</docker.tag>
