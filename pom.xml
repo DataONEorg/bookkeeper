@@ -14,7 +14,7 @@
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
         <junit.vintage.version>5.4.2</junit.vintage.version>
         <postgresql.version>42.7.3</postgresql.version>
-        <flyway.version>9.16.3</flyway.version>
+        <flyway.version>10.17.0</flyway.version>
         <mockito.version>2.28.2</mockito.version>
         <d1libclient.version>2.3.1</d1libclient.version>
         <maven.surefire.version>2.22.0</maven.surefire.version>
