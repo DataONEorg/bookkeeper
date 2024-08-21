@@ -3,7 +3,7 @@
  * jointly copyrighted by participating institutions in DataONE. For
  * more information on DataONE, see our web site at http://dataone.org.
  *
- *   Copyright 2019
+ *   Copyright 2023
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import java.sql.DriverManager;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 /**
  * A base class for initializing an embedded database for testing
  */
@@ -67,7 +66,7 @@ public class BaseTestCase {
     public static Jdbi dbi;
 
     /**
-     * Initialize test resources - start an embedded PostgreSQL database
+     * Initialize test resources - start a PostgreSQL database container
      */
 
     @BeforeAll
@@ -110,19 +109,12 @@ public class BaseTestCase {
             dataSourceFactory.setUrl(pg.getJdbcUrl());
             dataSourceFactory.setUser(pg.getUsername());
             dataSourceFactory.setPassword(pg.getPassword());
-            dataSourceFactory.setDriverClass("org.postgresql.Driver");
+            dataSourceFactory.setDriverClass(pg.getDriverClassName());
             dataSourceFactory.asSingleConnectionPool();
 
             // Initialize a dbi instance for tests to use
             dbi = new JdbiFactory(new TimedAnnotationNameStrategy())
                 .build(environment, dataSourceFactory, "postgresql");
-
-            // Start all managed objects in the environment
-/*
-            for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects() ) {
-                lifeCycle.start();
-            }
-*/
 
         } catch (Exception e) {
             e.printStackTrace();

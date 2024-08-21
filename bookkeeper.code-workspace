@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../bookkeeper-api"
+		}
+	],
+	"settings": {
+		"esbonio.sphinx.confDir": "",
+		"java.format.settings.url": ".vscode/eclipse-java-google-style.xml",
+		"java.configuration.updateBuildConfiguration": "interactive",
+		"java.compile.nullAnalysis.mode": "disabled"
+	}
+}
