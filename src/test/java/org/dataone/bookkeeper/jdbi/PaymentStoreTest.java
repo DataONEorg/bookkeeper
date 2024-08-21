@@ -21,7 +21,11 @@
 
 package org.dataone.bookkeeper.jdbi;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.fail;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.dataone.bookkeeper.BaseTestCase;
@@ -36,6 +40,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
+/**
+ * Test class for PaymentStore
+ */
 public class PaymentStoreTest extends BaseTestCase {
 
     // The PaymentStore to test
@@ -54,72 +61,48 @@ public class PaymentStoreTest extends BaseTestCase {
     public final ExpectedException exception = ExpectedException.none();
 
     /**
-     * Set up the Store for testing
+     * Set up the Store for testing with a customer and an order
      */
     @BeforeEach
     public void init() {
         paymentStore = dbi.onDemand(PaymentStore.class);
+        try {
+        Customer customer;
+            // Insert a customer to be used in later tests
+            customer = CustomerHelper.insertTestCustomer(
+                        CustomerHelper.createCustomer(StoreHelper.getRandomId()));
+            this.customerIds.add(customer.getId());
+
+            // Insert an order
+            Integer orderId;
+            orderId = OrderHelper.insertTestOrder(StoreHelper.getRandomId(), customerIds.get(0));
+            this.orderIds.add(orderId);
+            
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 
     /**
-     * Tear down resources
+     * Test getting the full Payments list
      */
-    // @AfterEach
-    // public void tearDown() {
-    //     // Remove test usage entries
-    //     for (Integer usageId : this.usageIds) {
-    //         try {
-    //             UsageHelper.removeTestUsage(usageId);
-    //         } catch (SQLException e) {
-    //             fail();
-    //         }
-    //     }
+    @Test
+    @DisplayName("Test listing all of the the payments")
+    public void testListPayments() {
+        try {
+            // Insert three test payments to be listed and checked
+            Integer orderId = orderIds.get(0);
+            insertTestPayment(orderId);
+            insertTestPayment(orderId);
+            insertTestPayment(orderId);
 
-    //     // Remove test quota entries
-    //     for (Integer quotaId : this.quotaIds) {
-    //         try {
-    //             QuotaHelper.removeTestQuota(quotaId);
-    //         } catch (SQLException e) {
-    //             fail();
-    //         }
-    //     }
-
-    //     // Remove test customer entries
-    //     for (Integer customerId : this.customerIds) {
-    //         try {
-    //             CustomerHelper.removeTestCustomer(customerId);
-    //         } catch (SQLException e) {
-    //             fail();
-    //         }
-    //     }
-
-    //     // Remove test product entries
-    //     for (Integer productId : this.productIds) {
-    //         try {
-    //             ProductHelper.removeTestProduct(productId);
-    //         } catch (SQLException e) {
-    //             fail();
-    //         }
-    //     }
-
-    //     // Remove test order entries
-    //     for (Integer orderId : this.orderIds) {
-    //         try {
-    //             OrderHelper.removeTestOrder(orderId);
-    //         } catch (SQLException e) {
-    //             fail();
-    //         }
-    //     }
-    // }
-
-    /**
-     * Test getting the full Quota list
-     */
-    // @Test
-    // @DisplayName("Test listing the usages")
-    // public void testListUsages() {
-    //     assertThat(usageStore.listUsages().size() >= 3);
-    // }
+            List<Payment> payments = paymentStore.listPayments();
+            assertTrue(payments.size() == 3);
+            assertTrue(payments.get(0).getOrderId().intValue() == orderId.intValue());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
 
     /**
      * Test getting a single quota by ID
@@ -192,31 +175,32 @@ public class PaymentStoreTest extends BaseTestCase {
     @DisplayName("Test inserting a Payment instance")
     public void testInsertWithPayment() {
         try {
-            Customer customer;
-            Integer orderId;
-            // Insert a customer
-            customer = CustomerHelper.insertTestCustomer(
-                        CustomerHelper.createCustomer(StoreHelper.getRandomId()));
-            this.customerIds.add(customer.getId()); // To be deleted
-
-            // Insert an order
-            orderId = OrderHelper.insertTestOrder(
-                        StoreHelper.getRandomId(), customer.getId());
-            this.orderIds.add(orderId); // To be deleted
-
-            Integer paymentId = StoreHelper.getRandomId();
-            String transactionId = StoreHelper.getRandomId().toString();
-            
-            Payment payment = createTestStoragePayment(transactionId, orderId);
-            paymentStore.insert(payment);
-            this.paymentIds.add(paymentId);
-
-            //assertThat(UsageHelper.getUsageCountById(usageId) == 1);
+            Integer paymentId = insertTestPayment(orderIds.get(0));
+            assertTrue(paymentId != null);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
+    /**
+     * Insert a payment into the paymentStore for the given orderId
+     * @param orderId the order for which the payment applies
+     * @return Integer identifier of the generated payment
+     */
+    private Integer insertTestPayment(Integer orderId) {
+        String transactionId = StoreHelper.getRandomId().toString();
+        Payment payment = createTestStoragePayment(transactionId, orderId);
+        Integer paymentId = paymentStore.insert(payment);
+        this.paymentIds.add(paymentId);
+        return paymentId;
+    }
+
+    /**
+     * Create a test payment
+     * @param transactionId the transasctionId associated with the payment
+     * @param orderId the orderId associated with the payment
+     * @return the Payment instance that was created
+     */
     private Payment createTestStoragePayment(String transactionId, Integer orderId) {
         Payment payment = new Payment();
         //payment.setPaymentId(paymentId); // Probably best to get rid of paymentId and just use transactionId
@@ -326,59 +310,25 @@ public class PaymentStoreTest extends BaseTestCase {
     // }
 
     /**
-     * Test deleting a usage
+     * Test deleting a payment
      */
-    // @Test
-    // @DisplayName("Test deleting a usage")
-    // public void testDelete() {
-    //     Integer customerId;
-    //     Integer productId;
-    //     Integer quotaId = null;
-    //     Integer usageId = null;
-    //     Integer chargeId = null;
-    //     Integer invoiceId = null;
+    @Test
+    @DisplayName("Test deleting payments")
+    public void testDelete() {
+        try {
+            Integer paymentId = insertTestPayment(orderIds.get(0));
+            assertTrue(paymentId != null);
+            int paymentCount = paymentStore.listPayments().size();
+            boolean deleted = paymentStore.delete(paymentId.toString());
+            assertTrue(deleted);
+            int newCount = paymentStore.listPayments().size();
+            assertTrue("Payment count was not decreased after deletion.", paymentCount - newCount == 1);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
 
-    //     try {
-    //         // Add a test customer
-    //         customerId = CustomerHelper.insertTestCustomer(StoreHelper.getRandomId());
-    //         this.customerIds.add(customerId); // Clean up
-
-    //         // Mint a productId
-    //         productId = StoreHelper.getRandomId();
-
-    //         // Mint a chargeId
-    //         chargeId = StoreHelper.getRandomId();
-
-    //         // Mint an invoiceId
-    //         invoiceId = StoreHelper.getRandomId();
-
-    //         // Add a test order
-    //         Integer orderId = OrderHelper.insertTestOrder(
-    //                 OrderHelper.createOrder(
-    //                         StoreHelper.getRandomId(), customerId, chargeId, invoiceId, productId)
-    //         ).getId();
-    //         this.orderIds.add(orderId); // Clean up
-
-    //         // Add a test quota
-    //         quotaId = QuotaHelper.insertTestQuotaWithOrder(
-    //                 StoreHelper.getRandomId(), orderId
-    //         );
-    //         this.quotaIds.add(quotaId);
-    //         Quota quota = QuotaHelper.getQuotaById(quotaId);
-
-    //         String instanceId = quota.getSubject() + quotaId.toString();
-    //         // Add a usage for the quota
-    //         usageId = StoreHelper.getRandomId();
-    //         UsageHelper.insertTestUsageInstanceId(usageId, quotaId, instanceId);
-
-    //         assertThat(UsageHelper.getUsageCountById(usageId) == 1);
-    //         // Delete the usage
-    //         usageStore.delete(usageId);
-    //         assertThat(UsageHelper.getUsageCountById(quotaId) == 0);
-    //     } catch (SQLException e) {
-    //         this.quotaIds.add(quotaId); // Clean up on fail
-    //         fail();
-    //     }
-
-    // }
+        // And try deleting a non-existent payment identifier
+        boolean deleted = paymentStore.delete("I-am-not-a-pipe");
+        assertFalse("Deletion for non-existent id should have failed but did not.", deleted);
+    }
 }

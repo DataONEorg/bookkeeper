@@ -133,8 +133,9 @@ public interface PaymentStore {
     /**
      * Delete a payment
      * @param transactionId the payment id to delete
+     * @return boolean true if the payment was deleted, otherwise false
      */
     @SqlUpdate("DELETE FROM payments WHERE transactionId = :transactionId")
-    void delete(@Bind("transactionId") Integer transactionId);
+    boolean delete(@Bind("transactionId") String transactionId);
 
 }
